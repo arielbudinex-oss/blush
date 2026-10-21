@@ -38,15 +38,6 @@ export default function SignupPage() {
     router.refresh();
   }
 
-  async function google() {
-    const supabase = createClient();
-    const { error: err } = await supabase.auth.signInWithOAuth({
-      provider: "google",
-      options: { redirectTo: `${window.location.origin}/auth/callback?next=/onboarding` },
-    });
-    if (err) setError("Masuk pakai Google belum tersedia. Pakai email dan password dulu, ya.");
-  }
-
   return (
     <Shell title="Buat akun" hint="Butuh 2 menit. Minimal 18 tahun.">
       <form onSubmit={submit} className="flex flex-col gap-[var(--space-sm)]">
@@ -84,9 +75,9 @@ export default function SignupPage() {
         <button type="submit" className={btnPrimary} disabled={busy}>
           {busy ? "Membuat akun…" : "Buat akun"}
         </button>
-        <button type="button" className={btnGhost} onClick={google}>
+        <a href="/api/auth/google/start?next=/onboarding" className={`${btnGhost} inline-flex items-center justify-center gap-2`}>
           Lanjut dengan Google
-        </button>
+        </a>
       </form>
       <p className="text-sm text-ink-soft">
         Sudah punya akun?{" "}

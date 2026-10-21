@@ -45,3 +45,5 @@ scripts/tmp-*
 
 .vercel
 .env*
+
+scratch/
