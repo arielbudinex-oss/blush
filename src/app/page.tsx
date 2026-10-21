@@ -1,31 +1,14 @@
 import Link from "next/link";
+import { Icon, type IconName } from "@/components/Icon";
 
 const primary =
   "app-press inline-flex min-h-12 items-center justify-center gap-2 rounded-[999px] bg-blush-deep px-6 text-sm font-bold text-paper transition-colors duration-200 hover:bg-ink";
 
-function Check() {
-  return (
-    <svg viewBox="0 0 24 24" aria-hidden="true" className="h-3.5 w-3.5 fill-none stroke-current stroke-[3]">
-      <path d="M5 12.5l4.5 4.5L19 7" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  );
-}
-
-function Heart({ className = "" }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 24 24" aria-hidden="true" className={className} fill="currentColor">
-      <path d="M12 20s-7-4.35-7-9.2A4.3 4.3 0 0112 7.6a4.3 4.3 0 017 3.2C19 15.65 12 20 12 20z" />
-    </svg>
-  );
-}
-
-function Tab({ d, label, active = false }: { d: string; label: string; active?: boolean }) {
+function Tab({ name, label, active = false }: { name: IconName; label: string; active?: boolean }) {
   return (
     <span className={`flex flex-col items-center gap-0.5 text-[0.62rem] font-bold ${active ? "text-blush-deep" : "text-ink-soft"}`}>
       <span className={`grid h-7 w-12 place-items-center rounded-[999px] ${active ? "bg-blush-tint" : ""}`}>
-        <svg viewBox="0 0 24 24" aria-hidden="true" className="h-4 w-4 fill-none stroke-current stroke-[1.8]" strokeLinejoin="round">
-          <path d={d} />
-        </svg>
+        <Icon name={name} className="h-4 w-4" />
       </span>
       {label}
     </span>
@@ -57,7 +40,7 @@ function DeckPreview() {
             <div className="flex items-center gap-2">
               <p className="text-2xl font-bold leading-none">Nadia, 26</p>
               <span className="grid h-5 w-5 place-items-center rounded-[999px] bg-verify text-white">
-                <Check />
+                <Icon name="check" className="h-3.5 w-3.5" strokeWidth={3} />
               </span>
             </div>
             <p className="mt-1 truncate text-sm font-medium text-white/90">Arsitek · Yogyakarta · 3 km</p>
@@ -80,25 +63,21 @@ function DeckPreview() {
 
         <div className="flex items-center justify-center gap-3 py-3">
           <span className="grid h-12 w-12 place-items-center rounded-[999px] border border-line-strong bg-paper text-ink">
-            <svg viewBox="0 0 24 24" aria-hidden="true" className="h-5 w-5 fill-none stroke-current stroke-[2.2]">
-              <path d="M6 6l12 12M18 6L6 18" strokeLinecap="round" />
-            </svg>
+            <Icon name="x" className="h-5 w-5" strokeWidth={2.2} />
           </span>
           <span className="grid h-12 w-12 place-items-center rounded-[999px] border border-ok bg-paper text-ok">
-            <svg viewBox="0 0 24 24" aria-hidden="true" className="h-5 w-5 fill-none stroke-current stroke-[1.8]" strokeLinejoin="round">
-              <path d="M12 3.5l2.6 5.4 5.9.8-4.3 4.1 1.1 5.8L12 16.8l-5.3 2.8 1.1-5.8L3.5 9.7l5.9-.8z" />
-            </svg>
+            <Icon name="star" className="h-5 w-5" />
           </span>
           <span className="grid h-14 w-14 place-items-center rounded-[999px] bg-blush-deep text-paper">
-            <Heart className="h-6 w-6" />
+            <Icon name="heart" className="h-6 w-6" filled />
           </span>
         </div>
 
         <div className="flex items-center justify-around border-t border-line px-2 pb-2.5 pt-1.5">
-          <Tab d="M8 4.5h10.5a1.5 1.5 0 011.5 1.5v9M4.5 8.5A1.5 1.5 0 016 7h9a1.5 1.5 0 011.5 1.5v9A1.5 1.5 0 0115 19H6a1.5 1.5 0 01-1.5-1.5z" label="Jelajah" active />
-          <Tab d="M12 20s-7-4.35-7-9.2A4.3 4.3 0 0112 7.6a4.3 4.3 0 017 3.2C19 15.65 12 20 12 20z" label="Suka" />
-          <Tab d="M4 6h16v10H9l-5 4z" label="Chat" />
-          <Tab d="M12 12a4 4 0 100-8 4 4 0 000 8zM4.5 20a7.5 7.5 0 0115 0" label="Profil" />
+          <Tab name="deck" label="Jelajah" active />
+          <Tab name="heart" label="Suka" />
+          <Tab name="chat" label="Chat" />
+          <Tab name="user" label="Profil" />
         </div>
       </div>
     </div>
@@ -111,7 +90,7 @@ export default function Home() {
       <header className="mx-auto flex h-14 max-w-4xl items-center justify-between px-4">
         <Link href="/" className="flex items-center gap-2">
           <span className="grid h-8 w-8 place-items-center rounded-[11px] bg-blush-deep text-paper">
-            <Heart className="h-4 w-4" />
+            <Icon name="heart" className="h-4 w-4" filled />
           </span>
           <span className="font-display text-lg font-bold tracking-[-0.03em]">Blush</span>
         </Link>

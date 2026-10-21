@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { photoUrl } from "@/lib/photo";
+import { Icon } from "@/components/Icon";
 import { btnGhost, btnPrimary, inputBase, label } from "@/components/ui";
 
 type Interest = { id: number; slug: string; label: string };
@@ -251,9 +252,7 @@ export default function ProfileForm({
                       aria-label="Jadikan foto sampul"
                       className="absolute left-2 top-2 grid h-7 w-7 place-items-center rounded-[999px] bg-paper/90 text-blush-deep"
                     >
-                      <svg viewBox="0 0 24 24" aria-hidden="true" className="h-4 w-4 fill-current">
-                        <path d="M12 3l2.6 5.6 6.1.7-4.5 4.2 1.2 6-5.4-3-5.4 3 1.2-6L3.3 9.3l6.1-.7z" />
-                      </svg>
+                      <Icon name="star" className="h-4 w-4" filled />
                     </button>
                   )}
                 </div>

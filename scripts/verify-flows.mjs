@@ -190,8 +190,8 @@ try {
 
   // 6 — Damar kirim pesan
   await clickText(pb, "Buka chat");
-  await pb.waitForSelector("form input[aria-label=Pesan]", { timeout: 15000 });
-  await pb.type("form input[aria-label=Pesan]", "Halo Rara, kita sama-sama suka ngopi ya!");
+  await pb.waitForSelector('form textarea[aria-label="Pesan"]', { timeout: 15000 });
+  await pb.type('form textarea[aria-label="Pesan"]', "Halo Rara, kita sama-sama suka ngopi ya!");
   await pb.click("form button[type=submit]");
   await new Promise((r) => setTimeout(r, 2500));
   const sent = await pb.evaluate(() => document.body.innerText);
@@ -203,7 +203,7 @@ try {
   ok("halaman matches menampilkan pesan terakhir", matchesText.includes("Halo Rara"), matchesText.slice(0, 120).replace(/\n/g, " | "));
   await pa.screenshot({ path: path.join(OUT, "05-matches-rara.png") });
   await pa.click('a[href^="/app/chat/"]');
-  await pa.waitForSelector("form input[aria-label=Pesan]", { timeout: 15000 });
+  await pa.waitForSelector('form textarea[aria-label="Pesan"]', { timeout: 15000 });
   let sawFirst = true;
   try {
     await pa.waitForFunction(() => document.body.innerText.includes("Halo Rara"), { timeout: 12000 });
@@ -213,7 +213,7 @@ try {
   ok("Rara melihat pesan Damar di chat", sawFirst);
 
   // 8 — realtime: Damar kirim pesan kedua, Rara harus lihat tanpa reload
-  await pb.type("form input[aria-label=Pesan]", "Pesan kedua — uji realtime");
+  await pb.type('form textarea[aria-label="Pesan"]', "Pesan kedua — uji realtime");
   await pb.click("form button[type=submit]");
   let realtime = false;
   try {

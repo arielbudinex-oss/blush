@@ -8,6 +8,7 @@ import { createClient } from "@/lib/supabase/client";
 import { distanceLabel, photoUrl } from "@/lib/photo";
 import { MatchModal, ReportModal } from "@/components/DeckModals";
 import { CountUp } from "@/components/motion";
+import { Icon } from "@/components/Icon";
 import { btnDanger, btnGhost, btnPrimary } from "@/components/ui";
 
 export type Candidate = {
@@ -48,38 +49,9 @@ function CheckBadge() {
       title="Terverifikasi"
       className="inline-grid h-[18px] w-[18px] shrink-0 place-items-center rounded-full bg-verify text-white"
     >
-      <svg viewBox="0 0 16 16" aria-hidden="true" className="h-3 w-3 fill-none stroke-current stroke-[2.8]">
-        <path d="M3.2 8.6l3 3 6.6-7" strokeLinecap="round" strokeLinejoin="round" />
-      </svg>
+      <Icon name="check" className="h-3 w-3" strokeWidth={2.8} />
       <span className="sr-only">Terverifikasi</span>
     </span>
-  );
-}
-
-function Icon({ name }: { name: "x" | "heart" | "star" | "undo" }) {
-  const common = { viewBox: "0 0 24 24", className: "h-6 w-6", "aria-hidden": true } as const;
-  if (name === "x")
-    return (
-      <svg {...common} fill="none" stroke="currentColor" strokeWidth={2.2} strokeLinecap="round">
-        <path d="M6 6l12 12M18 6L6 18" />
-      </svg>
-    );
-  if (name === "heart")
-    return (
-      <svg {...common} fill="none" stroke="currentColor" strokeWidth={2} strokeLinejoin="round">
-        <path d="M12 20s-7-4.35-7-9.2A4.3 4.3 0 0112 7.6a4.3 4.3 0 017 3.2C19 15.65 12 20 12 20z" />
-      </svg>
-    );
-  if (name === "star")
-    return (
-      <svg {...common} fill="currentColor">
-        <path d="M12 3l2.6 5.6 6.1.7-4.5 4.2 1.2 6-5.4-3-5.4 3 1.2-6L3.3 9.3l6.1-.7z" />
-      </svg>
-    );
-  return (
-    <svg {...common} fill="none" stroke="currentColor" strokeWidth={2.2} strokeLinecap="round" strokeLinejoin="round">
-      <path d="M4 9h9a5 5 0 010 10H8M4 9l4-4M4 9l4 4" />
-    </svg>
   );
 }
 
@@ -294,7 +266,7 @@ function SwipeCard({
           aria-label="Lewati"
           className="grid h-14 w-14 place-items-center rounded-[999px] border border-line-strong bg-paper text-ink shadow-[0_6px_18px_-10px_rgba(0,0,0,.45)] transition-transform duration-150 active:scale-95 disabled:opacity-50"
         >
-          <Icon name="x" />
+          <Icon name="x" className="h-6 w-6" strokeWidth={2.2} />
         </button>
         <button
           type="button"
@@ -303,7 +275,7 @@ function SwipeCard({
           aria-label="Batalkan swipe terakhir"
           className="grid h-10 w-10 place-items-center rounded-[999px] border border-line-strong bg-paper text-ink-soft transition-transform duration-150 active:scale-95 disabled:border-line disabled:bg-paper-2 disabled:text-ink-faint"
         >
-          <Icon name="undo" />
+          <Icon name="undo" className="h-5 w-5" strokeWidth={2.2} />
         </button>
         <button
           type="button"
@@ -312,7 +284,7 @@ function SwipeCard({
           aria-label="Superlike"
           className="grid h-14 w-14 place-items-center rounded-[999px] border border-ok bg-paper text-ok shadow-[0_6px_18px_-10px_rgba(0,0,0,.45)] transition-transform duration-150 active:scale-95 disabled:opacity-50"
         >
-          <Icon name="star" />
+          <Icon name="star" className="h-6 w-6" filled />
         </button>
         <button
           type="button"
@@ -321,7 +293,7 @@ function SwipeCard({
           aria-label="Suka"
           className="grid h-16 w-16 place-items-center rounded-[999px] bg-blush-deep text-paper shadow-[0_12px_28px_-12px_oklch(0.47_0.16_12)] transition-transform duration-150 active:scale-95 disabled:opacity-50"
         >
-          <Icon name="heart" />
+          <Icon name="heart" className="h-7 w-7" filled />
         </button>
       </div>
     </motion.article>
@@ -443,7 +415,7 @@ export default function SwipeDeck({
     if (err) return setError(err.message);
     setReportFor(null);
     setReportDetails("");
-    setError("Laporan terkirim. Terima kasih — profil ini masuk antrean review.");
+    setError("Laporan terkirim. Terima kasih. Profil ini masuk antrean review.");
   }
 
   async function block(candidate: Candidate) {
@@ -487,9 +459,7 @@ export default function SwipeDeck({
             <div className="grid min-h-[52dvh] place-items-center rounded-[20px] border border-line bg-paper px-5 py-8">
               <div className="text-center">
                 <span className="mx-auto grid h-14 w-14 place-items-center rounded-[999px] bg-blush-tint text-blush-deep">
-                  <svg viewBox="0 0 24 24" aria-hidden="true" className="h-7 w-7 fill-none stroke-current stroke-[1.7]" strokeLinejoin="round">
-                    <path d="M12 20s-7-4.35-7-9.2A4.3 4.3 0 0112 7.6a4.3 4.3 0 017 3.2C19 15.65 12 20 12 20z" />
-                  </svg>
+                  <Icon name="heart" className="h-7 w-7" />
                 </span>
                 <h2 className="mt-3 text-lg">Belum ada yang baru</h2>
                 <p className="mx-auto mt-1 max-w-[16rem] text-sm text-ink-soft">
@@ -545,10 +515,7 @@ export default function SwipeDeck({
         {!isVerified ? (
           <div className="rounded-[18px] border border-line bg-paper-2 p-4">
             <div className="flex items-center gap-2 text-verify">
-              <svg viewBox="0 0 24 24" aria-hidden="true" className="h-5 w-5 fill-none stroke-current stroke-[1.9]">
-                <path d="M12 3l7 3v5.5c0 4.2-2.8 7.6-7 9.5-4.2-1.9-7-5.3-7-9.5V6z" strokeLinejoin="round" />
-                <path d="M8.8 12.2l2.2 2.2 4.2-4.6" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
+              <Icon name="shield" className="h-5 w-5" />
               <span className="text-sm font-bold">Centang biru</span>
             </div>
             <p className="mt-2 text-sm text-ink-soft">
@@ -587,9 +554,7 @@ export default function SwipeDeck({
           <p className="mt-1 text-xs text-ink-soft">Mereka sudah suka duluan. Tinggal kamu balas.</p>
           <span className="mt-2 inline-flex items-center gap-1 text-xs font-bold text-blush-deep">
             Buka Likes
-            <svg viewBox="0 0 24 24" aria-hidden="true" className="h-3.5 w-3.5 fill-none stroke-current stroke-[2.4]" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M9 5l7 7-7 7" />
-            </svg>
+            <Icon name="chevron" className="h-3.5 w-3.5" strokeWidth={2.4} />
           </span>
         </Link>
       </aside>

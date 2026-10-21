@@ -1,3 +1,5 @@
+import { Icon } from "@/components/Icon";
+
 export default function Completeness({
   percent,
   verified,
@@ -38,11 +40,9 @@ export default function Completeness({
               aria-hidden="true"
               className="mr-1 inline-grid h-3.5 w-3.5 translate-y-[1px] place-items-center rounded-full bg-verify text-white"
             >
-              <svg viewBox="0 0 16 16" className="h-2.5 w-2.5 fill-none stroke-current stroke-[2.8]">
-                <path d="M3.2 8.6l3 3 6.6-7" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
+              <Icon name="check" className="h-2.5 w-2.5" strokeWidth={2.8} />
             </span>
-            Centang biru nyumbang 20% terakhir — tanpa itu, profil mentok 80%.
+            Centang biru nyumbang 20% terakhir. Tanpa itu, profil mentok 80%.
           </>
         )}
       </p>

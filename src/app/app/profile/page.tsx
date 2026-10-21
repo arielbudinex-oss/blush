@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { createServerSupabase } from "@/lib/supabase/server";
 import { PLANS, type Plan } from "@/lib/plans";
 import { photoUrl } from "@/lib/photo";
+import { Icon } from "@/components/Icon";
 import ProfileForm from "@/components/ProfileForm";
 import Completeness from "@/components/Completeness";
 import { profileCompletion, profileGaps } from "@/lib/completeness";
@@ -71,9 +72,7 @@ export default async function ProfilePage() {
                 title="Terverifikasi"
                 className="inline-grid h-[18px] w-[18px] shrink-0 place-items-center rounded-full bg-verify text-white"
               >
-                <svg viewBox="0 0 16 16" aria-hidden="true" className="h-3 w-3 fill-none stroke-current stroke-[2.8]">
-                  <path d="M3.2 8.6l3 3 6.6-7" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
+                <Icon name="check" className="h-3 w-3" strokeWidth={2.8} />
                 <span className="sr-only">Terverifikasi</span>
               </span>
             ) : (
@@ -118,13 +117,11 @@ export default async function ProfilePage() {
                   title="Terverifikasi"
                   className="inline-grid h-[18px] w-[18px] shrink-0 place-items-center rounded-full bg-verify text-white"
                 >
-                  <svg viewBox="0 0 16 16" aria-hidden="true" className="h-3 w-3 fill-none stroke-current stroke-[2.8]">
-                    <path d="M3.2 8.6l3 3 6.6-7" strokeLinecap="round" strokeLinejoin="round" />
-                  </svg>
+                  <Icon name="check" className="h-3 w-3" strokeWidth={2.8} />
                   <span className="sr-only">Terverifikasi</span>
                 </span>
               ) : null}
-              <p className="w-full truncate text-sm font-medium text-white/90">
+              <p className="w-fit max-w-full truncate rounded-[6px] bg-black/90 px-1.5 py-0.5 text-sm font-semibold text-white">
                 {[profile.job, profile.city].filter(Boolean).join(" · ") || "Lengkapi pekerjaan dan kota"}
               </p>
             </div>

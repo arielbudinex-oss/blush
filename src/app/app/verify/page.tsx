@@ -25,7 +25,7 @@ export default async function VerifyPage() {
         <span className="text-xs font-semibold text-blush-deep">Opsional, bukan wajib</span>
         <h1 className="mt-1 text-3xl">Verifikasi wajah</h1>
         <p className="mt-2 max-w-prose text-sm text-ink-soft">
-          Tanpa verifikasi, profil tetap jalan — cuma belum genap 100%. Sekali pindai, kamu dapat centang biru. Prosesnya
+          Tanpa verifikasi, profil tetap jalan. Cuma belum genap 100%. Sekali pindai, kamu dapat centang biru. Prosesnya
           di browser; yang dikirim angka wajah, bukan foto atau video.
         </p>
       </header>

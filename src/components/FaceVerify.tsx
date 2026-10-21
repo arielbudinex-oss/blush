@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Meter } from "@/components/motion";
+import { Icon } from "@/components/Icon";
 import { btnGhost, btnPrimary } from "@/components/ui";
 
 type Challenge = "kiri" | "kanan" | "dekat";
@@ -239,9 +240,7 @@ export default function FaceVerify({ verified }: { verified: boolean }) {
     return (
       <div className="rounded-card border border-ok bg-paper p-[var(--space-lg)]">
         <span className="inline-flex items-center gap-1 rounded-[999px] bg-verify px-2.5 py-1 text-2xs font-semibold text-white">
-          <svg viewBox="0 0 16 16" aria-hidden="true" className="h-3 w-3 fill-none stroke-current stroke-[2.4]">
-            <path d="M3.2 8.6l3 3 6.6-7" strokeLinecap="round" strokeLinejoin="round" />
-          </svg>
+          <Icon name="check" className="h-3 w-3" strokeWidth={2.4} />
           Terverifikasi
         </span>
         <h2 className="mt-3 text-2xl">Centang biru sudah aktif</h2>
@@ -304,7 +303,7 @@ export default function FaceVerify({ verified }: { verified: boolean }) {
                     i < step ? "bg-verify text-white" : i === step ? "bg-blush-deep text-paper" : "bg-paper-3 text-ink-faint"
                   }`}
                 >
-                  {i < step ? "✓" : i + 1}
+                  {i < step ? <Icon name="check" className="h-3.5 w-3.5" strokeWidth={2.6} /> : i + 1}
                 </span>
                 <span className={i === step ? "font-semibold text-ink" : "text-ink-soft"}>{CHALLENGE_TEXT[c]}</span>
               </li>

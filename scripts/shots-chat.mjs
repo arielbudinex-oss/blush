@@ -1,9 +1,14 @@
-/** Screenshot room chat pertama milik akun uji (mobile + desktop). */
+/**
+ * Screenshot room chat pertama milik akun uji (mobile + desktop).
+ * Rara ikut masuk dan membalas, supaya tampilan punya dua sisi percakapan
+ * sekaligus membuktikan realtime + status dibaca.
+ */
 import puppeteer from "puppeteer-core";
 import { mkdirSync } from "node:fs";
 
 const BASE = process.env.BLUSH_BASE ?? "http://localhost:3105";
 const OUT = "docs/verify/shots";
+const PASS = "BlushTest!2026";
 mkdirSync(OUT, { recursive: true });
 
 const browser = await puppeteer.launch({
@@ -12,29 +17,48 @@ const browser = await puppeteer.launch({
   args: ["--no-sandbox", "--enable-gpu", "--use-angle=d3d11", "--ignore-gpu-blocklist", "--force-device-scale-factor=1"],
 });
 
-async function login(page, width, height) {
+async function login(page, email, width, height) {
   await page.setViewport({ width, height, isMobile: width < 768, hasTouch: width < 768 });
   await page.goto(`${BASE}/login`, { waitUntil: "networkidle2" });
-  await page.type("#email", "damar@blush.test");
-  await page.type("#password", "BlushTest!2026");
+  await page.type("#email", email);
+  await page.type("#password", PASS);
   await page.click("button[type=submit]");
   await page.waitForFunction(() => !location.pathname.startsWith("/login"), { timeout: 20000 });
 }
 
-const page = await browser.newPage();
-await login(page, 390, 844);
-await page.goto(`${BASE}/app/matches`, { waitUntil: "networkidle2" });
-const href = await page.evaluate(() => document.querySelector('a[href^="/app/chat/"]')?.getAttribute("href") ?? null);
+async function send(page, text) {
+  await page.waitForSelector('form textarea[aria-label="Pesan"]', { timeout: 15000 });
+  await page.type('form textarea[aria-label="Pesan"]', text);
+  await page.keyboard.press("Enter");
+  await new Promise((r) => setTimeout(r, 700));
+}
+
+const mine = await browser.newPage();
+await login(mine, "damar@blush.test", 390, 844);
+await mine.goto(`${BASE}/app/matches`, { waitUntil: "networkidle2" });
+const href = await mine.evaluate(() => document.querySelector('a[href^="/app/chat/"]')?.getAttribute("href") ?? null);
+
 if (!href) {
   console.log("Tidak ada match aktif untuk damar — chat tidak bisa dipotret.");
 } else {
-  await page.goto(`${BASE}${href}`, { waitUntil: "networkidle2" });
+  await mine.goto(`${BASE}${href}`, { waitUntil: "networkidle2" });
+  await send(mine, "Halo Rara, kopi di Kemang yang kamu sebut itu yang mana?");
+  await send(mine, "Aku baru pindah ke Jakarta, jadi belum tahu tempatnya.");
+
+  const peer = await browser.newPage();
+  await login(peer, "rara@blush.test", 390, 844);
+  await peer.goto(`${BASE}${href}`, { waitUntil: "networkidle2" });
+  await send(peer, "Kopi Tuku di Kemang. Tempatnya kecil, tapi antreannya selalu panjang.");
+  await send(peer, "Kalau kamu nggak suka manis, pesan cold brew. Jangan pakai gula.");
+  await new Promise((r) => setTimeout(r, 1200));
+
+  await mine.bringToFront();
   await new Promise((r) => setTimeout(r, 900));
-  await page.screenshot({ path: `${OUT}/mobile-11-chat.png` });
+  await mine.screenshot({ path: `${OUT}/mobile-11-chat.png` });
   console.log("chat:", href);
 
-  await page.setViewport({ width: 1280, height: 900, isMobile: false, hasTouch: false });
+  await mine.setViewport({ width: 1280, height: 900, isMobile: false, hasTouch: false });
   await new Promise((r) => setTimeout(r, 600));
-  await page.screenshot({ path: `${OUT}/desktop-11-chat.png` });
+  await mine.screenshot({ path: `${OUT}/desktop-11-chat.png` });
 }
 await browser.close();

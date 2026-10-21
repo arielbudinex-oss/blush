@@ -9,7 +9,7 @@ export const btnDanger =
   "inline-flex items-center justify-center gap-2 rounded-[999px] border border-blush-deep px-5 py-3 text-sm font-semibold text-blush-deep transition-colors duration-200 ease-out hover:bg-blush-tint";
 
 export const inputBase =
-  "w-full rounded-[8px] border border-line-input bg-paper px-3 py-2 text-sm text-ink outline-none placeholder:text-ink-faint focus:border-blush-deep";
+  "w-full rounded-[8px] border border-line-input bg-paper px-3 py-2 text-sm text-ink outline-none placeholder:text-ink-placeholder focus:border-blush-deep";
 
 export const card = "rounded-card border border-line bg-paper p-[var(--space-md)]";
 

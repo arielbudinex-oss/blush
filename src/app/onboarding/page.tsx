@@ -239,7 +239,7 @@ export default function OnboardingPage() {
       {step === 2 ? (
         <div className="flex flex-col gap-[var(--space-sm)]">
           <p className="text-sm text-ink-soft">
-            Unggah 1–6 foto. Foto pertama jadi foto utama. Jangan pakai foto orang lain — akun bisa dibatasi.
+            Unggah 1–6 foto. Foto pertama jadi foto utama. Jangan pakai foto orang lain. Akun bisa dibatasi.
           </p>
           <input
             type="file"
@@ -298,7 +298,7 @@ export default function OnboardingPage() {
             </div>
           </div>
           <button type="button" className={btnGhost} onClick={useMyLocation}>
-            {coords ? "Lokasi tersimpan ✓ pakai lokasi lain" : "Pakai lokasi saya sekarang"}
+            {coords ? "Lokasi tersimpan. Pakai lokasi lain" : "Pakai lokasi saya sekarang"}
           </button>
           {coords ? (
             <p className="text-xs text-ink-faint">

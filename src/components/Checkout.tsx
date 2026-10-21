@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { Icon } from "@/components/Icon";
 import { btnGhost, btnPrimary, inputBase, label } from "@/components/ui";
 import { formatIdr } from "@/lib/plans";
 
@@ -89,7 +90,7 @@ export default function Checkout({
       <ul className="mt-3 grid gap-1 text-sm text-ink">
         {features.map((f) => (
           <li key={f} className="flex gap-2">
-            <span aria-hidden="true" className="shrink-0 font-bold text-ok">✓</span>
+            <Icon name="check" className="mt-0.5 h-4 w-4 shrink-0 text-ok" strokeWidth={2.6} />
             <span>{f}</span>
           </li>
         ))}
