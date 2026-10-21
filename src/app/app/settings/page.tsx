@@ -26,7 +26,7 @@ export default async function SettingsPage() {
 
   return (
     <main className="mx-auto w-full max-w-2xl px-[var(--space-md)] py-[var(--space-lg)]">
-      <h1 className="text-3xl">Keamanan &amp; privasi</h1>
+      <h1 className="text-3xl font-bold">Keamanan &amp; privasi</h1>
 
       <section className="mt-[var(--space-lg)] rounded-card border border-line bg-paper p-[var(--space-md)]">
         <h2 className="text-xl">Daftar blokir</h2>

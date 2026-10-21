@@ -66,7 +66,7 @@ export default async function ProfilePage() {
         </div>
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-2">
-            <h1 className="text-3xl">{profile.display_name || "Profil kamu"}</h1>
+            <h1 className="text-3xl font-bold">{profile.display_name || "Profil kamu"}</h1>
             {profile.is_verified === "approved" ? (
               <span
                 title="Terverifikasi"

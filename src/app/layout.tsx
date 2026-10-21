@@ -12,15 +12,22 @@ const cabinet = localFont({
   fallback: ["ui-sans-serif", "system-ui", "sans-serif"],
 });
 
-const satoshi = localFont({
+const author = localFont({
   src: [
-    { path: "../../public/fonts/satoshi-400.woff2", weight: "400", style: "normal" },
-    { path: "../../public/fonts/satoshi-500.woff2", weight: "500", style: "normal" },
-    { path: "../../public/fonts/satoshi-700.woff2", weight: "700", style: "normal" },
+    { path: "../../public/fonts/author-400.woff2", weight: "400", style: "normal" },
+    { path: "../../public/fonts/author-500.woff2", weight: "500", style: "normal" },
+    { path: "../../public/fonts/author-700.woff2", weight: "700", style: "normal" },
   ],
-  variable: "--font-satoshi",
+  variable: "--font-author",
   display: "swap",
   fallback: ["ui-sans-serif", "system-ui", "sans-serif"],
+});
+
+const gambetta = localFont({
+  src: [{ path: "../../public/fonts/gambetta-500i.woff2", weight: "500", style: "italic" }],
+  variable: "--font-gambetta",
+  display: "swap",
+  fallback: ["Georgia", "serif"],
 });
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
@@ -54,7 +61,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="id" className={`${cabinet.variable} ${satoshi.variable}`}>
+    <html lang="id" className={`${cabinet.variable} ${author.variable} ${gambetta.variable}`}>
       <body>{children}</body>
     </html>
   );

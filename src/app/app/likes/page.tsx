@@ -30,7 +30,7 @@ export default async function LikesPage() {
   if (!isPremium(plan)) {
     return (
       <main className="mx-auto w-full max-w-2xl px-[var(--space-md)] py-[var(--space-lg)]">
-        <h1 className="text-3xl">Yang suka kamu</h1>
+        <h1 className="text-3xl font-bold">Yang suka kamu</h1>
         <p className="mt-1 text-sm text-ink-soft">
           Mereka sudah suka duluan. Di paket gratis, fotonya masih disamarkan.
         </p>
@@ -80,7 +80,7 @@ export default async function LikesPage() {
 
   return (
     <main className="mx-auto w-full max-w-3xl px-[var(--space-md)] py-[var(--space-lg)]">
-      <h1 className="text-3xl">Yang suka kamu</h1>
+      <h1 className="text-3xl font-bold">Yang suka kamu</h1>
       <p className="mt-1 text-sm text-ink-soft">
         {rows.length > 0 ? `${rows.length} orang sudah suka duluan.` : "Belum ada yang suka."} Balas dari deck, kalau
         cocok kalian langsung match.

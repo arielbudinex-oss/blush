@@ -42,14 +42,14 @@ if (!href) {
   console.log("Tidak ada match aktif untuk damar — chat tidak bisa dipotret.");
 } else {
   await mine.goto(`${BASE}${href}`, { waitUntil: "networkidle2" });
-  await send(mine, "Halo Rara, kopi di Kemang yang kamu sebut itu yang mana?");
-  await send(mine, "Aku baru pindah ke Jakarta, jadi belum tahu tempatnya.");
+  await send(mine, "Kalau jadi ke Bromo bulan depan, kamu ikut lagi?");
+  await send(mine, "Aku bawa termos kopi. Biar nggak kedinginan di penanjakan.");
 
   const peer = await browser.newPage();
   await login(peer, "rara@blush.test", 390, 844);
   await peer.goto(`${BASE}${href}`, { waitUntil: "networkidle2" });
-  await send(peer, "Kopi Tuku di Kemang. Tempatnya kecil, tapi antreannya selalu panjang.");
-  await send(peer, "Kalau kamu nggak suka manis, pesan cold brew. Jangan pakai gula.");
+  await send(peer, "Boleh. Tapi aku nggak janji bangun jam tiga.");
+  await send(peer, "Jam empat cukup. Jangan lupa sarung tangan.");
   await new Promise((r) => setTimeout(r, 1200));
 
   await mine.bringToFront();

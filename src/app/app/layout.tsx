@@ -59,7 +59,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
           <div className="flex items-center gap-2">
             <Link
               href="/app/premium"
-              className="inline-flex min-h-11 items-center rounded-[999px] border border-line-strong px-3.5 text-xs font-semibold text-ink app-press hover:border-ink hover:bg-paper-2"
+              className="inline-flex min-h-11 items-center rounded-[999px] bg-blush-tint px-3.5 text-xs font-semibold text-blush-deep app-press hover:bg-paper-3"
             >
               {profile.plan === "gold" ? "Blush Gold" : profile.plan === "plus" ? "Blush Plus" : "Upgrade"}
             </Link>

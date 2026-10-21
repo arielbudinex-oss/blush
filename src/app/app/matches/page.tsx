@@ -29,7 +29,7 @@ export default async function MatchesPage() {
 
   return (
     <main className="mx-auto w-full max-w-2xl px-[var(--space-md)] py-[var(--space-lg)]">
-      <h1 className="text-3xl">Chat</h1>
+      <h1 className="text-3xl font-bold">Chat</h1>
       <p className="mt-1 text-sm text-ink-soft">
         Kalau kalian saling suka, room-nya langsung kebuka di sini. Tanpa pesan dalam 24 jam, match-nya hilang.
       </p>

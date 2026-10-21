@@ -12,7 +12,7 @@ export default function Completeness({
   return (
     <section aria-label="Kelengkapan profil" className="rounded-card border border-line bg-paper px-4 py-3">
       <div className="flex items-baseline justify-between gap-3">
-        <p className="text-sm font-semibold text-ink">Profil kamu {percent}% lengkap</p>
+        <p className="text-sm font-semibold text-ink">Kelengkapan profil</p>
         <span className="text-sm font-bold tabular-nums text-ink">{percent}%</span>
       </div>
       <div
@@ -42,7 +42,7 @@ export default function Completeness({
             >
               <Icon name="check" className="h-2.5 w-2.5" strokeWidth={2.8} />
             </span>
-            Centang biru nyumbang 20% terakhir. Tanpa itu, profil mentok 80%.
+            Verifikasi wajah menambah 20%. Tanpa itu, profil berhenti di 80%.
           </>
         )}
       </p>

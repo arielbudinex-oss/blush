@@ -149,15 +149,15 @@ function SwipeCard({
         </motion.span>
         <motion.span
           style={{ opacity: passOpacity }}
-          className="absolute right-4 top-5 rotate-12 rounded-[8px] border-2 border-ink-faint px-3 py-1 font-display text-lg font-bold uppercase tracking-[0.1em] text-ink-faint"
+          className="absolute right-4 top-5 rotate-12 rounded-[10px] border-[2.5px] border-ink-faint px-3 py-1 font-serif text-xl italic text-ink-faint"
         >
-          Lewati
+          lewat
         </motion.span>
         <motion.span
           style={{ opacity: superOpacity }}
-          className="absolute inset-x-0 bottom-24 mx-auto w-max rounded-[8px] border-2 border-blush-deep bg-paper/85 px-3 py-1 font-display text-lg font-bold uppercase tracking-[0.1em] text-blush-deep"
+          className="absolute inset-x-0 bottom-24 mx-auto w-max rounded-[10px] border-[2.5px] border-blush-deep bg-paper/85 px-3 py-1 font-serif text-xl italic text-blush-deep"
         >
-          Superlike
+          superlike
         </motion.span>
       </div>
 
@@ -207,13 +207,11 @@ function SwipeCard({
         ) : null}
 
         <div className="pointer-events-none absolute inset-x-0 bottom-0 z-10 bg-gradient-to-t from-black/85 via-black/35 to-transparent px-4 pb-4 pt-20 text-white">
-          <div className="flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1">
-            <h2 className="max-w-full truncate text-[1.7rem] leading-none text-white">{candidate.display_name || "Tanpa nama"}</h2>
-            {candidate.age ? (
-              <span className="rounded-[999px] bg-white/18 px-2 py-0.5 text-sm font-bold leading-tight text-white backdrop-blur-sm">
-                {candidate.age}
-              </span>
-            ) : null}
+          <div className="flex min-w-0 flex-wrap items-baseline gap-x-2 gap-y-1">
+            <h2 className="max-w-full truncate text-[1.95rem] font-bold leading-none tracking-[-0.022em] text-white">
+              {candidate.display_name || "Tanpa nama"}
+              {candidate.age ? <span className="text-[1.25rem] font-medium text-white/80">, {candidate.age}</span> : null}
+            </h2>
             {candidate.is_verified === "approved" ? <CheckBadge /> : null}
           </div>
           <p className="mt-1 truncate text-sm font-medium text-white/90">
@@ -223,22 +221,22 @@ function SwipeCard({
         </div>
       </div>
 
-      <div className="px-[var(--space-md)] pb-2 pt-3">
-        {candidate.bio ? <p className="line-clamp-2 text-sm text-ink-soft">{candidate.bio}</p> : null}
+      <div className="px-[var(--space-md)] pb-3 pt-3">
+        {candidate.bio ? <p className="line-clamp-2 text-sm leading-relaxed text-ink-soft">{candidate.bio}</p> : null}
 
         {prompt ? (
-          <div className="mt-2 rounded-[12px] bg-paper-2 px-3 py-2">
-            <p className="text-xs font-semibold text-ink-soft">{prompt.q}</p>
-            <p className="mt-0.5 line-clamp-1 text-sm text-ink">{prompt.a}</p>
+          <div className="mt-3 rounded-[14px] bg-blush-tint/70 px-3.5 py-2.5">
+            <p className="font-serif text-[1rem] italic leading-snug text-ink">{prompt.q}</p>
+            <p className="mt-1 line-clamp-1 text-sm text-ink-soft">{prompt.a}</p>
           </div>
         ) : null}
 
         {candidate.interests.length > 0 ? (
-          <div className="no-scrollbar mt-2 flex gap-1.5 overflow-x-auto">
+          <div className="no-scrollbar mt-3 flex gap-1.5 overflow-x-auto">
             {candidate.interests.slice(0, 8).map((i) => (
               <span
                 key={i}
-                className="shrink-0 rounded-[999px] border border-line px-2.5 py-1 text-2xs font-semibold capitalize text-ink-soft"
+                className="shrink-0 rounded-[999px] bg-blush-tint/55 px-2.5 py-1 text-2xs font-medium capitalize text-blush-deep"
               >
                 {i.replace(/-/g, " ")}
               </span>
@@ -273,7 +271,7 @@ function SwipeCard({
           onClick={onUndo}
           disabled={busy || flying || !canUndo}
           aria-label="Batalkan swipe terakhir"
-          className="grid h-10 w-10 place-items-center rounded-[999px] border border-line-strong bg-paper text-ink-soft transition-transform duration-150 active:scale-95 disabled:border-line disabled:bg-paper-2 disabled:text-ink-faint"
+          className="grid h-14 w-14 place-items-center rounded-[999px] border border-line-strong bg-paper text-ink-soft transition-transform duration-150 active:scale-95 disabled:border-line disabled:bg-paper-2 disabled:text-ink-faint"
         >
           <Icon name="undo" className="h-5 w-5" strokeWidth={2.2} />
         </button>
@@ -282,7 +280,7 @@ function SwipeCard({
           onClick={() => void fly("superlike")}
           disabled={busy || flying}
           aria-label="Superlike"
-          className="grid h-14 w-14 place-items-center rounded-[999px] border border-ok bg-paper text-ok shadow-[0_6px_18px_-10px_rgba(0,0,0,.45)] transition-transform duration-150 active:scale-95 disabled:opacity-50"
+          className="grid h-14 w-14 place-items-center rounded-[999px] border border-pear bg-pear text-ink shadow-[0_6px_18px_-10px_rgba(0,0,0,.45)] transition-transform duration-150 active:scale-95 disabled:opacity-50"
         >
           <Icon name="star" className="h-6 w-6" filled />
         </button>

@@ -33,9 +33,11 @@ export function MatchModal({
             transition={{ type: "spring", stiffness: 320, damping: 28 }}
           >
             <MatchBurst label={matched.name} />
-            <h2 className="text-2xl">Kalian saling suka</h2>
-            <p className="mt-2 text-sm text-ink-soft">
-              {matched.name} juga suka kamu. Chat sudah kebuka, ada 24 jam sebelum match-nya hilang.
+            <h2 className="text-[1.75rem] leading-[1.1]">
+              Kalian <em className="font-serif font-medium italic text-blush-deep">saling suka</em>.
+            </h2>
+            <p className="mt-2 text-sm leading-relaxed text-ink-soft">
+              {matched.name} juga suka kamu. Chat-nya sudah kebuka. Balas sebelum 24 jam, biar nggak hilang.
             </p>
             <div className="mt-4 flex flex-col gap-2">
               <Link href={`/app/chat/${matched.matchId}`} className={btnPrimary}>
