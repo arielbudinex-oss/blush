@@ -105,7 +105,13 @@ export default function Checkout({ plan, planName, priceIdr }: { plan: "plus" | 
         <div className="mt-4">
           <p className="text-sm text-ink-soft">
             Nominal: <strong>{formatIdr(state.amountIdr)}</strong> · berlaku sampai{" "}
-            {new Date(state.expiresAt).toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" })}
+            {new Date(state.expiresAt).toLocaleString("id-ID", {
+              day: "numeric",
+              month: "short",
+              hour: "2-digit",
+              minute: "2-digit",
+            })}{" "}
+            WIB
           </p>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src={state.qrDataUrl} alt="QRIS pembayaran" className="mt-3 h-64 w-64 rounded-[8px] border border-line bg-paper" />

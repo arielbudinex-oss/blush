@@ -21,7 +21,7 @@ function ProductDiagram() {
       <div className="rounded-card border border-line bg-paper p-4 shadow-[0_10px_28px_-18px_oklch(0.62_0.2_15)]">
         <div className="flex items-center justify-between">
           <span className="text-2xs font-semibold uppercase tracking-[0.08em] text-ink-faint">Discovery</span>
-          <span className="text-2xs font-semibold text-ink-faint">sisa 18 like hari ini</span>
+          <span className="text-2xs font-semibold uppercase tracking-[0.08em] text-ink-faint">sisa kuota like</span>
         </div>
         <div className="mt-3 flex h-40 items-center justify-center rounded-[8px] bg-blush-tint text-sm font-semibold text-blush-deep">
           foto profil · jarak · minat
