@@ -83,8 +83,24 @@ export async function GET(request: Request) {
   if (link.error || !tokenHash) return loginUrl("google_session");
 
   const supabase = await createServerSupabase();
-  const { error: verifyError } = await supabase.auth.verifyOtp({ type: "magiclink", token_hash: tokenHash });
+  const { data: session, error: verifyError } = await supabase.auth.verifyOtp({
+    type: "magiclink",
+    token_hash: tokenHash,
+  });
   if (verifyError) return loginUrl("google_session");
+
+  // Onboarding tidak boleh mulai dengan nama kosong kalau Google sudah memberi nama.
+  const userId = session.user?.id;
+  if (userId) {
+    const alias = identity.name.split(" ")[0]?.slice(0, 32) || "";
+    if (alias) {
+      await admin
+        .from("profiles")
+        .update({ display_name: alias })
+        .eq("id", userId)
+        .eq("display_name", "");
+    }
+  }
 
   const next = saved.next.startsWith("/") ? saved.next : "/app/discover";
   const response = NextResponse.redirect(new URL(next, url.origin));
