@@ -74,7 +74,7 @@ function DeckPreview() {
         </div>
 
         <div className="flex items-center justify-around border-t border-line px-2 pb-2.5 pt-1.5">
-          <Tab name="deck" label="Jelajah" active />
+          <Tab name="deck" label="Temukan" active />
           <Tab name="heart" label="Suka" />
           <Tab name="chat" label="Chat" />
           <Tab name="user" label="Profil" />
@@ -101,20 +101,20 @@ export default function Home() {
 
       <div className="mx-auto grid max-w-4xl gap-4 px-4 pb-8 pt-1 md:min-h-[calc(100dvh-3.5rem)] md:grid-cols-[1fr_auto] md:items-center md:gap-10 md:pb-10">
         <div className="min-w-0 md:max-w-[24rem]">
-          <h1 className="text-[1.75rem] font-bold leading-[1.06] tracking-[-0.03em] sm:text-[2.6rem]">
+          <h1 className="text-[2.05rem] font-bold leading-[1.03] tracking-[-0.032em] sm:text-[2.9rem]">
             Cari yang beneran,
             <br />
             bukan yang basa-basi.
           </h1>
-          <p className="mt-3 max-w-[34ch] text-sm leading-relaxed text-ink-soft">
-            Isi profil sekali, geser kalau ada yang menarik. Saling suka, chat langsung terbuka.
+          <p className="mt-3 max-w-[32ch] text-[0.95rem] leading-relaxed text-ink-soft">
+            Isi profil sekali. Geser yang menarik, lewati yang nggak. Saling suka, chat langsung kebuka.
           </p>
 
           <div className="mt-5 hidden gap-2 md:grid">
             <Link href="/signup" className={primary}>
               Buat akun
             </Link>
-            <p className="text-center text-2xs font-medium text-ink">Gratis · 18+ · tanpa kartu kredit.</p>
+            <p className="text-center text-2xs font-medium text-ink">Gratis buat mulai · Verifikasi foto dapat centang biru · 18+</p>
           </div>
         </div>
 
@@ -126,7 +126,7 @@ export default function Home() {
           <Link href="/signup" className={primary}>
             Buat akun
           </Link>
-          <p className="text-center text-2xs font-medium text-ink">Gratis · 18+ · tanpa kartu kredit.</p>
+          <p className="text-center text-2xs font-medium text-ink">Gratis buat mulai · Verifikasi foto dapat centang biru · 18+</p>
         </div>
       </div>
     </main>

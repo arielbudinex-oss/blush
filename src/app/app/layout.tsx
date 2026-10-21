@@ -29,7 +29,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
   }
 
   const links = [
-    { href: "/app/discover", label: "Jelajah" },
+    { href: "/app/discover", label: "Temukan" },
     { href: "/app/likes", label: "Suka" },
     { href: "/app/matches", label: "Chat" },
     { href: "/app/profile", label: "Profil" },

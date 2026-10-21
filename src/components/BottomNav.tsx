@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import { Icon, type IconName } from "@/components/Icon";
 
 const TABS: { href: string; label: string; icon: IconName; match: string[] }[] = [
-  { href: "/app/discover", label: "Jelajah", icon: "deck", match: ["/app/discover"] },
+  { href: "/app/discover", label: "Temukan", icon: "deck", match: ["/app/discover"] },
   { href: "/app/likes", label: "Suka", icon: "heart", match: ["/app/likes"] },
   { href: "/app/matches", label: "Chat", icon: "chat", match: ["/app/matches", "/app/chat"] },
   { href: "/app/profile", label: "Profil", icon: "user", match: ["/app/profile"] },
