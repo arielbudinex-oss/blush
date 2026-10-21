@@ -18,15 +18,21 @@ function Tab({ name, label, active = false }: { name: IconName; label: string; a
 /** Kartu swipe contoh — komponen yang sama dengan deck asli, bukan hero marketing. */
 function DeckPreview() {
   return (
-    <div className="relative mx-auto w-full max-w-[14.5rem] sm:max-w-[20rem]">
-      <div className="absolute inset-x-4 -top-2 h-full rotate-2 rounded-[26px] border border-line bg-blush-tint" aria-hidden="true" />
-      <div className="absolute inset-x-2 -top-1 h-full -rotate-1 rounded-[26px] border border-line bg-paper-2" aria-hidden="true" />
+    <div className="relative isolate mx-auto w-full max-w-[14.5rem] sm:max-w-[20rem]">
+      <div className="absolute inset-0 -z-10 -rotate-6 -translate-x-4 translate-y-2 overflow-hidden rounded-[26px] border border-line bg-paper-2 shadow-[0_18px_40px_-30px_oklch(0.3_0.05_40)]" aria-hidden="true">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src="/demo/rara.png" alt="" className="h-full w-full object-cover object-[center_35%]" />
+      </div>
+      <div className="absolute inset-0 -z-10 rotate-[5deg] translate-x-4 translate-y-1 overflow-hidden rounded-[26px] border border-line bg-paper-2 shadow-[0_18px_40px_-30px_oklch(0.3_0.05_40)]" aria-hidden="true">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src="/demo/damar.png" alt="" className="h-full w-full object-cover object-[center_30%]" />
+      </div>
 
-      <span className="absolute -right-5 -top-6 z-20 -rotate-4 rounded-[9px] border border-blush-deep/30 bg-paper px-2.5 py-1 font-serif text-[0.82rem] italic leading-none text-blush-deep shadow-[0_8px_18px_-12px_oklch(0.35_0.1_20)]">
+      <span className="absolute -right-5 -top-6 z-20 -rotate-4 rounded-[9px] border border-blush-deep/30 bg-paper px-2.5 py-1 text-[0.82rem] leading-none text-blush-deep shadow-[0_8px_18px_-12px_oklch(0.35_0.1_20)]">
         kenalan dulu
       </span>
 
-      <div className="relative overflow-hidden rounded-[26px] border border-line bg-paper shadow-[0_28px_60px_-32px_oklch(0.35_0.1_20)]">
+      <div className="relative z-10 overflow-hidden rounded-[26px] border border-line bg-paper shadow-[0_28px_60px_-32px_oklch(0.3_0.05_40)]">
         <div className="relative aspect-[4/5] w-full overflow-hidden bg-blush-tint sm:aspect-[3/4]">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
@@ -40,10 +46,10 @@ function DeckPreview() {
             ))}
           </div>
           <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent px-4 pb-4 pt-20 text-white">
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1.5">
               <p className="text-2xl font-bold leading-none">Nadia, 26</p>
-              <span className="grid h-5 w-5 place-items-center rounded-[999px] bg-verify text-white">
-                <Icon name="check" className="h-3.5 w-3.5" strokeWidth={3} />
+              <span className="grid h-[15px] w-[15px] translate-y-[1px] place-items-center rounded-[999px] bg-verify text-white">
+                <Icon name="check" className="h-2.5 w-2.5" strokeWidth={3.2} />
               </span>
             </div>
             <p className="mt-1 truncate text-sm font-medium text-white/90">Arsitek · Yogyakarta · 3 km</p>
@@ -51,13 +57,13 @@ function DeckPreview() {
         </div>
 
         <div className="px-3 pb-2 pt-2.5">
-          <div className="mt-2 hidden rounded-[14px] bg-blush-tint/70 px-3 py-2.5 sm:block">
-            <p className="font-serif text-[0.95rem] italic leading-snug text-ink">Akhir pekan ideal?</p>
+          <div className="mt-2 hidden rounded-[14px] bg-paper-2 px-3 py-2.5 sm:block">
+            <p className="text-[0.95rem] font-semibold leading-snug text-ink">Akhir pekan ideal?</p>
             <p className="line-clamp-1 text-sm text-ink-soft">Sepeda ke kota lama, mampir kopi.</p>
           </div>
           <div className="no-scrollbar mt-2 flex gap-1.5 overflow-hidden">
             {["Kopi", "Film", "Kucing"].map((t) => (
-              <span key={t} className="shrink-0 rounded-[999px] bg-blush-tint/55 px-2.5 py-1 text-2xs font-medium text-blush-deep">
+              <span key={t} className="shrink-0 rounded-[999px] bg-paper-3/80 px-2.5 py-1 text-2xs font-medium text-ink-soft">
                 {t}
               </span>
             ))}
@@ -107,7 +113,7 @@ export default function Home() {
           <h1 className="text-[2.15rem] font-bold leading-[1.02] tracking-[-0.035em] sm:text-[3.1rem]">
             Cari yang{" "}
             <span className="relative inline-block">
-              <em className="font-serif font-medium italic tracking-[-0.005em] text-blush-deep">beneran</em>
+              <em className="font-medium tracking-[-0.005em] text-blush-deep">beneran</em>
               <svg
                 viewBox="0 0 140 8"
                 preserveAspectRatio="none"

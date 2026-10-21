@@ -37,7 +37,7 @@ export default function BottomNav() {
                 >
                   <Icon name={tab.icon} className="h-[21px] w-[21px]" filled={active && tab.icon === "heart"} />
                 </span>
-                <span className={`text-2xs font-semibold leading-none ${active ? "text-blush-deep" : "text-ink-soft"}`}>
+                <span className={`text-2xs font-semibold leading-none ${active ? "text-blush-deep" : "text-ink"}`}>
                   {tab.label}
                 </span>
               </Link>

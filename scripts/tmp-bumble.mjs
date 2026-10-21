@@ -1,0 +1,20 @@
+import puppeteer from "puppeteer-core";
+const b = await puppeteer.launch({ executablePath: "C:/Program Files/Google/Chrome/Application/chrome.exe", headless: "new", args:["--no-sandbox","--disable-blink-features=AutomationControlled"] });
+const p = await b.newPage();
+await p.setViewport({ width: 1440, height: 1000, deviceScaleFactor: 1 });
+await p.setUserAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36");
+const res = await p.goto("https://bumble.com/en-us", { waitUntil: "domcontentloaded", timeout: 60000 }).catch(e=>({e}));
+console.log("status", res && res.status ? res.status() : res);
+await new Promise(r=>setTimeout(r,6000));
+console.log("url", p.url(), "title", await p.title());
+const data = await p.evaluate(() => {
+  const cs = getComputedStyle(document.body);
+  const fonts = [...document.fonts].map(f=>`${f.family} ${f.weight} ${f.style} ${f.status}`);
+  const h1 = document.querySelector("h1");
+  const btn = [...document.querySelectorAll("a,button")].find(e=>/sign up|join|log in/i.test(e.textContent||""));
+  const pick = el => el ? { text: el.textContent.trim().slice(0,60), family: getComputedStyle(el).fontFamily, size: getComputedStyle(el).fontSize, weight: getComputedStyle(el).fontWeight, ls: getComputedStyle(el).letterSpacing, lh: getComputedStyle(el).lineHeight, color: getComputedStyle(el).color, bg: getComputedStyle(el).backgroundColor, radius: getComputedStyle(el).borderRadius, padding: getComputedStyle(el).padding } : null;
+  return { bodyFont: cs.fontFamily, bodyBg: cs.backgroundColor, bodyColor: cs.color, h1: pick(h1), btn: pick(btn), fonts, head: [...document.querySelectorAll("link[rel=stylesheet]")].map(l=>l.href).slice(0,10) };
+});
+console.log(JSON.stringify(data,null,2));
+await p.screenshot({ path: "C:/Users/ariel/AppData/Local/hermes/cache/scratch/bumble/home.png", fullPage: false });
+await b.close();

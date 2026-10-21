@@ -34,7 +34,7 @@ export function MatchModal({
           >
             <MatchBurst label={matched.name} />
             <h2 className="text-[1.75rem] leading-[1.1]">
-              Kalian <em className="font-serif font-medium italic text-blush-deep">saling suka</em>.
+              Kalian <em className="font-medium text-blush-deep">saling suka</em>.
             </h2>
             <p className="mt-2 text-sm leading-relaxed text-ink-soft">
               {matched.name} juga suka kamu. Chat-nya sudah kebuka. Balas sebelum 24 jam, biar nggak hilang.

@@ -47,9 +47,9 @@ function CheckBadge() {
   return (
     <span
       title="Terverifikasi"
-      className="inline-grid h-[18px] w-[18px] shrink-0 place-items-center rounded-full bg-verify text-white"
+      className="inline-grid h-4 w-4 shrink-0 place-items-center rounded-full bg-verify text-white"
     >
-      <Icon name="check" className="h-3 w-3" strokeWidth={2.8} />
+      <Icon name="check" className="h-[10px] w-[10px]" strokeWidth={3.2} />
       <span className="sr-only">Terverifikasi</span>
     </span>
   );
@@ -61,12 +61,16 @@ function SwipeCard({
   onDecide,
   onUndo,
   canUndo,
+  onReport,
+  onBlock,
 }: {
   candidate: Candidate;
   busy: boolean;
   onDecide: (action: Action) => void;
   onUndo: () => void;
   canUndo: boolean;
+  onReport: () => void;
+  onBlock: () => void;
 }) {
   const reduce = useReducedMotion();
   const x = useMotionValue(0);
@@ -77,6 +81,7 @@ function SwipeCard({
   const superOpacity = useTransform(y, [-28, -118], [0, 1]);
   const [photoIdx, setPhotoIdx] = useState(0);
   const [flying, setFlying] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   const photos = useMemo(
     () => candidate.photos.map((p) => photoUrl(p)).filter(Boolean) as string[],
@@ -149,13 +154,13 @@ function SwipeCard({
         </motion.span>
         <motion.span
           style={{ opacity: passOpacity }}
-          className="absolute right-4 top-5 rotate-12 rounded-[10px] border-[2.5px] border-ink-faint px-3 py-1 font-serif text-xl italic text-ink-faint"
+          className="absolute right-4 top-5 rotate-12 rounded-[10px] border-[2.5px] border-ink-faint px-3 py-1 text-xl text-ink-faint"
         >
           lewat
         </motion.span>
         <motion.span
           style={{ opacity: superOpacity }}
-          className="absolute inset-x-0 bottom-24 mx-auto w-max rounded-[10px] border-[2.5px] border-blush-deep bg-paper/85 px-3 py-1 font-serif text-xl italic text-blush-deep"
+          className="absolute inset-x-0 bottom-24 mx-auto w-max rounded-[10px] border-[2.5px] border-blush-deep bg-paper/85 px-3 py-1 text-xl text-blush-deep"
         >
           superlike
         </motion.span>
@@ -206,13 +211,56 @@ function SwipeCard({
           </>
         ) : null}
 
+        <div className="absolute right-3 top-9 z-20">
+          <button
+            type="button"
+            aria-label="Opsi profil"
+            aria-expanded={menuOpen}
+            onClick={(e) => {
+              e.stopPropagation();
+              setMenuOpen((v) => !v);
+            }}
+            className="grid h-9 w-9 place-items-center rounded-[999px] bg-black/35 text-white backdrop-blur-sm transition-colors hover:bg-black/50"
+          >
+            <Icon name="more" className="h-4 w-4" />
+          </button>
+          {menuOpen ? (
+            <div className="absolute right-0 top-11 w-40 overflow-hidden rounded-[12px] border border-line bg-paper py-1 shadow-[0_18px_40px_-24px_oklch(0.3_0.05_40)]">
+              <button
+                type="button"
+                className="block w-full px-3.5 py-2 text-left text-sm font-medium text-ink hover:bg-paper-2"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setMenuOpen(false);
+                  onReport();
+                }}
+              >
+                Laporkan
+              </button>
+              <button
+                type="button"
+                className="block w-full px-3.5 py-2 text-left text-sm font-medium text-blush-deep hover:bg-paper-2"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setMenuOpen(false);
+                  onBlock();
+                }}
+              >
+                Blokir
+              </button>
+            </div>
+          ) : null}
+        </div>
+
         <div className="pointer-events-none absolute inset-x-0 bottom-0 z-10 bg-gradient-to-t from-black/85 via-black/35 to-transparent px-4 pb-4 pt-20 text-white">
-          <div className="flex min-w-0 flex-wrap items-baseline gap-x-2 gap-y-1">
-            <h2 className="max-w-full truncate text-[1.95rem] font-bold leading-none tracking-[-0.022em] text-white">
+          <div className="flex min-w-0 items-center gap-1.5">
+            <h2 className="min-w-0 truncate text-[1.95rem] font-bold leading-none tracking-[-0.022em] text-white">
               {candidate.display_name || "Tanpa nama"}
-              {candidate.age ? <span className="text-[1.25rem] font-medium text-white/80">, {candidate.age}</span> : null}
             </h2>
             {candidate.is_verified === "approved" ? <CheckBadge /> : null}
+            {candidate.age ? (
+              <span className="shrink-0 text-[1.25rem] font-medium leading-none text-white/80">, {candidate.age}</span>
+            ) : null}
           </div>
           <p className="mt-1 truncate text-sm font-medium text-white/90">
             {candidate.job ? `${candidate.job} · ` : ""}
@@ -225,8 +273,8 @@ function SwipeCard({
         {candidate.bio ? <p className="line-clamp-2 text-sm leading-relaxed text-ink-soft">{candidate.bio}</p> : null}
 
         {prompt ? (
-          <div className="mt-3 rounded-[14px] bg-blush-tint/70 px-3.5 py-2.5">
-            <p className="font-serif text-[1rem] italic leading-snug text-ink">{prompt.q}</p>
+          <div className="mt-3 rounded-[14px] bg-paper-2 px-3.5 py-2.5">
+            <p className="text-[1rem] leading-snug text-ink">{prompt.q}</p>
             <p className="mt-1 line-clamp-1 text-sm text-ink-soft">{prompt.a}</p>
           </div>
         ) : null}
@@ -236,7 +284,7 @@ function SwipeCard({
             {candidate.interests.slice(0, 8).map((i) => (
               <span
                 key={i}
-                className="shrink-0 rounded-[999px] bg-blush-tint/55 px-2.5 py-1 text-2xs font-medium capitalize text-blush-deep"
+                className="shrink-0 rounded-[999px] bg-paper-3/80 px-2.5 py-1 text-2xs font-medium capitalize text-ink-soft"
               >
                 {i.replace(/-/g, " ")}
               </span>
@@ -289,7 +337,7 @@ function SwipeCard({
           onClick={() => void fly("like")}
           disabled={busy || flying}
           aria-label="Suka"
-          className="grid h-16 w-16 place-items-center rounded-[999px] bg-blush-deep text-paper shadow-[0_12px_28px_-12px_oklch(0.47_0.16_12)] transition-transform duration-150 active:scale-95 disabled:opacity-50"
+          className="grid h-16 w-16 place-items-center rounded-[999px] bg-blush-deep text-paper shadow-[0_12px_28px_-12px_oklch(0.45_0.14_5)] transition-transform duration-150 active:scale-95 disabled:opacity-50"
         >
           <Icon name="heart" className="h-7 w-7" filled />
         </button>
@@ -449,7 +497,7 @@ export default function SwipeDeck({
         </div>
 
         <div className="relative">
-          {current ? <SwipeCard key={current.id} candidate={current} busy={busy} onDecide={decide} onUndo={undo} canUndo={canUndo} /> : null}
+          {current ? <SwipeCard key={current.id} candidate={current} busy={busy} onDecide={decide} onUndo={undo} canUndo={canUndo} onReport={() => setReportFor(current)} onBlock={() => void block(current)} /> : null}
         </div>
 
         <div className="mt-3 flex flex-col gap-2">
@@ -485,28 +533,6 @@ export default function SwipeDeck({
           ) : null}
         </div>
 
-        {current ? (
-          <div className="mt-3 flex items-center justify-between gap-2">
-            <div className="flex items-center gap-2">
-              <button
-                type="button"
-                className="rounded-[999px] px-2.5 py-1.5 text-xs font-semibold text-ink-soft hover:bg-paper-2"
-                onClick={() => setReportFor(current)}
-              >
-                Laporkan
-              </button>
-              <button
-                type="button"
-                className="rounded-[999px] px-2.5 py-1.5 text-xs font-semibold text-ink-soft hover:bg-paper-2"
-                onClick={() => block(current)}
-                disabled={busy}
-              >
-                Blokir
-              </button>
-            </div>
-            <span className="text-2xs text-ink-faint">Geser untuk memilih</span>
-          </div>
-        ) : null}
       </div>
 
       <aside className="hidden flex-col gap-3 self-start lg:flex">
