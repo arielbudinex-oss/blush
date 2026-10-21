@@ -80,9 +80,12 @@ Skrip debug: `scripts/debug-match.mjs`, `scripts/debug-realtime-browser.mjs`, `s
 
 ## Status
 
-Sudah terverifikasi end-to-end di lokal (lihat `docs/verify/run.log`). Belum dilakukan:
+Sudah terverifikasi end-to-end di lokal (lihat `docs/verify/run.log`).
 
-- `QRIS_STATIC_PAYLOAD` masih berisi payload uji, bukan QRIS merchant asli.
+- `QRIS_STATIC_PAYLOAD` sudah berisi QRIS merchant asli (Xinet, Sukoharjo). Bukti bahwa QR yang
+  ditampilkan benar-benar tertagih: PNG dari data URL dan tangkapan layar QR di-decode ulang dengan
+  `zxing-cpp` → payload identik dengan yang tampil di halaman (tag `01`=12, tag `54`=49000, CRC valid).
+  Catatan alat: `cv2.QRCodeDetector` gagal membaca QR padat ini; pakai `zxing-cpp` untuk verifikasi.
 - Confirm-email di Supabase masih aktif (PATCH konfigurasi auth butuh scope token yang lebih luas).
   Matikan manual di Dashboard → Authentication → Providers → Email → Confirm email, supaya signup
   langsung masuk tanpa menunggu email.
