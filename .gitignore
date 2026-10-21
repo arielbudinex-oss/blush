@@ -42,3 +42,6 @@ next-env.d.ts
 
 # probe sementara
 scripts/tmp-*
+
+.vercel
+.env*

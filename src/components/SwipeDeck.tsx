@@ -256,11 +256,9 @@ function SwipeCard({
           <div className="flex min-w-0 items-center gap-1.5">
             <h2 className="min-w-0 truncate text-[1.95rem] font-bold leading-none tracking-[-0.022em] text-white">
               {candidate.display_name || "Tanpa nama"}
+              {candidate.age ? <span className="text-[1.25rem] font-medium text-white/80">, {candidate.age}</span> : null}
             </h2>
             {candidate.is_verified === "approved" ? <CheckBadge /> : null}
-            {candidate.age ? (
-              <span className="shrink-0 text-[1.25rem] font-medium leading-none text-white/80">, {candidate.age}</span>
-            ) : null}
           </div>
           <p className="mt-1 truncate text-sm font-medium text-white/90">
             {candidate.job ? `${candidate.job} · ` : ""}
