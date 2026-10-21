@@ -46,6 +46,22 @@ export default function OnboardingForm() {
       .then(({ data }) => setInterests(data ?? []));
   }, [supabase]);
 
+  // Nama dari Google sudah tersimpan di profil, jadi form tidak mulai kosong.
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data: auth }) => {
+      const uid = auth.user?.id;
+      if (!uid) return;
+      supabase
+        .from("profiles")
+        .select("display_name")
+        .eq("id", uid)
+        .maybeSingle()
+        .then(({ data }) => {
+          if (data?.display_name) setDisplayName((prev) => prev || data.display_name);
+        });
+    });
+  }, [supabase]);
+
   const age = birthdate ? Math.floor((Date.now() - new Date(birthdate).getTime()) / 31557600000) : null;
 
   function togglePicked(id: number) {
