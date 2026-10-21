@@ -20,14 +20,7 @@ function Tab({ name, label, active = false }: { name: IconName; label: string; a
 function DeckPreview() {
   return (
     <div className="relative isolate mx-auto w-full max-w-[14.5rem] sm:max-w-[20rem]">
-      <div className="absolute inset-0 -z-10 -rotate-6 -translate-x-4 translate-y-2 overflow-hidden rounded-[20px] border border-line bg-paper-2 shadow-[0_18px_40px_-30px_oklch(0.3_0.05_40)]" aria-hidden="true">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/demo/nadia.jpg" alt="" className="h-full w-full object-cover object-[center_38%]" />
-      </div>
-      <div className="absolute inset-0 -z-10 rotate-[5deg] translate-x-4 translate-y-1 overflow-hidden rounded-[20px] border border-line bg-paper-2 shadow-[0_18px_40px_-30px_oklch(0.3_0.05_40)]" aria-hidden="true">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/demo/damar.png" alt="" className="h-full w-full object-cover object-[center_30%]" />
-      </div>
+      <div className="absolute inset-0 -z-10 -rotate-3 -translate-y-2 rounded-[20px] border border-line bg-paper-3 shadow-[0_18px_40px_-30px_oklch(0.3_0.05_40)]" aria-hidden="true" />
 
       <div className="relative z-10 overflow-hidden rounded-[20px] border border-line bg-paper shadow-[0_28px_60px_-32px_oklch(0.3_0.05_40)]">
         <div className="relative aspect-[4/5] w-full overflow-hidden bg-paper-2 sm:aspect-[3/4]">
@@ -104,7 +97,7 @@ export default function Home() {
         </Link>
       </header>
 
-      <div className="mx-auto grid max-w-4xl gap-4 px-4 pb-[calc(1.5rem+env(safe-area-inset-bottom))] pt-1 md:min-h-[calc(100dvh-3.5rem)] md:grid-cols-[1fr_auto] md:items-center md:gap-10 md:pb-10">
+      <div className="mx-auto grid max-w-4xl gap-5 px-4 pb-[calc(1.5rem+env(safe-area-inset-bottom))] pt-1 md:min-h-[calc(100dvh-3.5rem)] md:grid-cols-[1fr_auto] md:items-center md:gap-10 md:pb-10">
         <div className="min-w-0 md:max-w-[24rem]">
           <h1 className="text-pretty text-[2.15rem] font-bold leading-[1.02] tracking-[-0.035em] sm:text-[3.1rem]">
             Cari yang{" "}

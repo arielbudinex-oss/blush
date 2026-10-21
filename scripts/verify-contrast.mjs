@@ -126,9 +126,7 @@ async function sampleBackdrop(row) {
   const box = await el.boundingBox();
   let png = null;
   if (box) {
-    const buf = await page.screenshot({
-      clip: { x: Math.max(0, box.x), y: Math.max(0, box.y), width: Math.max(2, box.width), height: Math.max(2, box.height) },
-    });
+    const buf = await el.screenshot();
     png = PNG.sync.read(Buffer.from(buf));
   }
   await el.evaluate((n) => {
