@@ -90,7 +90,7 @@ export default function Home() {
     <main className="min-h-[100dvh] bg-paper">
       <header className="mx-auto flex h-14 max-w-4xl items-center justify-between px-4">
         <Link href="/" className="inline-flex items-center">
-          <Wordmark size="lg" />
+          <Wordmark size="md" />
         </Link>
         <Link href="/login" className="app-press inline-flex min-h-11 items-center px-2 text-sm font-bold text-ink hover:text-blush-deep">
           Masuk

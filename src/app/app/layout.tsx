@@ -46,7 +46,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
     <div className="app-shell flex min-h-dvh flex-col bg-paper">
       <header className="sticky top-0 z-30 border-b border-line bg-paper/95 pt-[env(safe-area-inset-top)] backdrop-blur">
         <div className="mx-auto flex min-h-14 max-w-6xl items-center justify-between gap-2 px-[var(--space-md)]">
-          <Logo size="lg" href="/app/discover" />
+          <Logo size="md" href="/app/discover" />
           <nav className="hidden items-center gap-1 md:flex">
             {links.map((l) => (
               <Link

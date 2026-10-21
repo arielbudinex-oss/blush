@@ -64,6 +64,5 @@ export function profileGaps(
     "hometown",
   ].filter((key) => Boolean(profile[key])).length;
   if (vitals < 3) gaps.push("Isi detail diri");
-  if (profile.is_verified !== "approved") gaps.push("Verifikasi wajah");
   return gaps;
 }
