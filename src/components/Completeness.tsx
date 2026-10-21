@@ -29,11 +29,20 @@ export default function Completeness({
         />
       </div>
       {gaps.length ? (
-        <p className="mt-2 text-xs font-medium text-ink">Berikutnya: {gaps.join(", ")}</p>
+        <div className="mt-2 flex flex-wrap items-center gap-1">
+          <span className="text-xs font-medium text-ink">Berikutnya:</span>
+          {gaps.map((g) => (
+            <span key={g} className="rounded-[5px] bg-paper-2 px-1.5 py-0.5 text-xs font-medium text-ink">
+              {g}
+            </span>
+          ))}
+        </div>
       ) : null}
       <p className="mt-1.5 text-xs text-ink-soft">
         {verified ? (
-          "Semua beres. Centang biru bikin orang lebih gampang percaya."
+          gaps.length === 0
+            ? "Semua beres. Centang biru bikin orang lebih gampang percaya."
+            : "Verifikasi wajah sudah aktif."
         ) : (
           <>
             <span

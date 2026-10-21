@@ -48,7 +48,7 @@ export function profileGaps(
 ): string[] {
   const gaps: string[] = [];
   if (!profile.bio) gaps.push("Tulis bio");
-  if (photoCount < 3) gaps.push(`${photoCount}/3 foto`);
+  if (photoCount < 3) gaps.push(`Tambah ${3 - photoCount} foto`);
   if (promptCount < 1) gaps.push("Jawab 1 prompt");
   else if (promptCount < 3) gaps.push(`${promptCount}/3 prompt`);
   if (interestCount < 3) gaps.push(`${interestCount}/3 minat`);
@@ -63,7 +63,7 @@ export function profileGaps(
     "languages",
     "hometown",
   ].filter((key) => Boolean(profile[key])).length;
-  if (vitals < 3) gaps.push("Detail diri");
-  if (profile.is_verified !== "approved") gaps.push("Centang biru");
+  if (vitals < 3) gaps.push("Isi detail diri");
+  if (profile.is_verified !== "approved") gaps.push("Verifikasi wajah");
   return gaps;
 }
