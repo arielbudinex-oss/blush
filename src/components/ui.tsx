@@ -1,4 +1,6 @@
 /** Kelas UI bersama. Semua warna lewat token di globals.css, tidak ada nilai mentah. */
+import { Wordmark } from "@/components/Logo";
+
 export const btnPrimary =
   "inline-flex items-center justify-center gap-2 rounded-[999px] bg-blush-deep px-6 py-3 text-sm font-semibold text-paper transition-colors duration-200 ease-out hover:bg-ink disabled:cursor-not-allowed disabled:opacity-60";
 
@@ -18,6 +20,9 @@ export const label = "block text-xs font-semibold text-ink-soft";
 export function Shell({ children, title, hint }: { children: React.ReactNode; title: string; hint?: string }) {
   return (
     <main className="mx-auto flex min-h-dvh w-full max-w-lg flex-col justify-center gap-[var(--space-md)] px-[var(--space-md)] py-[var(--space-2xl)]">
+      <div className="mb-1">
+        <Wordmark size="lg" />
+      </div>
       <h1 className="text-3xl">{title}</h1>
       {hint ? <p className="text-sm text-ink-soft">{hint}</p> : null}
       {children}

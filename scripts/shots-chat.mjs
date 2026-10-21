@@ -8,7 +8,8 @@ import { mkdirSync } from "node:fs";
 
 const BASE = process.env.BLUSH_BASE ?? "http://localhost:3105";
 const OUT = "docs/verify/shots";
-const PASS = "BlushTest!2026";
+const PASS = process.env.BLUSH_TEST_PASSWORD;
+if (!PASS) throw new Error("BLUSH_TEST_PASSWORD belum diisi");
 mkdirSync(OUT, { recursive: true });
 
 const browser = await puppeteer.launch({

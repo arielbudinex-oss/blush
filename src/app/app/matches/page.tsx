@@ -31,17 +31,17 @@ export default async function MatchesPage() {
     <main className="mx-auto w-full max-w-2xl px-[var(--space-md)] py-[var(--space-lg)]">
       <h1 className="text-3xl font-bold">Chat</h1>
       <p className="mt-1 text-sm text-ink-soft">
-        Kalau kalian saling suka, room-nya langsung kebuka di sini. Tanpa pesan dalam 24 jam, match-nya hilang.
+        Match yang saling suka langsung bisa chat di sini. Balas dalam 24 jam sebelum hilang.
       </p>
 
       {rows.length === 0 ? (
         <div className="mt-[var(--space-lg)] grid place-items-center rounded-card border border-line bg-paper-2 px-5 py-10 text-center">
-          <span className="grid h-14 w-14 place-items-center rounded-full bg-blush-tint text-blush-deep">
+          <span className="grid h-14 w-14 place-items-center rounded-full bg-paper-3 text-ink-soft">
             <Icon name="chat" className="h-7 w-7" />
           </span>
           <p className="mt-3 text-base font-semibold text-ink">Belum ada chat</p>
           <p className="mt-1 max-w-[32ch] text-sm text-ink-soft">
-            Kalau kalian saling suka, room chat langsung kebuka di sini.
+            Geser beberapa profil dulu. Match pertamamu muncul di sini.
           </p>
           <Link href="/app/discover" className="app-press mt-4 inline-flex min-h-11 items-center rounded-full bg-blush-deep px-5 text-sm font-bold text-paper hover:bg-ink">
             Mulai geser
@@ -58,7 +58,7 @@ export default async function MatchesPage() {
                 href={`/app/chat/${m.match_id}`}
                 className="flex items-center gap-[var(--space-sm)] rounded-card border border-line bg-paper p-[var(--space-sm)] transition-colors duration-150 hover:border-line-strong hover:bg-paper-2"
               >
-                <div className="h-[52px] w-[52px] shrink-0 overflow-hidden rounded-full bg-blush-tint">
+                <div className="h-[52px] w-[52px] shrink-0 overflow-hidden rounded-full bg-paper-2">
                   {url ? (
                     // eslint-disable-next-line @next/next/no-img-element
                     <img src={url} alt={`Foto ${m.display_name}`} className="h-full w-full object-cover" />
@@ -72,7 +72,7 @@ export default async function MatchesPage() {
                         title="Terverifikasi"
                         className="inline-grid h-[18px] w-[18px] shrink-0 place-items-center rounded-full bg-verify text-white"
                       >
-                        <Icon name="check" className="h-3 w-3" />
+                        <Icon name="check" className="h-3 w-3" strokeWidth={2.8} />
                         <span className="sr-only">Terverifikasi</span>
                       </span>
                     ) : null}

@@ -1,8 +1,9 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createServerSupabase } from "@/lib/supabase/server";
+import { photoUrl } from "@/lib/photo";
 import BottomNav from "@/components/BottomNav";
-import { Icon } from "@/components/Icon";
+import Logo from "@/components/Logo";
 
 // Route ini selalu butuh sesi terbaru dari cookies, jadi memang blocking (Next 16 cache components).
 export const instant = false;
@@ -16,11 +17,17 @@ export default async function AppLayout({ children }: { children: React.ReactNod
 
   const { data: profile } = await supabase
     .from("profiles")
-    .select("display_name, onboarded_at, plan, is_verified, last_active_at")
+    .select("display_name, onboarded_at, plan, is_verified, last_active_at, photos(storage_path, position)")
     .eq("id", user.id)
     .maybeSingle();
 
   if (!profile?.onboarded_at) redirect("/onboarding");
+
+  const photos = ((profile as { photos?: { storage_path: string; position: number }[] }).photos ?? [])
+    .slice()
+    .sort((a, b) => a.position - b.position);
+  const cover = photos.map((p) => photoUrl(p.storage_path)).find(Boolean) ?? null;
+  const initial = (profile.display_name || "B").trim().charAt(0).toUpperCase() || "B";
 
   // Presence: tandai aktif paling sering tiap 2 menit, jangan tulis tiap navigasi.
   const stale = !profile.last_active_at || Date.now() - new Date(profile.last_active_at).getTime() > 120_000;
@@ -39,12 +46,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
     <div className="app-shell flex min-h-dvh flex-col bg-paper">
       <header className="sticky top-0 z-30 border-b border-line bg-paper/95 pt-[env(safe-area-inset-top)] backdrop-blur">
         <div className="mx-auto flex min-h-14 max-w-6xl items-center justify-between gap-2 px-[var(--space-md)]">
-          <Link href="/app/discover" className="flex items-center gap-2">
-            <span className="grid h-8 w-8 place-items-center rounded-[11px] bg-blush-deep text-paper">
-              <Icon name="heart" className="h-4 w-4" filled />
-            </span>
-            <span className="font-display text-lg font-bold tracking-[-0.03em]">Blush</span>
-          </Link>
+          <Logo size="md" href="/app/discover" />
           <nav className="hidden items-center gap-1 md:flex">
             {links.map((l) => (
               <Link
@@ -58,10 +60,16 @@ export default async function AppLayout({ children }: { children: React.ReactNod
           </nav>
           <div className="flex items-center gap-2">
             <Link
-              href="/app/premium"
-              className="inline-flex min-h-11 items-center rounded-[999px] bg-blush-tint px-3.5 text-xs font-semibold text-blush-deep app-press hover:bg-paper-3"
+              href="/app/profile"
+              aria-label="Profil kamu"
+              className="grid h-11 w-11 shrink-0 place-items-center overflow-hidden rounded-full border border-line-strong bg-paper-2 text-sm font-bold text-ink-soft"
             >
-              {profile.plan === "gold" ? "Blush Gold" : profile.plan === "plus" ? "Blush Plus" : "Upgrade"}
+              {cover ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={cover} alt="" className="h-full w-full object-cover" />
+              ) : (
+                initial
+              )}
             </Link>
           </div>
         </div>

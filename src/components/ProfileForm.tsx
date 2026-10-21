@@ -235,7 +235,7 @@ export default function ProfileForm({
             const url = photoUrl(p.storage_path);
             return (
               <div key={p.id} className="overflow-hidden rounded-[10px] border border-line">
-                <div className="relative aspect-square bg-blush-tint">
+                <div className="relative aspect-square bg-paper-2">
                   {url ? (
                     // eslint-disable-next-line @next/next/no-img-element
                     <img src={url} alt={`Foto ${i + 1}`} className="h-full w-full object-cover" />

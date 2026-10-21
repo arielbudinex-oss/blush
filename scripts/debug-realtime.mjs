@@ -16,7 +16,7 @@ const svc = env.SUPABASE_SERVICE_ROLE_KEY;
 const sub = createClient(url, key, { auth: { persistSession: false } });
 const { data: signIn, error: signErr } = await sub.auth.signInWithPassword({
   email: "damar@blush.test",
-  password: "BlushTest!2026",
+  password: process.env.BLUSH_TEST_PASSWORD ?? "",
 });
 console.log("sign-in damar:", signErr ? signErr.message : "ok");
 

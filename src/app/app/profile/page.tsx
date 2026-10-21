@@ -53,13 +53,13 @@ export default async function ProfilePage() {
 
   return (
     <main className="mx-auto w-full max-w-3xl px-[var(--space-md)] py-[var(--space-lg)]">
-      <div className="mb-[var(--space-lg)] flex flex-wrap items-center gap-[var(--space-md)]">
-        <div className="h-20 w-20 overflow-hidden rounded-[999px] border border-line bg-blush-tint">
+      <div className="mb-[var(--space-lg)] flex items-start gap-[var(--space-md)]">
+        <div className="h-[72px] w-[72px] shrink-0 overflow-hidden rounded-[999px] border border-line bg-paper-2">
           {cover ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img src={cover} alt="Foto profil" className="h-full w-full object-cover" />
           ) : (
-            <span className="flex h-full w-full items-center justify-center font-display text-2xl font-bold text-blush-deep">
+            <span className="flex h-full w-full items-center justify-center font-display text-2xl font-bold text-ink-soft">
               {(profile.display_name || "B").charAt(0).toUpperCase()}
             </span>
           )}
@@ -76,19 +76,25 @@ export default async function ProfilePage() {
                 <span className="sr-only">Terverifikasi</span>
               </span>
             ) : (
-              <Link href="/app/verify" className="inline-flex items-center gap-1.5 whitespace-nowrap text-xs font-semibold text-ink-soft hover:text-ink">
+              <Link href="/app/verify" className="inline-flex min-h-9 items-center gap-1.5 whitespace-nowrap text-xs font-semibold text-ink-soft hover:text-ink">
                 Verifikasi wajah
-                <span className="rounded-[999px] bg-paper-2 px-1.5 py-0.5 text-[0.65rem] font-medium text-ink-soft">Opsional</span>
+                <span className="rounded-[999px] bg-paper-2 px-1.5 py-0.5 text-[0.65rem] font-medium text-ink">Opsional</span>
               </Link>
             )}
           </div>
           <p className="mt-1 text-sm text-ink-soft">
-            Paket aktif: <strong>{PLANS[plan].name}</strong>
+            Paket aktif: <strong className="text-ink">{PLANS[plan].name}</strong>
           </p>
+          <div className="mt-1 flex items-center gap-3 text-sm font-semibold">
+            <Link href="/app/premium" className="inline-flex min-h-9 items-center text-blush-deep hover:underline">
+              {plan === "free" ? "Lihat paket" : "Kelola paket"}
+            </Link>
+            <span className="text-ink-faint" aria-hidden="true">·</span>
+            <Link href="/app/settings" className="inline-flex min-h-9 items-center text-ink-soft hover:text-ink">
+              Pengaturan
+            </Link>
+          </div>
         </div>
-        <Link href="/app/settings" className="text-sm font-semibold text-blush-deep">
-          Pengaturan
-        </Link>
       </div>
 
       <div className="mb-[var(--space-lg)]">
@@ -101,7 +107,7 @@ export default async function ProfilePage() {
           <span className="text-xs text-ink-soft">Begini tampilnya</span>
         </div>
         <div className="overflow-hidden rounded-[22px] border border-line bg-paper">
-          <div className="relative aspect-[16/11] w-full bg-blush-tint">
+          <div className="relative aspect-[16/11] w-full bg-paper-2">
             {cover ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img src={cover} alt="" className="h-full w-full object-cover object-[center_28%]" />

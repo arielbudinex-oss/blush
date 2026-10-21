@@ -21,7 +21,7 @@ export default function Completeness({
         aria-valuemax={100}
         aria-valuenow={percent}
         aria-label="Kelengkapan profil"
-        className="mt-2 h-2 overflow-hidden rounded-[999px] bg-paper-3"
+        className="mt-2 h-2 overflow-hidden rounded-[999px] bg-line-strong"
       >
         <span
           className="block h-full rounded-[999px] bg-blush-deep transition-[width] duration-300"
@@ -29,7 +29,7 @@ export default function Completeness({
         />
       </div>
       {gaps.length ? (
-        <p className="mt-2 text-xs font-medium text-ink">Berikutnya: {gaps.join(" · ")}</p>
+        <p className="mt-2 text-xs font-medium text-ink">Berikutnya: {gaps.join(", ")}</p>
       ) : null}
       <p className="mt-1.5 text-xs text-ink-soft">
         {verified ? (

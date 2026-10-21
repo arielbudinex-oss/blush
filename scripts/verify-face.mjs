@@ -20,7 +20,8 @@ const OUT = path.resolve("docs/verify");
 mkdirSync(OUT, { recursive: true });
 const SCRATCH = "C:/Users/ariel/AppData/Local/hermes/cache/scratch";
 const SAMPLE = "node_modules/@vladmandic/face-api/demo/sample1.jpg";
-const PASS = "BlushTest!2026";
+const PASS = process.env.BLUSH_TEST_PASSWORD;
+if (!PASS) throw new Error("BLUSH_TEST_PASSWORD belum diisi");
 
 // Reset status verifikasi akun uji supaya skrip bisa dijalankan berulang (cooldown 1 jam per akun).
 const env = Object.fromEntries(

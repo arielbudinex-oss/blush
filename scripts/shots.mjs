@@ -6,7 +6,8 @@ import path from "node:path";
 const BASE = process.env.BLUSH_BASE ?? "http://localhost:3105";
 const OUT = path.resolve("docs/verify/shots");
 mkdirSync(OUT, { recursive: true });
-const PASS = "BlushTest!2026";
+const PASS = process.env.BLUSH_TEST_PASSWORD;
+if (!PASS) throw new Error("BLUSH_TEST_PASSWORD belum diisi");
 
 const browser = await puppeteer.launch({
   executablePath: "C:/Program Files/Google/Chrome/Application/chrome.exe",

@@ -21,7 +21,7 @@ async function login(email) {
   page.on("pageerror", (e) => console.log(`  [${email} pageerror]`, e.message));
   await page.goto(`${BASE}/login`, { waitUntil: "networkidle2" });
   await page.type("#email", email);
-  await page.type("#password", "BlushTest!2026");
+  await page.type("#password", process.env.BLUSH_TEST_PASSWORD ?? "");
   await page.click("button[type=submit]");
   await page.waitForFunction(() => !location.pathname.startsWith("/login"), { timeout: 15000 });
   return page;

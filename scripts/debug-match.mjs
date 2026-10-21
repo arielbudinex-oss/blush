@@ -14,7 +14,7 @@ page.on("requestfailed", (r) => console.log("  [reqfail]", r.url().slice(0, 120)
 
 await page.goto(`${BASE}/login`, { waitUntil: "networkidle2" });
 await page.type("#email", "damar@blush.test");
-await page.type("#password", "BlushTest!2026");
+await page.type("#password", process.env.BLUSH_TEST_PASSWORD ?? "");
 await page.click("button[type=submit]");
 await page.waitForFunction(() => !location.pathname.startsWith("/login"), { timeout: 15000 });
 

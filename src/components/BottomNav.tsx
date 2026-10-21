@@ -31,13 +31,13 @@ export default function BottomNav() {
                 className="flex min-h-[3.75rem] flex-col items-center justify-center gap-1 pb-1 pt-1.5"
               >
                 <span
-                  className={`grid h-8 w-14 place-items-center rounded-full transition-colors duration-150 ${
-                    active ? "bg-blush-tint text-blush-deep" : "text-ink-soft"
+                  className={`grid h-8 w-14 place-items-center transition-colors duration-150 ${
+                    active ? "text-blush-deep" : "text-ink-soft"
                   }`}
                 >
                   <Icon name={tab.icon} className="h-[21px] w-[21px]" filled={active && tab.icon === "heart"} />
                 </span>
-                <span className={`text-2xs font-semibold leading-none ${active ? "text-blush-deep" : "text-ink"}`}>
+                <span className={`text-2xs font-semibold leading-none ${active ? "text-blush-deep" : "text-ink-soft"}`}>
                   {tab.label}
                 </span>
               </Link>

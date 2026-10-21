@@ -135,7 +135,7 @@ export function MatchBurst({ label }: { label: string }) {
         initial={reduce ? false : { scale: 0.82, rotate: -6, opacity: 0 }}
         animate={{ scale: 1, rotate: 0, opacity: 1 }}
         transition={reduce ? { duration: 0 } : springSoft}
-        className="relative flex h-24 w-24 items-center justify-center rounded-[999px] border border-blush-deep bg-blush-tint font-display text-3xl font-bold text-blush-deep"
+        className="relative flex h-24 w-24 items-center justify-center rounded-[999px] border border-line-strong bg-paper-2 font-display text-3xl font-bold text-ink-soft"
       >
         {label.trim().charAt(0).toUpperCase() || "B"}
       </motion.div>

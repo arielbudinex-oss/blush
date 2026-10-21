@@ -78,19 +78,20 @@ export default function Checkout({
       <div className="flex flex-wrap items-baseline justify-between gap-x-2 gap-y-1">
         <h3 className="text-xl">{planName}</h3>
         {popular ? (
-          <span className="rounded-[999px] bg-blush-tint px-2 py-0.5 text-2xs font-semibold text-blush-deep">
-            Paling sering diambil
+          <span className="rounded-[999px] bg-blush-deep px-2.5 py-0.5 text-2xs font-semibold text-paper">
+            Mulai di sini
           </span>
         ) : null}
       </div>
-      <p className="mt-1 text-sm text-ink-soft">
-        {formatIdr(priceIdr)} per bulan · total {formatIdr(total)}
+      <p className="mt-1.5 text-sm text-ink-soft">
+        {formatIdr(priceIdr)} per bulan
+        {months > 1 ? ` · total ${formatIdr(total)}` : ""}
       </p>
 
       <ul className="mt-3 grid gap-1 text-sm text-ink">
         {features.map((f) => (
           <li key={f} className="flex gap-2">
-            <Icon name="check" className="mt-0.5 h-4 w-4 shrink-0 text-ok" strokeWidth={2.6} />
+            <Icon name="check" className="mt-0.5 h-4 w-4 shrink-0 text-ink-soft" strokeWidth={2.6} />
             <span>{f}</span>
           </li>
         ))}
@@ -116,7 +117,7 @@ export default function Checkout({
       </div>
 
       {state.kind === "idle" || state.kind === "loading" ? (
-        <button type="button" className={`${btnPrimary} mt-4`} onClick={start} disabled={state.kind === "loading"}>
+        <button type="button" className={`${btnPrimary} mt-4 w-full`} onClick={start} disabled={state.kind === "loading"}>
           {state.kind === "loading" ? "Menyiapkan QRIS…" : "Bayar pakai QRIS"}
         </button>
       ) : null}

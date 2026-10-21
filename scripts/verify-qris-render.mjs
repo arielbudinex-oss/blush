@@ -17,7 +17,7 @@ await page.setViewport({ width: 1280, height: 900, deviceScaleFactor: 3 });
 
 await page.goto(`${BASE}/login`, { waitUntil: "networkidle2" });
 await page.type("#email", "rara@blush.test");
-await page.type("#password", "BlushTest!2026");
+await page.type("#password", process.env.BLUSH_TEST_PASSWORD ?? "");
 await page.click("button[type=submit]");
 await page.waitForFunction(() => location.pathname.startsWith("/app/"), { timeout: 15000 });
 

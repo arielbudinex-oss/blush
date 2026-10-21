@@ -42,8 +42,8 @@ for (const [table, column] of Object.entries(scoped)) {
 await admin.from("profiles").update({ plan: "free" }).neq("display_name", "");
 
 const SCRATCH = "C:/Users/ariel/AppData/Local/hermes/cache/scratch";
-const RARA = { email: "rara@blush.test", pass: "BlushTest!2026", name: "Rara", bd: "1998-05-12", city: "Bandung", gender: "Perempuan", photo: `${SCRATCH}/blush-rara.png` };
-const DAMAR = { email: "damar@blush.test", pass: "BlushTest!2026", name: "Damar", bd: "1996-02-20", city: "Jakarta", gender: "Laki-laki", photo: `${SCRATCH}/blush-damar.png` };
+const RARA = { email: "rara@blush.test", pass: process.env.BLUSH_TEST_PASSWORD ?? "", name: "Rara", bd: "1998-05-12", city: "Bandung", gender: "Perempuan", photo: `${SCRATCH}/blush-rara.png` };
+const DAMAR = { email: "damar@blush.test", pass: process.env.BLUSH_TEST_PASSWORD ?? "", name: "Damar", bd: "1996-02-20", city: "Jakarta", gender: "Laki-laki", photo: `${SCRATCH}/blush-damar.png` };
 
 const log = (...a) => console.log("•", ...a);
 const ok = (label, cond, extra = "") => console.log(`${cond ? "PASS" : "FAIL"} — ${label}${extra ? " :: " + extra : ""}`);

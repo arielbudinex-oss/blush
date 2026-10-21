@@ -311,7 +311,7 @@ export default function Chat({
           <Icon name="back" className="h-5 w-5" />
         </Link>
         <div className="relative h-11 w-11 shrink-0">
-          <div className="h-11 w-11 overflow-hidden rounded-full bg-blush-tint">
+          <div className="h-11 w-11 overflow-hidden rounded-full bg-paper-2">
             {otherPhoto ? <img src={otherPhoto} alt="" className="h-full w-full object-cover" /> : null}
           </div>
           {activeNow ? <span className="absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full bg-ok ring-2 ring-paper" /> : null}
@@ -394,7 +394,7 @@ export default function Chat({
           </div>
         ) : messages.length === 0 ? (
           <div className="flex h-full flex-col items-center justify-center px-6 text-center">
-            <div className="grid h-14 w-14 place-items-center rounded-full bg-blush-tint text-blush-deep">
+            <div className="grid h-14 w-14 place-items-center rounded-full bg-paper-3 text-ink-soft">
               <Icon name="chat" className="h-6 w-6" />
             </div>
             <p className="mt-3 font-display text-lg font-bold">Belum ada pesan</p>

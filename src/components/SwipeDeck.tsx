@@ -143,7 +143,7 @@ function SwipeCard({
       initial={reduce ? false : { opacity: 0, scale: 0.985 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
-      className="relative isolate touch-pan-y select-none overflow-hidden rounded-[22px] border border-line bg-paper shadow-[0_24px_60px_-30px_oklch(0.35_0.1_20)]"
+      className="relative isolate touch-pan-y select-none overflow-hidden rounded-[20px] border border-line bg-paper shadow-[0_24px_60px_-30px_oklch(0.35_0.1_20)]"
     >
       <div className="pointer-events-none absolute inset-0 z-20">
         <motion.span
@@ -166,7 +166,7 @@ function SwipeCard({
         </motion.span>
       </div>
 
-      <div className="deck-photo relative w-full bg-blush-tint">
+      <div className="deck-photo relative w-full bg-paper-2">
         {photos[photoIdx] ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img
@@ -176,7 +176,7 @@ function SwipeCard({
             draggable={false}
           />
         ) : (
-          <span className="flex h-full items-center justify-center text-sm font-semibold text-blush-deep">
+          <span className="flex h-full items-center justify-center text-sm font-semibold text-ink-soft">
             Belum ada foto
           </span>
         )}
@@ -220,7 +220,7 @@ function SwipeCard({
               e.stopPropagation();
               setMenuOpen((v) => !v);
             }}
-            className="grid h-9 w-9 place-items-center rounded-[999px] bg-black/35 text-white backdrop-blur-sm transition-colors hover:bg-black/50"
+            className="grid h-9 w-9 place-items-center rounded-[999px] bg-ink text-paper transition-colors hover:bg-blush-deep"
           >
             <Icon name="more" className="h-4 w-4" />
           </button>
@@ -254,9 +254,9 @@ function SwipeCard({
 
         <div className="pointer-events-none absolute inset-x-0 bottom-0 z-10 bg-gradient-to-t from-black/85 via-black/35 to-transparent px-4 pb-4 pt-20 text-white">
           <div className="flex min-w-0 items-center gap-1.5">
-            <h2 className="min-w-0 truncate text-[1.95rem] font-bold leading-none tracking-[-0.022em] text-white">
+            <h2 className="min-w-0 truncate text-[1.9rem] font-bold leading-none tracking-[-0.022em] text-white">
               {candidate.display_name || "Tanpa nama"}
-              {candidate.age ? <span className="text-[1.25rem] font-medium text-white/80">, {candidate.age}</span> : null}
+              {candidate.age ? <span className="text-[1.05rem] font-semibold text-white/70">, {candidate.age}</span> : null}
             </h2>
             {candidate.is_verified === "approved" ? <CheckBadge /> : null}
           </div>
@@ -271,8 +271,8 @@ function SwipeCard({
         {candidate.bio ? <p className="line-clamp-2 text-sm leading-relaxed text-ink-soft">{candidate.bio}</p> : null}
 
         {prompt ? (
-          <div className="mt-3 rounded-[14px] bg-paper-2 px-3.5 py-2.5">
-            <p className="text-[1rem] leading-snug text-ink">{prompt.q}</p>
+          <div className="mt-3 rounded-[10px] border border-line bg-paper px-3.5 py-2.5">
+            <p className="text-[0.98rem] font-semibold leading-snug text-ink">{prompt.q}</p>
             <p className="mt-1 line-clamp-1 text-sm text-ink-soft">{prompt.a}</p>
           </div>
         ) : null}
@@ -282,7 +282,7 @@ function SwipeCard({
             {candidate.interests.slice(0, 8).map((i) => (
               <span
                 key={i}
-                className="shrink-0 rounded-[999px] bg-paper-3/80 px-2.5 py-1 text-2xs font-medium capitalize text-ink-soft"
+                className="shrink-0 rounded-[999px] border border-line px-2.5 py-1 text-2xs font-medium capitalize text-ink-soft"
               >
                 {i.replace(/-/g, " ")}
               </span>
@@ -302,13 +302,13 @@ function SwipeCard({
         ) : null}
       </div>
 
-      <div className="flex items-center justify-center gap-3 border-t border-line bg-paper px-[var(--space-md)] py-[var(--space-sm)]">
+      <div className="grid grid-cols-4 place-items-center gap-1 border-t border-line bg-paper px-3 py-2.5">
         <button
           type="button"
           onClick={() => void fly("pass")}
           disabled={busy || flying}
           aria-label="Lewati"
-          className="grid h-14 w-14 place-items-center rounded-[999px] border border-line-strong bg-paper text-ink shadow-[0_6px_18px_-10px_rgba(0,0,0,.45)] transition-transform duration-150 active:scale-95 disabled:opacity-50"
+          className="grid h-14 w-14 place-items-center rounded-[999px] border border-line-strong bg-paper text-ink transition-transform duration-150 active:scale-95 disabled:opacity-50"
         >
           <Icon name="x" className="h-6 w-6" strokeWidth={2.2} />
         </button>
@@ -326,18 +326,18 @@ function SwipeCard({
           onClick={() => void fly("superlike")}
           disabled={busy || flying}
           aria-label="Superlike"
-          className="grid h-14 w-14 place-items-center rounded-[999px] border border-pear bg-pear text-ink shadow-[0_6px_18px_-10px_rgba(0,0,0,.45)] transition-transform duration-150 active:scale-95 disabled:opacity-50"
+          className="grid h-14 w-14 place-items-center rounded-[999px] border border-line-strong bg-paper text-ink transition-transform duration-150 active:scale-95 disabled:opacity-50"
         >
-          <Icon name="star" className="h-6 w-6" filled />
+          <Icon name="star" className="h-6 w-6" />
         </button>
         <button
           type="button"
           onClick={() => void fly("like")}
           disabled={busy || flying}
           aria-label="Suka"
-          className="grid h-16 w-16 place-items-center rounded-[999px] bg-blush-deep text-paper shadow-[0_12px_28px_-12px_oklch(0.45_0.14_5)] transition-transform duration-150 active:scale-95 disabled:opacity-50"
+          className="grid h-14 w-14 place-items-center rounded-[999px] bg-blush-deep text-paper shadow-[0_12px_28px_-14px_oklch(0.49_0.185_20)] transition-transform duration-150 active:scale-95 disabled:opacity-50"
         >
-          <Icon name="heart" className="h-7 w-7" filled />
+          <Icon name="heart" className="h-6 w-6" filled />
         </button>
       </div>
     </motion.article>
@@ -502,7 +502,7 @@ export default function SwipeDeck({
           {!current ? (
             <div className="grid min-h-[52dvh] place-items-center rounded-[20px] border border-line bg-paper px-5 py-8">
               <div className="text-center">
-                <span className="mx-auto grid h-14 w-14 place-items-center rounded-[999px] bg-blush-tint text-blush-deep">
+                <span className="mx-auto grid h-14 w-14 place-items-center rounded-[999px] bg-paper-3 text-ink-soft">
                   <Icon name="heart" className="h-7 w-7" />
                 </span>
                 <h2 className="mt-3 text-lg">Belum ada yang baru</h2>
