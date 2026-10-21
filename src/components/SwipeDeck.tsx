@@ -167,7 +167,7 @@ function SwipeCard({
           <img
             src={photos[photoIdx]}
             alt={`Foto ${candidate.display_name}`}
-            className="h-full w-full object-cover"
+            className="h-full w-full object-cover object-[center_30%]"
             draggable={false}
           />
         ) : (

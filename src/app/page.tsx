@@ -30,10 +30,9 @@ function DeckPreview() {
         <div className="relative aspect-[4/5] w-full overflow-hidden bg-blush-tint sm:aspect-[3/4]">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=760&q=80&auto=format&fit=crop"
+            src="/demo/nadia.jpg"
             alt="Contoh kartu profil di deck Blush"
-            className="h-full w-full object-cover"
-            referrerPolicy="no-referrer"
+            className="h-full w-full object-cover object-[center_38%]"
           />
           <div className="absolute inset-x-0 top-0 flex gap-1 p-2.5" aria-hidden="true">
             {[0, 1, 2].map((i) => (
