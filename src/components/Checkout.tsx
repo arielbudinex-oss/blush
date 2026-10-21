@@ -18,7 +18,19 @@ type CheckoutState =
     }
   | { kind: "error"; message: string };
 
-export default function Checkout({ plan, planName, priceIdr }: { plan: "plus" | "gold"; planName: string; priceIdr: number }) {
+export default function Checkout({
+  plan,
+  planName,
+  priceIdr,
+  features,
+  popular = false,
+}: {
+  plan: "plus" | "gold";
+  planName: string;
+  priceIdr: number;
+  features: string[];
+  popular?: boolean;
+}) {
   const [months, setMonths] = useState(1);
   const [state, setState] = useState<CheckoutState>({ kind: "idle" });
   const total = priceIdr * months;
@@ -61,13 +73,29 @@ export default function Checkout({ plan, planName, priceIdr }: { plan: "plus" | 
   }
 
   return (
-    <div className="rounded-card border border-blush-deep bg-paper p-[var(--space-md)]">
-      <h3 className="text-xl">{planName}</h3>
+    <div className={`rounded-card border bg-paper p-[var(--space-md)] ${popular ? "border-blush-deep" : "border-line"}`}>
+      <div className="flex flex-wrap items-baseline justify-between gap-x-2 gap-y-1">
+        <h3 className="text-xl">{planName}</h3>
+        {popular ? (
+          <span className="rounded-[999px] bg-blush-tint px-2 py-0.5 text-2xs font-semibold text-blush-deep">
+            Paling sering diambil
+          </span>
+        ) : null}
+      </div>
       <p className="mt-1 text-sm text-ink-soft">
         {formatIdr(priceIdr)} per bulan · total {formatIdr(total)}
       </p>
 
-      <div className="mt-3 max-w-[12rem]">
+      <ul className="mt-3 grid gap-1 text-sm text-ink">
+        {features.map((f) => (
+          <li key={f} className="flex gap-2">
+            <span aria-hidden="true" className="shrink-0 font-bold text-ok">✓</span>
+            <span>{f}</span>
+          </li>
+        ))}
+      </ul>
+
+      <div className="mt-3 w-full">
         <label className={label} htmlFor={`months-${plan}`}>
           Durasi
         </label>

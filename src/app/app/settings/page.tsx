@@ -63,9 +63,8 @@ export default async function SettingsPage() {
       <section className="mt-[var(--space-lg)] rounded-card border border-line bg-paper-2 p-[var(--space-md)]">
         <h2 className="text-xl">Data &amp; lokasi</h2>
         <p className="mt-2 text-sm text-ink-soft">
-          Lokasi presisi dipakai hanya untuk menghitung jarak di server. Orang lain hanya melihat perkiraan jarak
-          (misalnya &ldquo;3 km dari kamu&rdquo;), bukan koordinatmu. Foto verifikasi disimpan di bucket privat dan
-          tidak pernah tampil di profil.
+          Lokasi presisi cuma dipakai buat hitung jarak. Orang lain cuma melihat perkiraan seperti &ldquo;3 km dari
+          kamu&rdquo;, bukan koordinatmu. Foto verifikasi disimpan di bucket privat dan tidak pernah tampil di profil.
         </p>
       </section>
     </main>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { btnGhost, btnPrimary, inputBase, label } from "@/components/ui";
 
@@ -136,14 +137,29 @@ export default function Chat({
   }
 
   return (
-    <div className="flex h-[calc(100dvh-9rem)] flex-col rounded-card border border-line bg-paper">
-      <header className="flex items-center justify-between border-b border-line px-[var(--space-md)] py-[var(--space-sm)]">
-        <div>
-          <p className="font-semibold">{otherName || "Tanpa nama"}</p>
-          <p className="text-2xs font-semibold uppercase tracking-[0.08em] text-ink-faint">realtime</p>
+    <div className="flex h-[calc(100dvh-11rem)] flex-col rounded-card border border-line bg-paper md:h-[calc(100dvh-7.5rem)]">
+      <header className="flex items-center justify-between gap-2 border-b border-line px-[var(--space-md)] py-[var(--space-sm)]">
+        <div className="flex min-w-0 items-center gap-2">
+          <Link
+            href="/app/matches"
+            aria-label="Kembali ke daftar chat"
+            className="grid h-10 w-10 shrink-0 place-items-center rounded-[999px] border border-line-strong text-ink transition-colors hover:border-ink hover:bg-paper-2"
+          >
+            <svg viewBox="0 0 24 24" aria-hidden="true" className="h-5 w-5 fill-none stroke-current stroke-[2.2]" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M15 5l-7 7 7 7" />
+            </svg>
+          </Link>
+          <div className="min-w-0">
+            <p className="truncate font-semibold">{otherName || "Tanpa nama"}</p>
+            <p className="text-2xs font-semibold text-ink-soft">Saling suka</p>
+          </div>
         </div>
         <div className="flex gap-2">
-          <button type="button" className="rounded-[999px] border border-line-strong px-3 py-1.5 text-xs font-semibold text-ink-soft hover:border-ink" onClick={() => setShowSafety((s) => !s)}>
+          <button
+            type="button"
+            className="inline-flex min-h-10 items-center rounded-[999px] border border-line-strong px-3.5 text-xs font-semibold text-ink transition-colors hover:border-ink hover:bg-paper-2"
+            onClick={() => setShowSafety((s) => !s)}
+          >
             Keamanan
           </button>
         </div>
@@ -175,7 +191,7 @@ export default function Chat({
 
       <div className="flex-1 space-y-2 overflow-y-auto px-[var(--space-md)] py-[var(--space-md)]">
         {grouped.length === 0 ? (
-          <p className="text-sm text-ink-soft">Belum ada pesan. Coba tanya soal minat yang kalian sama-sama pilih.</p>
+          <p className="text-sm text-ink-soft">Belum ada pesan. Mulai dari hal kecil: kopi, film, atau rencana akhir pekan.</p>
         ) : null}
         {grouped.map((m) => {
           const mine = m.sender_id === meId;

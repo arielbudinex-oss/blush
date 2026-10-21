@@ -76,7 +76,14 @@ BLUSH_BASE=http://localhost:3100 node scripts/verify-flows.mjs
 swipe → match → chat realtime, checkout QRIS, aktivasi premium dari halaman admin. Log terakhir:
 `docs/verify/run.log` (14/14 PASS), tangkapan layar di `docs/verify/*.png`.
 
-Skrip debug: `scripts/debug-match.mjs`, `scripts/debug-realtime-browser.mjs`, `scripts/debug-realtime.mjs`.
+Verifikasi wajah (opsional, on-device, kamera palsu dari file Y4M):
+
+```bash
+BLUSH_BASE=http://localhost:3100 node scripts/verify-face.mjs
+```
+
+Badge centang biru hanya muncul kalau verifikasi disetujui. Kelengkapan profil dihitung dari
+`src/lib/completeness.ts`: verifikasi berbobot 20 dari 100, jadi tanpa verifikasi profil mentok 80%.
 
 ## Status
 

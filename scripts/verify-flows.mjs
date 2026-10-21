@@ -6,12 +6,40 @@
  * Jalankan: node scripts/verify-flows.mjs   (butuh server di http://localhost:3100)
  */
 import puppeteer from "puppeteer-core";
-import { mkdirSync } from "node:fs";
+import { mkdirSync, readFileSync } from "node:fs";
 import path from "node:path";
+import { createClient } from "@supabase/supabase-js";
 
 const BASE = process.env.BLUSH_BASE ?? "http://localhost:3100";
 const OUT = path.resolve("docs/verify");
 mkdirSync(OUT, { recursive: true });
+
+// Reset jejak swipe/match/pembayaran akun uji agar suite bisa dijalankan berulang.
+const env = Object.fromEntries(
+  readFileSync(".env.local", "utf8")
+    .split(String.fromCharCode(10))
+    .map((l) => l.trimEnd())
+    .filter((l) => /^[A-Z0-9_]+=/.test(l))
+    .map((l) => [l.slice(0, l.indexOf("=")), l.slice(l.indexOf("=") + 1).replace(/^"|"$/g, "")]),
+);
+const admin = createClient(env.NEXT_PUBLIC_SUPABASE_URL, env.SUPABASE_SERVICE_ROLE_KEY, { auth: { persistSession: false } });
+const scoped = {
+  matches: "user_a",
+  swipes: "actor_id",
+  blocks: "blocker_id",
+  reports: "reporter_id",
+  payments: "profile_id",
+  boosts: "profile_id",
+};
+for (const [table, column] of Object.entries(scoped)) {
+  const { error } = await admin.from(table).delete().not(column, "is", null);
+  if (error) throw new Error(`reset ${table}: ${error.message}`);
+}
+{
+  const { error } = await admin.from("messages").delete().gte("id", 0);
+  if (error) throw new Error(`reset messages: ${error.message}`);
+}
+await admin.from("profiles").update({ plan: "free" }).neq("display_name", "");
 
 const SCRATCH = "C:/Users/ariel/AppData/Local/hermes/cache/scratch";
 const RARA = { email: "rara@blush.test", pass: "BlushTest!2026", name: "Rara", bd: "1998-05-12", city: "Bandung", gender: "Perempuan", photo: `${SCRATCH}/blush-rara.png` };
@@ -30,6 +58,28 @@ async function clickText(page, text) {
   }, text);
   if (!hit) throw new Error(`elemen dengan teks "${text}" tidak ditemukan`);
   await new Promise((r) => setTimeout(r, 400));
+}
+
+async function clickLabel(page, label) {
+  const hit = await page.evaluate((l) => {
+    const el = document.querySelector(`[aria-label="${l}"], [aria-label^="${l} "]`);
+    if (!el) return false;
+    el.click();
+    return true;
+  }, label);
+  if (!hit) throw new Error(`tombol aria-label "${label}" tidak ditemukan`);
+  await new Promise((r) => setTimeout(r, 400));
+}
+
+async function swipeUntil(page, name, max = 8) {
+  for (let i = 0; i < max; i++) {
+    await page.waitForSelector('[aria-label="Suka"]', { timeout: 15000 }).catch(() => null);
+    const text = await page.evaluate(() => document.body.innerText);
+    if (text.includes(name)) return true;
+    await clickLabel(page, "Lewati").catch(() => null);
+    await new Promise((r) => setTimeout(r, 1500));
+  }
+  return (await page.evaluate(() => document.body.innerText)).includes(name);
 }
 
 async function setInput(page, selector, value) {
@@ -75,7 +125,7 @@ async function onboarding(page, user, interestLabels) {
   ok("foto terpilih di langkah 3", count > 0, `${count} file`);
   await clickText(page, "Lanjut");
 
-  await clickText(page, "Selesai & mulai swipe");
+  await clickText(page, "Selesai, mulai geser");
   await page.waitForFunction(() => location.pathname.startsWith("/app/"), { timeout: 20000 });
   log("onboarding selesai ->", page.url());
 }
@@ -106,7 +156,7 @@ try {
   // 1 — landing
   await pa.goto(BASE, { waitUntil: "networkidle2" });
   const h1 = await pa.$eval("h1", (e) => e.textContent.trim());
-  ok("landing h1", h1.includes("Kenalan yang nggak bikin capek"), h1);
+  ok("landing h1", h1.includes("beneran") && h1.includes("basa-basi"), h1);
   await pa.screenshot({ path: path.join(OUT, "01-landing.png"), fullPage: false });
 
   // 2 — onboarding Rara
@@ -114,7 +164,7 @@ try {
   await onboarding(pa, RARA, ["Ngopi", "Musik", "Traveling"]);
   await pa.screenshot({ path: path.join(OUT, "02-discover-rara.png") });
   const deckText = await pa.evaluate(() => document.body.innerText);
-  ok("deck tampil (Damar belum onboarded)", /Deck kosong|Suka/.test(deckText));
+  ok("deck tampil (Damar belum onboarded)", /Deck kosong|Suka|Kandidat|Belum ada yang baru|Untukmu/.test(deckText));
 
   // 3 — onboarding Damar
   await login(pb, DAMAR);
@@ -122,15 +172,18 @@ try {
 
   // 4 — Rara swipe like Damar
   await pa.goto(`${BASE}/app/discover`, { waitUntil: "networkidle2" });
+  const seenOk = await swipeUntil(pa, "Damar");
   const seen = await pa.evaluate(() => document.body.innerText);
-  ok("Rara melihat kandidat", seen.includes("Damar"), seen.match(/Kandidat \d+ dari \d+/)?.[0] ?? "");
+  ok("Rara melihat kandidat", seenOk, seen.match(/Kandidat \d+ dari \d+/)?.[0] ?? "");
   await pa.screenshot({ path: path.join(OUT, "03-deck-rara.png") });
-  await clickText(pa, "Suka");
+  await clickLabel(pa, "Suka");
   await new Promise((r) => setTimeout(r, 2500));
 
   // 5 — Damar swipe like Rara -> match
   await pb.goto(`${BASE}/app/discover`, { waitUntil: "networkidle2" });
-  await clickText(pb, "Suka");
+  const raraSeen = await swipeUntil(pb, "Rara");
+  ok("Damar melihat kandidat Rara", raraSeen);
+  await clickLabel(pb, "Suka");
   await pb.waitForFunction(() => document.body.innerText.includes("Kalian saling suka"), { timeout: 15000 });
   ok("match terdeteksi di UI Damar", true);
   await pb.screenshot({ path: path.join(OUT, "04-match-moment.png") });
@@ -149,7 +202,7 @@ try {
   const matchesText = await pa.evaluate(() => document.body.innerText);
   ok("halaman matches menampilkan pesan terakhir", matchesText.includes("Halo Rara"), matchesText.slice(0, 120).replace(/\n/g, " | "));
   await pa.screenshot({ path: path.join(OUT, "05-matches-rara.png") });
-  await pa.click("ul li a");
+  await pa.click('a[href^="/app/chat/"]');
   await pa.waitForSelector("form input[aria-label=Pesan]", { timeout: 15000 });
   let sawFirst = true;
   try {

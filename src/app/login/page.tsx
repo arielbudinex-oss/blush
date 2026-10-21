@@ -12,6 +12,7 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  const [googleBusy, setGoogleBusy] = useState(false);
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
@@ -30,16 +31,22 @@ export default function LoginPage() {
   }
 
   async function google() {
+    setGoogleBusy(true);
+    setError(null);
     const supabase = createClient();
     const { error: err } = await supabase.auth.signInWithOAuth({
       provider: "google",
       options: { redirectTo: `${window.location.origin}/auth/callback?next=/app/discover` },
     });
-    if (err) setError("Login Google belum aktif di project ini. Pakai email dan password dulu.");
+    if (err) {
+      setGoogleBusy(false);
+      console.warn("Google OAuth belum aktif:", err.message);
+      setError("Masuk pakai Google belum tersedia. Sementara pakai email dan password dulu, ya.");
+    }
   }
 
   return (
-    <Shell title="Masuk ke Blush" hint="Pakai email dan password akunmu.">
+    <Shell title="Masuk ke Blush" hint="Selamat datang lagi.">
       <form onSubmit={submit} className="flex flex-col gap-[var(--space-sm)]">
         <div>
           <label className={label} htmlFor="email">
@@ -73,8 +80,14 @@ export default function LoginPage() {
         <button type="submit" className={btnPrimary} disabled={busy}>
           {busy ? "Memeriksa…" : "Masuk"}
         </button>
-        <button type="button" className={btnGhost} onClick={google}>
-          Masuk dengan Google
+        <button type="button" className={`${btnGhost} inline-flex items-center justify-center gap-2`} onClick={google} disabled={googleBusy}>
+          <svg viewBox="0 0 24 24" aria-hidden="true" className="h-4 w-4">
+            <path fill="#4285F4" d="M23.5 12.3c0-.8-.1-1.6-.2-2.3H12v4.5h6.4a5.5 5.5 0 0 1-2.4 3.6v3h3.9c2.2-2.1 3.6-5.2 3.6-8.8z" />
+            <path fill="#34A853" d="M12 24c3.2 0 5.9-1.1 7.9-2.9l-3.9-3c-1.1.7-2.4 1.2-4 1.2-3.1 0-5.7-2.1-6.6-4.9H1.4v3.1A12 12 0 0 0 12 24z" />
+            <path fill="#FBBC05" d="M5.4 14.4a7.2 7.2 0 0 1 0-4.6V6.7H1.4a12 12 0 0 0 0 10.7z" />
+            <path fill="#EA4335" d="M12 4.7c1.8 0 3.3.6 4.5 1.8l3.4-3.4A12 12 0 0 0 1.4 6.7l4 3.1C6.3 6.9 8.9 4.7 12 4.7z" />
+          </svg>
+          {googleBusy ? "Mengalihkan ke Google…" : "Masuk dengan Google"}
         </button>
       </form>
       <p className="text-sm text-ink-soft">

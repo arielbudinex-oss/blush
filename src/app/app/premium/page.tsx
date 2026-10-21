@@ -27,24 +27,25 @@ export default async function PremiumPage() {
 
   return (
     <main className="mx-auto w-full max-w-3xl px-[var(--space-md)] py-[var(--space-lg)]">
-      <h1 className="text-3xl">Paket Blush</h1>
+      <h1 className="text-3xl">Pilih yang cocok</h1>
       <p className="mt-1 text-sm text-ink-soft">
         Paket aktif: <strong>{PLANS[plan].name}</strong>
         {profile?.plan_expires_at
-          ? ` · berlaku sampai ${new Date(profile.plan_expires_at).toLocaleDateString("id-ID")}`
+          ? ` · sampai ${new Date(profile.plan_expires_at).toLocaleDateString("id-ID")}`
           : ""}
+        . Bayar sekali lewat QRIS, aktif saat itu juga.
       </p>
 
       <div className="mt-[var(--space-lg)] grid gap-[var(--space-md)] md:grid-cols-2">
         {(["plus", "gold"] as const).map((id) => (
-          <div key={id} className="flex flex-col gap-[var(--space-sm)]">
-            <Checkout plan={id} planName={PLANS[id].name} priceIdr={PLANS[id].priceIdr} />
-            <ul className="space-y-1 px-1 text-sm text-ink-soft">
-              {PLANS[id].features.map((f) => (
-                <li key={f}>{f}</li>
-              ))}
-            </ul>
-          </div>
+          <Checkout
+            key={id}
+            plan={id}
+            planName={PLANS[id].name}
+            priceIdr={PLANS[id].priceIdr}
+            features={PLANS[id].features}
+            popular={id === "plus"}
+          />
         ))}
       </div>
 

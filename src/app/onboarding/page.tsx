@@ -58,12 +58,12 @@ export default function OnboardingPage() {
 
   function useMyLocation() {
     if (!navigator.geolocation) {
-      setError("Browser ini tidak mengizinkan lokasi. Isi kota saja, jarak akan dihitung setelah lokasi tersedia.");
+      setError("Browser nggak kasih izin lokasi. Isi kota dulu, jarak dihitung setelah lokasi tersedia.");
       return;
     }
     navigator.geolocation.getCurrentPosition(
       (pos) => setCoords({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
-      () => setError("Izin lokasi ditolak. Kamu tetap bisa lanjut — jarak akan muncul setelah lokasi diizinkan."),
+      () => setError("Izin lokasi ditolak. Nggak apa-apa, lanjut saja; jarak muncul setelah lokasi diizinkan."),
       { timeout: 10000 },
     );
   }
@@ -85,12 +85,12 @@ export default function OnboardingPage() {
       return;
     }
     if (picked.length < 3) {
-      setError("Pilih minimal 3 minat supaya match-nya relevan.");
+      setError("Pilih minimal 3 minat dulu.");
       setBusy(false);
       return;
     }
     if (files.length < 1) {
-      setError("Unggah minimal satu foto.");
+      setError("Isi minimal satu foto.");
       setBusy(false);
       return;
     }
@@ -148,7 +148,7 @@ export default function OnboardingPage() {
   return (
     <main className="mx-auto flex min-h-dvh w-full max-w-xl flex-col gap-[var(--space-md)] px-[var(--space-md)] py-[var(--space-2xl)]">
       <div>
-        <p className="text-2xs font-semibold uppercase tracking-[0.1em] text-ink-faint">
+        <p className="text-xs font-semibold text-ink-soft">
           Langkah {step + 1} dari {steps.length}
         </p>
         <h1 className="mt-1 text-3xl">{steps[step]}</h1>
@@ -322,7 +322,7 @@ export default function OnboardingPage() {
               setError(null);
               if (step === 0) {
                 if (!displayName.trim()) return setError("Nama panggilan belum diisi.");
-                if (!birthdate || (age ?? 0) < 18) return setError("Tanggal lahir harus membuatmu 18 tahun ke atas.");
+                if (!birthdate || (age ?? 0) < 18) return setError("Kamu harus 18 tahun ke atas.");
                 if (!gender) return setError("Pilih gender dulu.");
               }
               setStep((s) => s + 1);
@@ -332,7 +332,7 @@ export default function OnboardingPage() {
           </button>
         ) : (
           <button type="button" className={btnPrimary} onClick={save} disabled={busy}>
-            {busy ? "Menyimpan…" : "Selesai & mulai swipe"}
+            {busy ? "Menyimpan…" : "Selesai, mulai geser"}
           </button>
         )}
       </div>

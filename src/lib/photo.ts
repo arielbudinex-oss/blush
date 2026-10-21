@@ -13,6 +13,6 @@ export function firstPhoto(paths: string[] | null | undefined): string | null {
 
 export function distanceLabel(meters: number | null | undefined): string {
   if (meters === null || meters === undefined) return "jarak belum diketahui";
-  if (meters < 1000) return `${Math.round(meters / 10) * 10} m dari kamu`;
+  if (meters < 1000) return "di kotamu";
   return `${Math.round(meters / 1000)} km dari kamu`;
 }

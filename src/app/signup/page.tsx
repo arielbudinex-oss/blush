@@ -31,7 +31,7 @@ export default function SignupPage() {
       return;
     }
     if (!data.session) {
-      setNotice("Akun dibuat. Cek emailmu untuk konfirmasi, lalu masuk.");
+      setNotice("Akun dibuat. Cek email buat konfirmasi, lalu masuk.");
       return;
     }
     router.push("/onboarding");
@@ -44,11 +44,11 @@ export default function SignupPage() {
       provider: "google",
       options: { redirectTo: `${window.location.origin}/auth/callback?next=/onboarding` },
     });
-    if (err) setError("Daftar dengan Google belum aktif di project ini.");
+    if (err) setError("Masuk pakai Google belum tersedia. Pakai email dan password dulu, ya.");
   }
 
   return (
-    <Shell title="Buat akun Blush" hint="Gratis. Kamu harus berumur 18 tahun atau lebih.">
+    <Shell title="Buat akun" hint="Butuh 2 menit. Minimal 18 tahun.">
       <form onSubmit={submit} className="flex flex-col gap-[var(--space-sm)]">
         <div>
           <label className={label} htmlFor="email">
@@ -66,7 +66,7 @@ export default function SignupPage() {
         </div>
         <div>
           <label className={label} htmlFor="password">
-            Password (minimal 8 karakter)
+            Password (8 karakter ke atas)
           </label>
           <input
             id="password"
@@ -82,10 +82,10 @@ export default function SignupPage() {
         {error ? <p className="text-sm font-medium text-blush-deep">{error}</p> : null}
         {notice ? <p className="text-sm font-medium text-ok">{notice}</p> : null}
         <button type="submit" className={btnPrimary} disabled={busy}>
-          {busy ? "Membuat akun…" : "Daftar"}
+          {busy ? "Membuat akun…" : "Buat akun"}
         </button>
         <button type="button" className={btnGhost} onClick={google}>
-          Daftar dengan Google
+          Lanjut dengan Google
         </button>
       </form>
       <p className="text-sm text-ink-soft">

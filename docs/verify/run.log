@@ -1,18 +1,19 @@
-PASS — landing h1 :: Kenalan yang nggak bikin capek.
-• login rara@blush.test -> http://localhost:3103/app/discover
+PASS — landing h1 :: Cari yang beneran,bukan yang basa-basi.
+• login rara@blush.test -> http://localhost:3105/app/discover
 PASS — foto terpilih di langkah 3 :: 1 file
-• onboarding selesai -> http://localhost:3103/app/discover
+• onboarding selesai -> http://localhost:3105/app/discover
 PASS — deck tampil (Damar belum onboarded)
-• login damar@blush.test -> http://localhost:3103/app/discover
+• login damar@blush.test -> http://localhost:3105/app/discover
 PASS — foto terpilih di langkah 3 :: 1 file
-• onboarding selesai -> http://localhost:3103/app/discover
-PASS — Rara melihat kandidat :: Kandidat 1 dari 1
+• onboarding selesai -> http://localhost:3105/app/discover
+PASS — Rara melihat kandidat
+PASS — Damar melihat kandidat Rara
 PASS — match terdeteksi di UI Damar
 PASS — pesan terkirim & tampil
-PASS — halaman matches menampilkan pesan terakhir :: Blush | Discover | Likes | Matches | Profil | Premium | Match kamu |  | Room chat terbuka otomatis begitu kalian saling suka. |  | Damar |  | Ha
+PASS — halaman matches menampilkan pesan terakhir :: Blush | Jelajah | Likes | Chat | Profil | Blush Plus | Match kamu |  | Chat kebuka otomatis setelah kalian saling suka. Kalau 24 jam ngg
 PASS — Rara melihat pesan Damar di chat
 PASS — chat realtime tanpa reload
 PASS — QR image tampil :: Nominal: Rp49.000
-PASS — payload QRIS 4 char terakhir = CRC :: 63044C34
-PAYLOAD=00020101021226660014ID.CO.QRIS.WWW01189360091100000000010215ID10200000000010303UMI5204481454054900053033605802ID5919BLUSH TEST MERCHANT6007JAKARTA63044C34
+PASS — payload QRIS 4 char terakhir = CRC :: 63042DE0
+PAYLOAD=00020101021226610016ID.CO.SHOPEE.WWW01189360091800239476710208239476710303UMI51440014ID.CO.QRIS.WWW0215ID10266189866770303UMI5204581754054900053033605802ID5905Xinet6009SUKOHARJO61055755862070703A0163042DE0
 PASS — admin menandai lunas

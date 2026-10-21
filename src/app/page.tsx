@@ -1,290 +1,155 @@
 import Link from "next/link";
-import { PLANS, PLAN_ORDER, formatIdr } from "@/lib/plans";
 
-const btnPrimary =
-  "inline-flex items-center justify-center gap-2 rounded-[999px] bg-blush-deep px-6 py-3 text-sm font-semibold text-paper transition-colors duration-200 ease-out hover:bg-ink";
-const btnGhost =
-  "inline-flex items-center justify-center gap-2 rounded-[999px] border border-line-strong px-5 py-3 text-sm font-semibold text-ink transition-colors duration-200 ease-out hover:border-ink hover:bg-paper-2";
+const primary =
+  "app-press inline-flex min-h-12 items-center justify-center gap-2 rounded-[999px] bg-blush-deep px-6 text-sm font-bold text-paper transition-colors duration-200 hover:bg-ink";
 
-function Pill({ children }: { children: React.ReactNode }) {
+function Check() {
   return (
-    <span className="inline-flex items-center gap-2 rounded-[999px] border border-line-strong bg-paper-2 px-3 py-1 text-2xs font-semibold uppercase tracking-[0.08em] text-ink-soft">
-      {children}
+    <svg viewBox="0 0 24 24" aria-hidden="true" className="h-3.5 w-3.5 fill-none stroke-current stroke-[3]">
+      <path d="M5 12.5l4.5 4.5L19 7" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+function Heart({ className = "" }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true" className={className} fill="currentColor">
+      <path d="M12 20s-7-4.35-7-9.2A4.3 4.3 0 0112 7.6a4.3 4.3 0 017 3.2C19 15.65 12 20 12 20z" />
+    </svg>
+  );
+}
+
+function Tab({ d, label, active = false }: { d: string; label: string; active?: boolean }) {
+  return (
+    <span className={`flex flex-col items-center gap-0.5 text-[0.62rem] font-bold ${active ? "text-blush-deep" : "text-ink-soft"}`}>
+      <span className={`grid h-7 w-12 place-items-center rounded-[999px] ${active ? "bg-blush-tint" : ""}`}>
+        <svg viewBox="0 0 24 24" aria-hidden="true" className="h-4 w-4 fill-none stroke-current stroke-[1.8]" strokeLinejoin="round">
+          <path d={d} />
+        </svg>
+      </span>
+      {label}
     </span>
   );
 }
 
-/** Diagram produk — bukan tangkapan layar palsu, bukan angka karangan. */
-function ProductDiagram() {
+/** Kartu swipe contoh — komponen yang sama dengan deck asli, bukan hero marketing. */
+function DeckPreview() {
   return (
-    <div className="flex w-full max-w-md flex-col gap-3">
-      <div className="rounded-card border border-line bg-paper p-4 shadow-[0_10px_28px_-18px_oklch(0.62_0.2_15)]">
-        <div className="flex items-center justify-between">
-          <span className="text-2xs font-semibold uppercase tracking-[0.08em] text-ink-faint">Discovery</span>
-          <span className="text-2xs font-semibold uppercase tracking-[0.08em] text-ink-faint">sisa kuota like</span>
-        </div>
-        <div className="mt-3 flex h-40 items-center justify-center rounded-[8px] bg-blush-tint text-sm font-semibold text-blush-deep">
-          foto profil · jarak · minat
-        </div>
-        <div className="mt-3 flex items-center justify-between">
-          <span className="rounded-[999px] border border-line-strong px-3 py-1 text-xs font-semibold text-ink-soft">Lewati</span>
-          <span className="rounded-[999px] bg-blush px-3 py-1 text-xs font-semibold text-paper">Suka</span>
-          <span className="rounded-[999px] border border-line-strong px-3 py-1 text-xs font-semibold text-ink-soft">Superlike</span>
-        </div>
-      </div>
-      <div className="ml-6 rounded-card border border-line bg-paper p-4">
-        <span className="text-2xs font-semibold uppercase tracking-[0.08em] text-ink-faint">Match</span>
-        <p className="mt-1 text-sm text-ink-soft">Kalau kalian berdua suka, room chat langsung terbuka.</p>
-      </div>
-      <div className="ml-12 rounded-card border border-line bg-paper p-4">
-        <span className="text-2xs font-semibold uppercase tracking-[0.08em] text-ink-faint">Chat</span>
-        <p className="mt-1 text-sm text-ink-soft">Realtime, dengan indikator belum dibaca.</p>
-      </div>
-    </div>
-  );
-}
+    <div className="relative mx-auto w-full max-w-[15.5rem] sm:max-w-[20rem]">
+      <div className="absolute inset-x-4 -top-2 h-full rotate-2 rounded-[26px] border border-line bg-paper-3" aria-hidden="true" />
+      <div className="absolute inset-x-2 -top-1 h-full -rotate-1 rounded-[26px] border border-line bg-paper-2" aria-hidden="true" />
 
-function Split({
-  side,
-  eyebrow,
-  title,
-  proof,
-  children,
-}: {
-  side: "left" | "right";
-  eyebrow: string;
-  title: string;
-  proof: React.ReactNode;
-  children: React.ReactNode;
-}) {
-  return (
-    <section className="border-t border-line py-[var(--space-3xl)]">
-      <div className="mx-auto grid max-w-6xl items-center gap-[var(--space-xl)] px-[var(--space-md)] md:grid-cols-2">
-        <div className={side === "right" ? "md:order-2" : ""}>
-          <Pill>{eyebrow}</Pill>
-          <h2 className="mt-4">{title}</h2>
-          <div className="mt-4 space-y-3 text-ink-soft">{children}</div>
+      <div className="relative overflow-hidden rounded-[26px] border border-line bg-paper shadow-[0_28px_60px_-32px_oklch(0.35_0.1_20)]">
+        <div className="relative aspect-[4/5] w-full overflow-hidden bg-blush-tint sm:aspect-[3/4]">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=760&q=80&auto=format&fit=crop"
+            alt="Contoh kartu profil di deck Blush"
+            className="h-full w-full object-cover"
+            referrerPolicy="no-referrer"
+          />
+          <div className="absolute inset-x-0 top-0 flex gap-1 p-2.5" aria-hidden="true">
+            {[0, 1, 2].map((i) => (
+              <span key={i} className={`h-[3px] flex-1 rounded-[999px] ${i === 0 ? "bg-white" : "bg-white/70"}`} />
+            ))}
+          </div>
+          <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent px-4 pb-4 pt-20 text-white">
+            <div className="flex items-center gap-2">
+              <p className="text-2xl font-bold leading-none">Nadia, 26</p>
+              <span className="grid h-5 w-5 place-items-center rounded-[999px] bg-verify text-white">
+                <Check />
+              </span>
+            </div>
+            <p className="mt-1 truncate text-sm font-medium text-white/90">Arsitek · Yogyakarta · 3 km</p>
+          </div>
         </div>
-        <div className={`flex justify-center ${side === "right" ? "md:order-1 md:justify-start" : "md:justify-end"}`}>
-          {proof}
+
+        <div className="px-3 pb-2 pt-2.5">
+          <div className="mt-2 hidden rounded-[12px] bg-paper-2 px-3 py-2 sm:block">
+            <p className="text-[0.6rem] font-semibold text-ink-soft">Akhir pekan ideal</p>
+            <p className="line-clamp-1 text-sm text-ink">Sepeda ke kota lama, mampir kopi.</p>
+          </div>
+          <div className="no-scrollbar mt-2 flex gap-1.5 overflow-hidden">
+            {["Kopi", "Film", "Kucing"].map((t) => (
+              <span key={t} className="shrink-0 rounded-[999px] border border-line-strong px-2.5 py-1 text-2xs font-semibold text-ink-soft">
+                {t}
+              </span>
+            ))}
+          </div>
+        </div>
+
+        <div className="flex items-center justify-center gap-3 py-3">
+          <span className="grid h-12 w-12 place-items-center rounded-[999px] border border-line-strong bg-paper text-ink">
+            <svg viewBox="0 0 24 24" aria-hidden="true" className="h-5 w-5 fill-none stroke-current stroke-[2.2]">
+              <path d="M6 6l12 12M18 6L6 18" strokeLinecap="round" />
+            </svg>
+          </span>
+          <span className="grid h-12 w-12 place-items-center rounded-[999px] border border-ok bg-paper text-ok">
+            <svg viewBox="0 0 24 24" aria-hidden="true" className="h-5 w-5 fill-none stroke-current stroke-[1.8]" strokeLinejoin="round">
+              <path d="M12 3.5l2.6 5.4 5.9.8-4.3 4.1 1.1 5.8L12 16.8l-5.3 2.8 1.1-5.8L3.5 9.7l5.9-.8z" />
+            </svg>
+          </span>
+          <span className="grid h-14 w-14 place-items-center rounded-[999px] bg-blush-deep text-paper">
+            <Heart className="h-6 w-6" />
+          </span>
+        </div>
+
+        <div className="flex items-center justify-around border-t border-line px-2 pb-2.5 pt-1.5">
+          <Tab d="M8 4.5h10.5a1.5 1.5 0 011.5 1.5v9M4.5 8.5A1.5 1.5 0 016 7h9a1.5 1.5 0 011.5 1.5v9A1.5 1.5 0 0115 19H6a1.5 1.5 0 01-1.5-1.5z" label="Jelajah" active />
+          <Tab d="M12 20s-7-4.35-7-9.2A4.3 4.3 0 0112 7.6a4.3 4.3 0 017 3.2C19 15.65 12 20 12 20z" label="Suka" />
+          <Tab d="M4 6h16v10H9l-5 4z" label="Chat" />
+          <Tab d="M12 12a4 4 0 100-8 4 4 0 000 8zM4.5 20a7.5 7.5 0 0115 0" label="Profil" />
         </div>
       </div>
-    </section>
-  );
-}
-
-/** Kartu contoh yang menampilkan bagian UI Blush sendiri (bukan testimoni, bukan angka). */
-function ProofCard({ title, lines }: { title: string; lines: string[] }) {
-  return (
-    <div className="w-full max-w-sm rounded-card border border-line bg-paper p-[var(--space-md)] shadow-[0_12px_30px_-22px_oklch(0.62_0.2_15)]">
-      <span className="text-2xs font-semibold uppercase tracking-[0.1em] text-ink-faint">{title}</span>
-      <ul className="mt-3 space-y-2 text-sm text-ink-soft">
-        {lines.map((l) => (
-          <li key={l} className="rounded-[8px] border border-line bg-paper-2 px-3 py-2">
-            {l}
-          </li>
-        ))}
-      </ul>
     </div>
   );
 }
 
 export default function Home() {
   return (
-    <main>
-      <header className="border-b border-line bg-paper/85 backdrop-blur-sm">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-[var(--space-md)] py-[var(--space-sm)]">
-          <Link href="/" className="font-display text-lg font-bold tracking-[-0.03em]">
-            Blush
-          </Link>
-          <nav className="flex items-center gap-[var(--space-sm)]">
-            <a href="#cara-kerja" className="hidden text-sm font-medium text-ink-soft hover:text-ink sm:inline">
-              Cara kerja
-            </a>
-            <a href="#harga" className="hidden text-sm font-medium text-ink-soft hover:text-ink sm:inline">
-              Harga
-            </a>
-            <Link href="/login" className="text-sm font-semibold text-ink hover:text-blush-deep">
-              Masuk
-            </Link>
-            <Link href="/signup" className={btnPrimary}>
-              Daftar
-            </Link>
-          </nav>
-        </div>
+    <main className="app-shell min-h-[100dvh] bg-paper">
+      <header className="mx-auto flex h-14 max-w-4xl items-center justify-between px-4">
+        <Link href="/" className="flex items-center gap-2">
+          <span className="grid h-8 w-8 place-items-center rounded-[11px] bg-blush-deep text-paper">
+            <Heart className="h-4 w-4" />
+          </span>
+          <span className="font-display text-lg font-bold tracking-[-0.03em]">Blush</span>
+        </Link>
+        <Link href="/login" className="app-press inline-flex min-h-11 items-center rounded-[999px] border border-line-strong bg-paper px-4 text-sm font-bold text-ink hover:bg-paper-2">
+          Masuk
+        </Link>
       </header>
 
-      {/* Split Studio — hero diptych */}
-      <section className="mx-auto grid max-w-6xl items-center gap-[var(--space-xl)] px-[var(--space-md)] py-[var(--space-3xl)] md:grid-cols-2">
-        <div>
-          <Pill>Dating app web · gratis buat mulai</Pill>
-          <h1 className="mt-[var(--space-md)] max-w-[14ch]">Kenalan yang nggak bikin capek.</h1>
-          <p className="mt-[var(--space-md)] max-w-[46ch] text-lg text-ink-soft">
-            Blush nunjukin profil yang memang cocok sama minat dan jarakmu, kasih kuota like yang jelas,
-            dan buka chat begitu kalian saling suka. Nggak ada bot, nggak ada angka karangan.
+      <div className="mx-auto grid max-w-4xl gap-4 px-4 pb-8 pt-1 md:min-h-[calc(100dvh-3.5rem)] md:grid-cols-[1fr_auto] md:items-center md:gap-10 md:pb-10">
+        <div className="min-w-0 md:max-w-[24rem]">
+          <h1 className="text-[1.75rem] font-bold leading-[1.06] tracking-[-0.03em] sm:text-[2.6rem]">
+            Cari yang beneran,
+            <br />
+            bukan yang basa-basi.
+          </h1>
+          <p className="mt-3 max-w-[34ch] text-sm leading-relaxed text-ink-soft">
+            Isi profil sekali, geser kalau ada yang menarik. Saling suka, chat langsung terbuka.
           </p>
-          <div className="mt-[var(--space-lg)] flex flex-wrap gap-[var(--space-sm)]">
-            <Link href="/signup" className={btnPrimary}>
+
+          <div className="mt-5 hidden gap-2 md:grid">
+            <Link href="/signup" className={primary}>
               Buat akun
             </Link>
-            <a href="#cara-kerja" className={btnGhost}>
-              Lihat cara kerjanya
-            </a>
-          </div>
-          <ul className="mt-[var(--space-lg)] space-y-2 text-sm text-ink-soft">
-            <li>Umur minimal 18 tahun, wajib verifikasi foto buat badge biru.</li>
-            <li>Report &amp; block tersedia di setiap profil dan setiap chat.</li>
-            <li>Lokasi presisi tidak pernah dibagikan mentah — hanya jarak kasar.</li>
-          </ul>
-        </div>
-        <div className="flex justify-center md:justify-end">
-          <ProductDiagram />
-        </div>
-      </section>
-
-      <section id="cara-kerja" className="border-t border-line bg-paper-2 py-[var(--space-3xl)]">
-        <div className="mx-auto max-w-6xl px-[var(--space-md)]">
-          <Pill>Cara kerja</Pill>
-          <h2 className="mt-4 max-w-[22ch]">Tiga langkah, semuanya kelihatan di layar.</h2>
-          <div className="mt-[var(--space-xl)] grid gap-[var(--space-md)] md:grid-cols-3">
-            {[
-              {
-                n: "01",
-                t: "Isi profil, sebut minatmu",
-                d: "Nama, tanggal lahir, minat, dan minimal satu foto. Selesai dalam dua menit.",
-              },
-              {
-                n: "02",
-                t: "Swipe dengan kuota yang jelas",
-                d: "Counter like harian tampil di atas deck, jadi kamu tahu persis sisa kuotanya.",
-              },
-              {
-                n: "03",
-                t: "Match, lalu ngobrol",
-                d: "Like timbal balik langsung bikin room chat. Realtime, tanpa reload.",
-              },
-            ].map((s) => (
-              <article key={s.n} className="rounded-card border border-line bg-paper p-[var(--space-md)] transition-transform duration-200 ease-out hover:-translate-y-0.5">
-                <span className="text-2xs font-semibold uppercase tracking-[0.1em] text-blush-deep">{s.n}</span>
-                <h3 className="mt-2">{s.t}</h3>
-                <p className="mt-2 text-sm text-ink-soft">{s.d}</p>
-              </article>
-            ))}
+            <p className="text-center text-2xs font-medium text-ink">Gratis · 18+ · tanpa kartu kredit.</p>
           </div>
         </div>
-      </section>
 
-      <Split
-        side="right"
-        eyebrow="Swipe"
-        title="Like, lewati, superlike — dan bisa dibatalkan."
-        proof={
-          <ProofCard
-            title="Deck"
-            lines={[
-              "Filter aktif: 20–38 tahun · dalam 50 km",
-              "Sisa like hari ini ditampilkan sebelum kamu geser",
-              "Undo swipe terakhir, tanpa batas waktu",
-            ]}
-          />
-        }
-      >
-        <p>
-          Deck Blush cuma menampilkan profil yang lolos filtermu: umur, jarak, gender, dan niat (serius,
-          santai, atau cari teman). Profil yang sudah kamu swipe tidak akan muncul lagi.
-        </p>
-        <p>Undo swipe terakhir tersedia dari menu deck, jadi salah geser bukan masalah.</p>
-      </Split>
-
-      <Split
-        side="left"
-        eyebrow="Safety"
-        title="Verifikasi foto, report, block — bawaan, bukan tambahan."
-        proof={
-          <ProofCard
-            title="Keamanan"
-            lines={[
-              "Selfie verifikasi dikirim manual untuk direview",
-              "Report masuk antrean review, status bisa dicek",
-              "Block menyembunyikan kalian berdua dari deck & chat",
-            ]}
-          />
-        }
-      >
-        <p>
-          Kirim satu selfie, tim kami cek manual, lalu badge terverifikasi muncul di profilmu. Profil yang
-          dilaporkan masuk antrean review dan bisa dibatasi.
-        </p>
-        <p>Block langsung menyembunyikan kalian berdua dari deck dan chat.</p>
-      </Split>
-
-      <section id="harga" className="border-t border-line bg-paper-2 py-[var(--space-3xl)]">
-        <div className="mx-auto max-w-6xl px-[var(--space-md)]">
-          <Pill>Harga</Pill>
-          <h2 className="mt-4 max-w-[24ch]">Gratisnya benar-benar bisa dipakai. Naik paket kalau butuh lebih.</h2>
-          <div className="mt-[var(--space-xl)] grid gap-[var(--space-md)] md:grid-cols-3">
-            {PLAN_ORDER.map((id) => {
-              const plan = PLANS[id];
-              return (
-                <article
-                  key={id}
-                  className={`flex flex-col rounded-card border bg-paper p-[var(--space-lg)] ${
-                    id === "plus" ? "border-blush-deep shadow-[0_14px_34px_-22px_oklch(0.62_0.2_15)]" : "border-line"
-                  }`}
-                >
-                  <h3>{plan.name}</h3>
-                  <p className="mt-1 text-sm text-ink-soft">{plan.tagline}</p>
-                  <p className="mt-[var(--space-md)] font-display text-2xl font-bold">
-                    {plan.priceIdr === 0 ? "Gratis" : formatIdr(plan.priceIdr)}
-                    <span className="ml-2 text-sm font-medium text-ink-faint">{plan.period}</span>
-                  </p>
-                  <ul className="mt-[var(--space-md)] flex-1 space-y-2 text-sm text-ink-soft">
-                    {plan.features.map((f) => (
-                      <li key={f}>{f}</li>
-                    ))}
-                  </ul>
-                  <Link href="/signup" className={`${id === "free" ? btnGhost : btnPrimary} mt-[var(--space-lg)]`}>
-                    {id === "free" ? "Mulai gratis" : `Pilih ${plan.name}`}
-                  </Link>
-                </article>
-              );
-            })}
-          </div>
-          <p className="mt-[var(--space-md)] text-sm text-ink-faint">
-            Pembayaran pakai QRIS. Paket aktif setelah pembayaran terverifikasi.
-          </p>
+        <div className="w-full max-w-[16.5rem] justify-self-center sm:max-w-[20rem] md:w-[20rem]">
+          <DeckPreview />
         </div>
-      </section>
 
-      <section className="py-[var(--space-3xl)]">
-        <div className="mx-auto max-w-3xl px-[var(--space-md)] text-center">
-          <h2 className="mx-auto max-w-[26ch]">Siap lihat siapa yang ada di sekitarmu?</h2>
-          <Link href="/signup" className={`${btnPrimary} mt-[var(--space-lg)]`}>
-            Buat akun Blush
+        <div className="grid gap-1.5 md:hidden">
+          <Link href="/signup" className={primary}>
+            Buat akun
           </Link>
+          <p className="text-center text-2xs font-medium text-ink">Gratis · 18+ · tanpa kartu kredit.</p>
         </div>
-      </section>
-
-      <footer className="border-t border-line bg-ink py-[var(--space-2xl)] text-paper">
-        <div className="mx-auto max-w-6xl px-[var(--space-md)]">
-          <p className="font-display text-2xl font-bold">Blush</p>
-          <p className="mt-2 max-w-[52ch] text-sm text-paper/80">
-            Dibuat untuk orang yang mau kenalan tanpa drama. Kalau ada yang tidak beres di aplikasi ini,
-            laporkan lewat menu bantuan di dalam akunmu.
-          </p>
-          <div className="mt-[var(--space-lg)] flex flex-wrap gap-[var(--space-md)] text-sm">
-            <Link href="/signup" className="hover:text-pear">
-              Daftar
-            </Link>
-            <Link href="/login" className="hover:text-pear">
-              Masuk
-            </Link>
-            <a href="#harga" className="hover:text-pear">
-              Harga
-            </a>
-          </div>
-        </div>
-      </footer>
+      </div>
     </main>
   );
 }

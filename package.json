@@ -11,6 +11,8 @@
   "dependencies": {
     "@supabase/ssr": "^0.12.7",
     "@supabase/supabase-js": "^2.118.0",
+    "@vladmandic/face-api": "^1.7.15",
+    "motion": "^14.4.0",
     "next": "16.4.2",
     "qrcode": "^1.5.4",
     "react": "19.3.0",
@@ -25,6 +27,7 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.4.2",
+    "pngjs": "^7.0.0",
     "puppeteer-core": "^25.15.0",
     "tailwindcss": "^4",
     "typescript": "^5"
