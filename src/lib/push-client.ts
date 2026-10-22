@@ -26,8 +26,8 @@ export async function subscribeToPush() {
   if (!pushSupported()) throw new Error("Browser ini belum mendukung notifikasi aplikasi.");
   if (Notification.permission !== "granted") throw new Error("Izin notifikasi belum diberikan.");
 
-  await navigator.serviceWorker.register("/sw.js");
-  const registration = await navigator.serviceWorker.ready;
+  const registration = await navigator.serviceWorker.register("/sw.js");
+  await navigator.serviceWorker.ready;
 
   // Langsung minta langganan; lebih cepat daripada menunggu getSubscription di sebagian browser.
   let subscription: PushSubscription;
