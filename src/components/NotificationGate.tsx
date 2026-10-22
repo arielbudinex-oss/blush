@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Icon } from "@/components/Icon";
-import { pushSupported, subscribeToPush } from "@/lib/push-client";
+import { pushSupported } from "@/lib/push-client";
 
 const FLAG = "blush_notif_prompted";
 
@@ -44,12 +44,14 @@ export default function NotificationGate() {
         setDenied(true);
         return;
       }
-      setError("Mendaftarkan perangkat…");
-      await Promise.race([
-        subscribeToPush(),
-        new Promise<never>((_, reject) => window.setTimeout(() => reject(new Error("Terlalu lama. Kamu tetap bisa lanjut dan mencoba dari Pengaturan.")), 12000)),
-      ]);
-      finish();
+      try {
+        localStorage.setItem("blush_push_pending", "1");
+      } catch {
+        // abaikan
+      }
+      setError("Izin aktif. Memuat ulang…");
+      window.location.reload();
+      return;
     } catch (e) {
       setError(e instanceof Error ? e.message : "Notifikasi belum bisa diaktifkan.");
     } finally {

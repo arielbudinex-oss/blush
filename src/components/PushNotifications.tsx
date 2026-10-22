@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Icon } from "@/components/Icon";
-import { pushSupported, subscribeToPush, unsubscribeFromPush } from "@/lib/push-client";
+import { pushSupported, unsubscribeFromPush } from "@/lib/push-client";
 
 /** Izin notifikasi browser + langganan Web Push. */
 export default function PushNotifications() {
@@ -15,7 +15,14 @@ export default function PushNotifications() {
   useEffect(() => {
     const ok = pushSupported();
     setSupported(ok);
-    if (ok) setPermission(Notification.permission);
+    if (ok) {
+      setPermission(Notification.permission);
+      try {
+        setSubscribed(localStorage.getItem("blush_push_active") === "1");
+      } catch {
+        // abaikan
+      }
+    }
   }, []);
 
   async function enable() {
@@ -28,13 +35,14 @@ export default function PushNotifications() {
         setMessage("Izin notifikasi ditolak. Aktifkan dari pengaturan browser kalau berubah pikiran.");
         return;
       }
-      setMessage("Mendaftarkan perangkat…");
-      await Promise.race([
-        subscribeToPush(),
-        new Promise<never>((_, reject) => window.setTimeout(() => reject(new Error("Browser terlalu lama menyiapkan notifikasi. Muat ulang lalu coba lagi.")), 12000)),
-      ]);
-      setSubscribed(true);
-      setMessage("Notifikasi aktif di perangkat ini.");
+      try {
+        localStorage.setItem("blush_push_pending", "1");
+      } catch {
+        // abaikan
+      }
+      setMessage("Izin aktif. Memuat ulang…");
+      window.location.reload();
+      return;
     } catch (e) {
       console.error("push subscribe", e);
       setMessage(e instanceof Error ? e.message : "Notifikasi gagal diaktifkan.");
@@ -47,6 +55,11 @@ export default function PushNotifications() {
     setBusy(true);
     try {
       await unsubscribeFromPush();
+      try {
+        localStorage.removeItem("blush_push_active");
+      } catch {
+        // abaikan
+      }
       setSubscribed(false);
       setMessage("Notifikasi dimatikan di perangkat ini.");
     } catch {
