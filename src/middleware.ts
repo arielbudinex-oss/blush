@@ -39,7 +39,7 @@ export async function middleware(request: NextRequest) {
   if (user && (path === "/login" || path === "/signup")) {
     const target = request.nextUrl.searchParams.get("next");
     const url = request.nextUrl.clone();
-    url.pathname = target?.startsWith("/") ? target : "/app/discover";
+    url.pathname = target?.startsWith("/") && !target.startsWith("//") ? target : "/app/discover";
     url.search = "";
     return NextResponse.redirect(url);
   }
