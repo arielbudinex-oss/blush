@@ -80,10 +80,13 @@ export async function GET() {
   const sessionSet = (list: EventRow[]) => new Set(list.map((e) => e.session_id));
   const ipSet = (list: EventRow[]) => new Set(list.map((e) => e.ip_hash).filter(Boolean) as string[]);
 
+  const userForSession = new Map<string, string>();
+  for (const e of recent30) if (e.user_id && !userForSession.has(e.session_id)) userForSession.set(e.session_id, e.user_id);
   const liveMap = new Map<string, EventRow>();
   for (const e of recent30) {
     // Satu akun tampil sekali walau membuka beberapa tab; tamu tetap per sesi.
-    const key = e.user_id ? `u:${e.user_id}` : `s:${e.session_id}`;
+    const uid = userForSession.get(e.session_id);
+    const key = uid ? `u:${uid}` : `s:${e.session_id}`;
     if (!liveMap.has(key)) liveMap.set(key, e);
   }
   const live = [...liveMap.values()]
@@ -200,9 +203,9 @@ export async function GET() {
     now: {
       sessions: sessionSet(recent5).size,
       accounts: activeAccountIds.size,
-      guests: new Set(recent5.filter((e) => !e.user_id).map((e) => e.session_id)).size,
+      guests: new Set(recent5.filter((e) => !e.user_id && !userForSession.has(e.session_id)).map((e) => e.session_id)).size,
       ips: ipSet(recent5).size,
-      people: activeAccountIds.size + new Set(recent5.filter((e) => !e.user_id).map((e) => e.session_id)).size,
+      people: activeAccountIds.size + new Set(recent5.filter((e) => !e.user_id && !userForSession.has(e.session_id)).map((e) => e.session_id)).size,
     },
     last24: {
       pageViews: events.filter((e) => e.event_type === "page_view").length,
