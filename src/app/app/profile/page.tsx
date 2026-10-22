@@ -103,7 +103,10 @@ export default async function ProfilePage() {
       <section className="mb-[var(--space-lg)]">
         <div className="mb-2 flex items-baseline justify-between gap-3">
           <h2 className="whitespace-nowrap text-base">Pratinjau profil</h2>
-          <a href="#edit-profil" className="-mr-2 inline-flex min-h-11 items-center px-2 text-sm font-semibold text-blush-deep hover:underline">
+          <a
+            href="#edit-profil"
+            className="-mr-2 inline-flex min-h-11 items-center rounded-full border border-line bg-paper px-3 text-sm font-semibold text-blush-deep hover:border-line-strong"
+          >
             Edit
           </a>
         </div>
