@@ -168,7 +168,7 @@ export default function AdminLive() {
 
           <div className="mt-4 grid gap-4 lg:grid-cols-[minmax(0,1.35fr)_minmax(0,1fr)]">
             <div className="rounded-card border border-line bg-paper p-4">
-              <h3 className="text-sm font-semibold text-ink">Sesi langsung (30 menit)</h3>
+              <h3 className="text-sm font-semibold text-ink">Sesi terbaru (30 menit)</h3>
               {data.live.length === 0 ? (
                 <p className="mt-2 text-sm text-ink-soft">Belum ada pengunjung dalam 30 menit terakhir.</p>
               ) : (

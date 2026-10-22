@@ -63,6 +63,8 @@ export async function GET() {
   const profiles = (rawProfiles ?? []) as ProfileRow[];
   const profileById = new Map(profiles.map((p) => [p.id, p]));
   const names = new Map(profiles.map((p) => [p.id, p.display_name || "Tanpa nama"]));
+  const lastEventByUser = new Map<string, string>();
+  for (const e of events) if (e.user_id && !lastEventByUser.has(e.user_id)) lastEventByUser.set(e.user_id, e.created_at);
 
   // Bot tidak dihitung sebagai pengunjung; angkanya tetap dilaporkan terpisah.
   const events = allEvents.filter((e) => e.device_type !== "Bot");
@@ -194,7 +196,7 @@ export async function GET() {
       name: p.display_name || "Tanpa nama",
       plan: p.plan || "free",
       verified: p.is_verified === "approved",
-      lastActiveAt: p.last_active_at,
+      lastActiveAt: lastEventByUser.get(p.id) ?? p.last_active_at,
     }));
 
   return NextResponse.json({
