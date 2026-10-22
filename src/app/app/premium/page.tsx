@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import { createServerSupabase } from "@/lib/supabase/server";
-import { PLANS, formatIdr, type Plan } from "@/lib/plans";
+import { PLANS, SUPERLIKE_PACKS, formatIdr, type Plan } from "@/lib/plans";
 import Checkout from "@/components/Checkout";
 import BoostButton from "@/components/BoostButton";
 
@@ -69,6 +69,25 @@ export default async function PremiumPage() {
           />
         </section>
       ) : null}
+
+      <section className="mt-[var(--space-lg)] rounded-card border border-line bg-paper p-[var(--space-md)]">
+        <h2 className="text-xl">Superlike tambahan</h2>
+        <p className="mt-1 text-sm text-ink-soft">
+          Superlike harian tetap jalan. Paket ini menambah kuota untuk hari yang kamu butuh lebih banyak.
+        </p>
+        <div className="mt-3 grid gap-2 sm:grid-cols-3">
+          {SUPERLIKE_PACKS.map((pack) => (
+            <div key={pack.id} className="rounded-[10px] border border-line bg-paper-2 px-3 py-3">
+              <p className="text-sm font-semibold text-ink">{pack.count} superlike</p>
+              <p className="mt-1 text-lg font-bold text-ink">{formatIdr(pack.priceIdr)}</p>
+              <p className="mt-0.5 text-xs text-ink-soft">sekali beli</p>
+            </div>
+          ))}
+        </div>
+        <p className="mt-3 text-xs text-ink-soft">
+          Pembelian paket superlike dibantu admin lewat QRIS. Buka Pengaturan untuk menghubungi admin.
+        </p>
+      </section>
 
       <section className="mt-[var(--space-xl)] rounded-card border border-line bg-paper-2 p-[var(--space-md)]">
         <h2 className="text-xl">Riwayat pembayaran</h2>

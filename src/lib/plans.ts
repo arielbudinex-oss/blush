@@ -82,6 +82,13 @@ export const PLANS: Record<Plan, PlanConfig> = {
 
 export const PLAN_ORDER: Plan[] = ["free", "plus", "gold"];
 
+/** Paket superlike sekali beli. Harga terpisah dari langganan bulanan. */
+export const SUPERLIKE_PACKS = [
+  { id: "superlike-5", count: 5, priceIdr: 15000 },
+  { id: "superlike-15", count: 15, priceIdr: 39000 },
+  { id: "superlike-40", count: 40, priceIdr: 89000 },
+] as const;
+
 export function isPremium(plan: Plan | null | undefined): boolean {
   return plan === "plus" || plan === "gold";
 }
