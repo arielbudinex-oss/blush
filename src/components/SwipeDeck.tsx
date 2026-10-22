@@ -467,6 +467,11 @@ export default function SwipeDeck({
       setCanUndo(true);
 
       if (action !== "pass") {
+        void fetch("/api/push/like", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ targetId: target.id }),
+        }).catch(() => {});
         const { data: myMatches } = await supabase.rpc("my_matches");
         const match = (myMatches ?? []).find(
           (m: { match_id: string; other_id: string }) => m.other_id === target.id,

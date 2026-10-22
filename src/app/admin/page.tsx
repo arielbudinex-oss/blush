@@ -3,6 +3,7 @@ import { createServerSupabase } from "@/lib/supabase/server";
 import { PLANS, formatIdr, type Plan } from "@/lib/plans";
 import { PaymentRowActions, VerifyRowActions } from "@/components/AdminActions";
 import AdminLive from "@/components/AdminLive";
+import AdminPush from "@/components/AdminPush";
 
 // Route ini selalu butuh sesi terbaru dari cookies, jadi memang blocking (Next 16 cache components).
 export const instant = false;
@@ -48,6 +49,7 @@ export default async function AdminPage() {
       </p>
 
       <AdminLive />
+      <AdminPush />
 
       <section className="mt-[var(--space-lg)] rounded-card border border-line bg-paper p-[var(--space-md)]">
         <h2 className="text-xl">Pembayaran menunggu ({pending?.length ?? 0})</h2>

@@ -5,6 +5,7 @@ import { Icon, type IconName } from "@/components/Icon";
 import UnblockButton from "@/components/UnblockButton";
 import SignOutButton from "@/components/SignOutButton";
 import DeleteAccountButton from "@/components/DeleteAccountButton";
+import PushNotifications from "@/components/PushNotifications";
 
 // Route ini selalu butuh sesi terbaru dari cookies, jadi memang blocking (Next 16 cache components).
 export const instant = false;
@@ -89,6 +90,8 @@ export default async function SettingsPage() {
           </ul>
         )}
       </section>
+
+      <PushNotifications />
 
       <section className="mt-[var(--space-lg)] rounded-card border border-line bg-paper p-[var(--space-md)]">
         <h2 className="text-xl">Data dan lokasi</h2>

@@ -263,6 +263,11 @@ export default function Chat({
         ? withoutTemp
         : [...withoutTemp, inserted as Message];
     });
+    void fetch("/api/push/message", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ matchId, text }),
+    }).catch(() => {});
   }
 
   function retry(m: Message) {
