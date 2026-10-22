@@ -13,11 +13,12 @@ function bytes(value: string) {
 
 async function save(subscription: PushSubscription) {
   const json = subscription.toJSON();
-  await fetch("/api/push/subscribe", {
+  const res = await fetch("/api/push/subscribe", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ endpoint: json.endpoint, keys: json.keys }),
   });
+  if (!res.ok) throw new Error("Langganan notifikasi belum tersimpan.");
 }
 
 /** Izin notifikasi browser + langganan Web Push. */
@@ -30,13 +31,12 @@ export default function PushNotifications() {
   const sync = useCallback(async () => {
     if (!("serviceWorker" in navigator) || !("PushManager" in window) || !PUBLIC_KEY) {
       setSupported(false);
-      return;
+      throw new Error("Browser ini belum mendukung notifikasi aplikasi.");
     }
     setPermission(Notification.permission);
     if (Notification.permission !== "granted") return;
 
     const registration = await navigator.serviceWorker.register("/sw.js");
-    await navigator.serviceWorker.ready;
     let subscription = await registration.pushManager.getSubscription();
     if (!subscription) {
       subscription = await registration.pushManager.subscribe({
@@ -62,7 +62,10 @@ export default function PushNotifications() {
         setMessage("Izin notifikasi ditolak. Aktifkan dari pengaturan browser kalau berubah pikiran.");
         return;
       }
-      await sync();
+      await Promise.race([
+        sync(),
+        new Promise<never>((_, reject) => window.setTimeout(() => reject(new Error("Notifikasi terlalu lama disiapkan. Muat ulang halaman lalu coba lagi.")), 15000)),
+      ]);
     } catch {
       setMessage("Notifikasi gagal diaktifkan. Coba dari Chrome atau Safari terbaru.");
     } finally {
