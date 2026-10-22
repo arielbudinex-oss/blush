@@ -23,6 +23,8 @@ export default async function DiscoverPage({
     { data: candidates },
     { data: likesUsed },
     { data: profile },
+    { data: myInterestRows },
+    { data: interestRows },
     { count: superUsed },
     { count: swipeCount },
   ] = await Promise.all([
@@ -33,6 +35,8 @@ export default async function DiscoverPage({
       .select("plan, is_verified, preferences(min_age, max_age, max_distance_km, show_gender, verified_only, search_lat, search_lng)")
       .eq("id", user!.id)
       .maybeSingle(),
+    supabase.from("profile_interests").select("interest_id").eq("profile_id", user!.id),
+    supabase.from("interests").select("id, label"),
     supabase
       .from("swipes")
       .select("id", { count: "exact", head: true })
@@ -83,6 +87,9 @@ export default async function DiscoverPage({
         superlikesLeft={Math.max(0, quota.dailySuperlikes - Number(superUsed ?? 0))}
         isVerified={profile?.is_verified === "approved"}
         hasSwipes={(swipeCount ?? 0) > 0}
+        myInterests={(interestRows ?? [])
+          .filter((i: { id: number }) => new Set((myInterestRows ?? []).map((r: { interest_id: number }) => r.interest_id)).has(i.id))
+          .map((i: { label: string }) => i.label)}
         prefs={prefs}
         gold={plan === "gold"}
       />

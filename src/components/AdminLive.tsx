@@ -49,10 +49,15 @@ function timeWib(iso: string | null) {
   return new Intl.DateTimeFormat("id-ID", { hour: "2-digit", minute: "2-digit", timeZone: "Asia/Jakarta" }).format(new Date(iso));
 }
 
-function Stat({ label, value, note }: { label: string; value: number | string; note?: string }) {
+function Stat({ label, value, note, icon }: { label: string; value: number | string; note?: string; icon: "user" | "location" | "deck" | "heart" }) {
   return (
-    <div className="rounded-card border border-line bg-paper p-4">
-      <p className="text-xs font-semibold text-ink-soft">{label}</p>
+    <div className="relative overflow-hidden rounded-card border border-line bg-gradient-to-b from-paper to-paper-2 p-4">
+      <div className="flex items-start justify-between gap-2">
+        <p className="text-xs font-semibold text-ink-soft">{label}</p>
+        <span className="grid h-8 w-8 place-items-center rounded-full bg-paper text-ink-soft ring-1 ring-line">
+          <Icon name={icon} className="h-4 w-4" />
+        </span>
+      </div>
       <p className="mt-1 text-3xl font-bold tabular-nums text-ink">{value}</p>
       {note ? <p className="mt-1 text-xs text-ink-soft">{note}</p> : null}
     </div>
@@ -121,10 +126,10 @@ export default function AdminLive() {
       {data ? (
         <>
           <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-            <Stat label="Aktif sekarang" value={data.now.people} note={`${data.now.accounts} akun · ${data.now.guests} tamu`} />
-            <Stat label="IP aktif" value={data.now.ips} note="5 menit terakhir" />
-            <Stat label="Kunjungan 24 jam" value={data.last24.pageViews} note={`${data.last24.sessions} sesi, ${data.last24.accounts} akun`} />
-            <Stat label="Klik tautan 24 jam" value={data.last24.linkClicks} note={`${data.last24.clickIps} IP unik yang klik`} />
+            <Stat icon="user" label="Aktif sekarang" value={data.now.people} note={`${data.now.accounts} akun · ${data.now.guests} tamu`} />
+            <Stat icon="location" label="IP aktif" value={data.now.ips} note="5 menit terakhir" />
+            <Stat icon="deck" label="Kunjungan 24 jam" value={data.last24.pageViews} note={`${data.last24.sessions} sesi · ${data.last24.accounts} akun aktif`} />
+            <Stat icon="heart" label="Klik tautan 24 jam" value={data.last24.linkClicks} note={`${data.last24.clickIps} IP unik yang klik`} />
           </div>
 
           {data.bots24 > 0 ? (

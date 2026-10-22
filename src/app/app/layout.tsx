@@ -6,6 +6,7 @@ import AppNav from "@/components/AppNav";
 import AutoLocation from "@/components/AutoLocation";
 import Logo from "@/components/Logo";
 import HeaderAvatar from "@/components/HeaderAvatar";
+import NotificationPrompt from "@/components/NotificationPrompt";
 
 // Route ini selalu butuh sesi terbaru dari cookies, jadi memang blocking (Next 16 cache components).
 export const instant = false;
@@ -48,6 +49,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
       </header>
       <main className="app-main flex-1">
         {profile.location ? null : <AutoLocation userId={user.id} />}
+        <NotificationPrompt />
         {children}
       </main>
       <BottomNav />

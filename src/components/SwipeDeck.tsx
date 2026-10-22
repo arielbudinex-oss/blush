@@ -67,8 +67,10 @@ function SwipeCard({
   onReport,
   onBlock,
   onOpenProfile,
+  myInterests,
 }: {
   candidate: Candidate;
+  myInterests?: string[];
   busy: boolean;
   onDecide: (action: Action) => Promise<boolean>;
   onUndo: () => void;
@@ -94,6 +96,8 @@ function SwipeCard({
     [candidate.photos],
   );
   const prompt = candidate.prompts?.find((p) => p.a?.trim());
+  const mine = new Set((myInterests ?? []).map((i) => i.toLowerCase()));
+  const shared = candidate.interests.filter((i) => mine.has(i.toLowerCase()));
 
   const fly = useCallback(
     async (action: Action) => {
@@ -303,8 +307,13 @@ function SwipeCard({
           </div>
         ) : null}
 
+        {shared.length > 0 ? (
+          <p className="mt-2 text-xs font-semibold text-blush-deep">
+            {shared.length === 1 ? `Kalian sama-sama suka ${shared[0]}` : `${shared.length} minat sama: ${shared.slice(0, 2).join(", ")}`}
+          </p>
+        ) : null}
         {candidate.interests.length > 0 ? (
-          <div className="no-scrollbar mt-3 flex gap-1.5 overflow-x-auto">
+          <div className="mt-2 flex flex-wrap gap-1.5">
             {candidate.interests.slice(0, 8).map((i) => (
               <span
                 key={i}
@@ -391,6 +400,7 @@ export default function SwipeDeck({
   isVerified,
   hasSwipes,
   gold,
+  myInterests,
   prefs,
 }: {
   candidates: Candidate[];
@@ -400,6 +410,7 @@ export default function SwipeDeck({
   isVerified: boolean;
   hasSwipes: boolean;
   gold: boolean;
+  myInterests?: string[];
   prefs: {
     min_age: number;
     max_age: number;
@@ -590,6 +601,7 @@ export default function SwipeDeck({
               onReport={() => setReportFor(current)}
               onBlock={() => void block(current)}
               onOpenProfile={() => setSheetOpen(true)}
+              myInterests={myInterests}
             />
           ) : null}
         </div>

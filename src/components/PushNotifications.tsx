@@ -1,25 +1,8 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { Icon } from "@/components/Icon";
-
-const PUBLIC_KEY = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY;
-
-function bytes(value: string) {
-  const padding = "=".repeat((4 - (value.length % 4)) % 4);
-  const raw = atob((value + padding).replace(/-/g, "+").replace(/_/g, "/"));
-  return Uint8Array.from(raw, (c) => c.charCodeAt(0));
-}
-
-async function save(subscription: PushSubscription) {
-  const json = subscription.toJSON();
-  const res = await fetch("/api/push/subscribe", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ endpoint: json.endpoint, keys: json.keys }),
-  });
-  if (!res.ok) throw new Error("Langganan notifikasi belum tersimpan.");
-}
+import { pushSupported, subscribeToPush, unsubscribeFromPush } from "@/lib/push-client";
 
 /** Izin notifikasi browser + langganan Web Push. */
 export default function PushNotifications() {
@@ -28,43 +11,11 @@ export default function PushNotifications() {
   const [subscribed, setSubscribed] = useState(false);
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
-  const syncingRef = useRef<Promise<void> | null>(null);
-
-  const sync = useCallback(async () => {
-    if (!("serviceWorker" in navigator) || !("PushManager" in window) || !PUBLIC_KEY) {
-      setSupported(false);
-      throw new Error("Browser ini belum mendukung notifikasi aplikasi.");
-    }
-    if (Notification.permission !== "granted") return;
-
-    setMessage("Menyiapkan service worker…");
-    await navigator.serviceWorker.register("/sw.js");
-    const registration = await navigator.serviceWorker.ready;
-    setMessage("Mendaftarkan perangkat…");
-    let subscription = await registration.pushManager.getSubscription();
-    if (!subscription) {
-      subscription = await registration.pushManager.subscribe({
-        userVisibleOnly: true,
-        applicationServerKey: bytes(PUBLIC_KEY),
-      });
-    }
-    await save(subscription);
-    setSubscribed(true);
-    setMessage("Notifikasi aktif di perangkat ini.");
-  }, []);
-
-  const startSync = useCallback(async () => {
-    if (syncingRef.current) return syncingRef.current;
-    const task = sync().finally(() => {
-      syncingRef.current = null;
-    });
-    syncingRef.current = task;
-    return task;
-  }, [sync]);
 
   useEffect(() => {
-    // Jangan minta izin otomatis. Tombol adalah gesture yang jelas untuk browser.
-    setPermission(Notification.permission);
+    const ok = pushSupported();
+    setSupported(ok);
+    if (ok) setPermission(Notification.permission);
   }, []);
 
   async function enable() {
@@ -77,13 +28,16 @@ export default function PushNotifications() {
         setMessage("Izin notifikasi ditolak. Aktifkan dari pengaturan browser kalau berubah pikiran.");
         return;
       }
+      setMessage("Mendaftarkan perangkat…");
       await Promise.race([
-        startSync(),
-        new Promise<never>((_, reject) => window.setTimeout(() => reject(new Error("Notifikasi terlalu lama disiapkan. Muat ulang halaman lalu coba lagi.")), 15000)),
+        subscribeToPush(),
+        new Promise<never>((_, reject) => window.setTimeout(() => reject(new Error("Browser terlalu lama menyiapkan notifikasi. Muat ulang lalu coba lagi.")), 12000)),
       ]);
+      setSubscribed(true);
+      setMessage("Notifikasi aktif di perangkat ini.");
     } catch (e) {
       console.error("push subscribe", e);
-      setMessage("Notifikasi gagal diaktifkan. Coba dari Chrome atau Safari terbaru.");
+      setMessage(e instanceof Error ? e.message : "Notifikasi gagal diaktifkan.");
     } finally {
       setBusy(false);
     }
@@ -92,16 +46,7 @@ export default function PushNotifications() {
   async function disable() {
     setBusy(true);
     try {
-      const registration = await navigator.serviceWorker.getRegistration("/sw.js");
-      const subscription = await registration?.pushManager.getSubscription();
-      if (subscription) {
-        await fetch("/api/push/subscribe", {
-          method: "DELETE",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ endpoint: subscription.endpoint }),
-        });
-        await subscription.unsubscribe();
-      }
+      await unsubscribeFromPush();
       setSubscribed(false);
       setMessage("Notifikasi dimatikan di perangkat ini.");
     } catch {

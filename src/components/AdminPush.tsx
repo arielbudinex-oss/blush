@@ -12,6 +12,7 @@ export default function AdminPush() {
 
   async function send(event: React.FormEvent) {
     event.preventDefault();
+    if (!window.confirm(`Kirim notifikasi "${title}" ke semua perangkat yang berlangganan?`)) return;
     setBusy(true);
     setError(null);
     setStatus(null);

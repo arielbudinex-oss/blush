@@ -22,10 +22,7 @@ export default async function AdminPage() {
       <main className="mx-auto w-full max-w-2xl px-[var(--space-md)] py-[var(--space-xl)]">
         <h1 className="text-3xl">Halaman admin</h1>
         <p className="mt-2 text-sm text-ink-soft">
-          Akunmu bukan admin. Untuk menjadikan admin, jalankan di SQL editor:
-          <code className="mt-2 block break-all rounded-[8px] border border-line bg-paper-2 p-2 text-xs">
-            update public.profiles set role = &apos;admin&apos; where id = &apos;{user.id}&apos;;
-          </code>
+          Akun ini bukan admin. Hubungi pemilik Blush kalau kamu merasa seharusnya punya akses.
         </p>
       </main>
     );
@@ -41,29 +38,59 @@ export default async function AdminPage() {
     supabase.from("reports").select("id, reporter_id, reported_id, reason, details, status").eq("status", "open"),
   ]);
 
+  const sections = [
+    ["#aktivitas", "Aktivitas"],
+    ["#notifikasi", "Notifikasi"],
+    ["#pembayaran", "Pembayaran"],
+    ["#verifikasi", "Verifikasi"],
+    ["#laporan", "Laporan"],
+  ] as const;
+
   return (
     <main className="mx-auto w-full max-w-6xl px-[var(--space-md)] py-[var(--space-lg)]">
-      <h1 className="text-3xl">Admin Blush</h1>
-      <p className="mt-1 text-sm text-ink-soft">
-        Semua aksi di sini memakai service role di server dan hanya bisa dipanggil oleh akun ber-role admin.
-      </p>
+      <header className="flex flex-wrap items-end justify-between gap-3 border-b border-line pb-4">
+        <div>
+          <p className="text-2xs font-semibold uppercase tracking-[0.14em] text-blush-deep">Blush admin</p>
+          <h1 className="mt-1 text-3xl font-bold tracking-[-0.02em]">Ringkasan hari ini</h1>
+          <p className="mt-1 max-w-2xl text-sm text-ink-soft">
+            Pengunjung, sesi, klik tautan, pembayaran, dan laporan dalam satu layar. Aksi sensitif memakai service role di server.
+          </p>
+        </div>
+        <nav aria-label="Bagian admin" className="flex flex-wrap gap-1.5 text-xs font-semibold">
+          {sections.map(([href, label]) => (
+            <a key={href} href={href} className="inline-flex min-h-9 items-center rounded-full border border-line bg-paper px-3 text-ink-soft hover:border-line-strong hover:text-ink">
+              {label}
+            </a>
+          ))}
+        </nav>
+      </header>
 
-      <AdminLive />
-      <AdminPush />
+      <div id="aktivitas" className="scroll-mt-24">
+        <AdminLive />
+      </div>
 
-      <section className="mt-[var(--space-lg)] rounded-card border border-line bg-paper p-[var(--space-md)]">
-        <h2 className="text-xl">Pembayaran menunggu ({pending?.length ?? 0})</h2>
+      <div id="notifikasi" className="scroll-mt-24">
+        <AdminPush />
+      </div>
+
+      <section id="pembayaran" className="mt-[var(--space-lg)] scroll-mt-24 rounded-card border border-line bg-paper p-[var(--space-md)]">
+        <div className="flex flex-wrap items-baseline justify-between gap-2">
+          <h2 className="text-xl">Pembayaran menunggu</h2>
+          <span className="rounded-full bg-paper-2 px-2 py-0.5 text-xs font-semibold text-ink-soft">{pending?.length ?? 0} transaksi</span>
+        </div>
         {(pending ?? []).length === 0 ? (
-          <p className="mt-2 text-sm text-ink-soft">Tidak ada transaksi pending.</p>
+          <p className="mt-3 rounded-[10px] bg-paper-2 px-3 py-4 text-sm text-ink-soft">Tidak ada transaksi pending.</p>
         ) : (
           <ul className="mt-3 flex flex-col gap-2">
             {(pending ?? []).map(
               (p: { id: string; plan: string; months: number; amount_idr: number; created_at: string; profile_id: string }) => (
-                <li key={p.id} className="flex flex-wrap items-center justify-between gap-2 rounded-[8px] border border-line bg-paper-2 px-3 py-2 text-sm">
-                  <span>
-                    {PLANS[p.plan as Plan]?.name ?? p.plan} · {p.months} bln · <strong>{formatIdr(p.amount_idr)}</strong> ·{" "}
-                    {new Date(p.created_at).toLocaleString("id-ID")}
-                  </span>
+                <li key={p.id} className="flex flex-wrap items-center justify-between gap-3 rounded-[10px] border border-line bg-paper-2 px-3 py-3 text-sm">
+                  <div className="min-w-0">
+                    <p className="font-semibold text-ink">
+                      {PLANS[p.plan as Plan]?.name ?? p.plan} · {p.months} bulan · {formatIdr(p.amount_idr)}
+                    </p>
+                    <p className="mt-0.5 text-xs text-ink-soft">{new Date(p.created_at).toLocaleString("id-ID")}</p>
+                  </div>
                   <PaymentRowActions paymentId={p.id} />
                 </li>
               ),
@@ -72,37 +99,45 @@ export default async function AdminPage() {
         )}
       </section>
 
-      <section className="mt-[var(--space-lg)] rounded-card border border-line bg-paper p-[var(--space-md)]">
-        <h2 className="text-xl">Verifikasi menunggu ({verifiedPending?.length ?? 0})</h2>
+      <section id="verifikasi" className="mt-[var(--space-lg)] scroll-mt-24 rounded-card border border-line bg-paper p-[var(--space-md)]">
+        <div className="flex flex-wrap items-baseline justify-between gap-2">
+          <h2 className="text-xl">Verifikasi menunggu</h2>
+          <span className="rounded-full bg-paper-2 px-2 py-0.5 text-xs font-semibold text-ink-soft">{verifiedPending?.length ?? 0} akun</span>
+        </div>
         {(verifiedPending ?? []).length === 0 ? (
-          <p className="mt-2 text-sm text-ink-soft">Tidak ada selfie menunggu review.</p>
+          <p className="mt-3 rounded-[10px] bg-paper-2 px-3 py-4 text-sm text-ink-soft">Tidak ada selfie menunggu review.</p>
         ) : (
           <ul className="mt-3 flex flex-col gap-2">
             {(verifiedPending ?? []).map((p: { id: string; display_name: string; city: string }) => (
-              <li key={p.id} className="flex flex-wrap items-center justify-between gap-2 rounded-[8px] border border-line bg-paper-2 px-3 py-2 text-sm">
-                <span>
-                  {p.display_name || "Tanpa nama"} · {p.city || "kota kosong"}
-                </span>
+              <li key={p.id} className="flex flex-wrap items-center justify-between gap-3 rounded-[10px] border border-line bg-paper-2 px-3 py-3 text-sm">
+                <div>
+                  <p className="font-semibold text-ink">{p.display_name || "Tanpa nama"}</p>
+                  <p className="text-xs text-ink-soft">{p.city || "Kota belum diisi"}</p>
+                </div>
                 <VerifyRowActions userId={p.id} />
               </li>
             ))}
           </ul>
         )}
-        <p className="mt-2 text-xs text-ink-faint">
-          Selfie tersimpan di bucket privat <code>verifications/&lt;user_id&gt;/…</code> — buka lewat dashboard Supabase.
+        <p className="mt-3 text-xs text-ink-faint">
+          Selfie disimpan di bucket privat. Review tetap lewat halaman ini supaya aksesnya tercatat.
         </p>
       </section>
 
-      <section className="mt-[var(--space-lg)] rounded-card border border-line bg-paper p-[var(--space-md)]">
-        <h2 className="text-xl">Laporan terbuka ({reports?.length ?? 0})</h2>
+      <section id="laporan" className="mt-[var(--space-lg)] scroll-mt-24 rounded-card border border-line bg-paper p-[var(--space-md)]">
+        <div className="flex flex-wrap items-baseline justify-between gap-2">
+          <h2 className="text-xl">Laporan terbuka</h2>
+          <span className="rounded-full bg-paper-2 px-2 py-0.5 text-xs font-semibold text-ink-soft">{reports?.length ?? 0} laporan</span>
+        </div>
         {(reports ?? []).length === 0 ? (
-          <p className="mt-2 text-sm text-ink-soft">Tidak ada laporan baru.</p>
+          <p className="mt-3 rounded-[10px] bg-paper-2 px-3 py-4 text-sm text-ink-soft">Tidak ada laporan baru.</p>
         ) : (
           <ul className="mt-3 flex flex-col gap-2 text-sm">
             {(reports ?? []).map((r: { id: number; reason: string; details: string | null; reported_id: string }) => (
-              <li key={r.id} className="rounded-[8px] border border-line bg-paper-2 px-3 py-2">
-                <strong>{r.reason}</strong> · profil {r.reported_id.slice(0, 8)}…
-                {r.details ? <span className="block text-xs text-ink-soft">{r.details}</span> : null}
+              <li key={r.id} className="rounded-[10px] border border-line bg-paper-2 px-3 py-3">
+                <p className="font-semibold text-ink">{r.reason}</p>
+                <p className="text-xs text-ink-soft">Profil {r.reported_id.slice(0, 8)}…</p>
+                {r.details ? <p className="mt-1 text-xs text-ink-soft">{r.details}</p> : null}
               </li>
             ))}
           </ul>
