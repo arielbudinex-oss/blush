@@ -36,6 +36,9 @@ export default function Chat({
   otherName,
   otherPhoto,
   otherActiveAt,
+  expiresAt,
+  extendedAt,
+  sharedInterests = [],
 }: {
   matchId: string;
   meId: string;
@@ -43,6 +46,9 @@ export default function Chat({
   otherName: string;
   otherPhoto: string | null;
   otherActiveAt: string | null;
+  expiresAt: string | null;
+  extendedAt: string | null;
+  sharedInterests?: string[];
 }) {
   const supabase = createClient();
   const router = useRouter();
@@ -57,6 +63,9 @@ export default function Chat({
   const [peerTyping, setPeerTyping] = useState(false);
   const [liveActiveAt, setLiveActiveAt] = useState<string | null>(otherActiveAt);
   const [nowMs, setNowMs] = useState(() => Date.now());
+  const [expiry, setExpiry] = useState<string | null>(expiresAt);
+  const [extended, setExtended] = useState(Boolean(extendedAt));
+  const [extendBusy, setExtendBusy] = useState(false);
 
   const endRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
@@ -285,8 +294,21 @@ export default function Chat({
     setShowSafety(false);
     setStatus({
       tone: error ? "error" : "ok",
-      text: error ? "Laporan gagal terkirim. Coba lagi." : "Laporan masuk. Dia nggak dapat notifikasi soal ini.",
+      text: error ? "Laporan gagal terkirim. Coba lagi." : "Laporan masuk. Dia tidak mendapat notifikasi soal ini.",
     });
+  }
+
+  async function extend() {
+    setExtendBusy(true);
+    const { data, error: err } = await supabase.rpc("extend_match", { p_match: matchId });
+    setExtendBusy(false);
+    if (err) {
+      setStatus({ tone: "error", text: "Chat belum bisa diperpanjang. Coba lagi." });
+      return;
+    }
+    if (typeof data === "string") setExpiry(data);
+    setExtended(true);
+    setStatus({ tone: "ok", text: "Chat diperpanjang 24 jam. Waktu baru terpasang." });
   }
 
   async function unmatch() {
@@ -356,7 +378,7 @@ export default function Chat({
             <div>
               <p className="text-sm font-bold">Keamanan</p>
               <p className="mt-0.5 text-xs text-ink-soft">
-                Laporkan, blokir, atau batalkan match. Dia nggak dapat notifikasi soal laporan.
+                Laporkan, blokir, atau batalkan match. Dia tidak mendapat notifikasi soal laporan.
               </p>
             </div>
             <button
@@ -396,6 +418,34 @@ export default function Chat({
         </section>
       ) : null}
 
+      {expiry ? (() => {
+        const left = Math.max(0, new Date(expiry).getTime() - nowMs);
+        const hours = Math.floor(left / 3_600_000);
+        const expired = left === 0;
+        return (
+          <div className="flex flex-wrap items-center justify-between gap-2 border-b border-line bg-paper-2 px-3 py-2 text-xs">
+            <span className={expired ? "font-semibold text-blush-deep" : "text-ink-soft"}>
+              {expired ? "Waktu chat habis" : `Chat ditutup dalam ${hours > 0 ? `${hours} jam` : `${Math.max(1, Math.floor(left / 60_000))} menit`}`}
+            </span>
+            {!extended && !expired ? (
+              <button
+                type="button"
+                onClick={extend}
+                disabled={extendBusy}
+                className="inline-flex min-h-8 items-center gap-1 rounded-[999px] border border-line-strong px-3 text-xs font-semibold text-ink transition-colors hover:border-ink disabled:opacity-60"
+              >
+                <Icon name="clock" className="h-3.5 w-3.5" />
+                {extendBusy ? "Memperpanjang…" : "Perpanjang 24 jam"}
+              </button>
+            ) : (
+              <span className="inline-flex items-center gap-1 font-semibold text-ok">
+                <Icon name="check" className="h-3.5 w-3.5" /> sudah diperpanjang
+              </span>
+            )}
+          </div>
+        );
+      })() : null}
+
       <div className="flex flex-1 flex-col overflow-y-auto px-3 py-3" aria-live="polite">
         {loading ? (
           <div className="space-y-2" aria-hidden>
@@ -411,6 +461,25 @@ export default function Chat({
             <p className="mt-1 max-w-[16rem] text-sm text-ink-soft">
               Sebut satu hal dari profilnya. Biasanya itu cukup buat mulai.
             </p>
+            <div className="mt-4 flex flex-wrap justify-center gap-2">
+              {(sharedInterests.length ? sharedInterests.slice(0, 3).map((tag) => `Kalian sama-sama suka ${tag.toLowerCase()}. Tanya favoritnya?`) : [
+                "Apa hal kecil yang bikin harimu enak?",
+                "Lagi pengin ke tempat baru, di mana?",
+                "Coffee atau teh, dan kenapa?",
+              ]).map((line) => (
+                <button
+                  key={line}
+                  type="button"
+                  onClick={() => {
+                    setBody(line);
+                    requestAnimationFrame(() => inputRef.current?.focus());
+                  }}
+                  className="rounded-[999px] border border-line bg-paper px-3 py-1.5 text-left text-xs font-medium text-ink transition-colors hover:border-ink hover:bg-paper-2"
+                >
+                  {line}
+                </button>
+              ))}
+            </div>
           </div>
         ) : (
           <div className="mt-auto">
@@ -553,7 +622,7 @@ export default function Chat({
               Batalkan match dengan {otherName || "dia"}?
             </h2>
             <p className="mt-2 text-sm text-ink-soft">
-              Chat ditutup buat kalian berdua. Match-nya nggak bisa dibuka lagi.
+              Chat ditutup untuk kalian berdua dan tidak bisa dibuka lagi.
             </p>
             <div className="mt-4 flex gap-2">
               <button type="button" className={btnPrimary} onClick={unmatch} disabled={busy}>

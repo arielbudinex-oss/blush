@@ -17,7 +17,14 @@ export type IconName =
   | "chevron"
   | "camera"
   | "lock"
-  | "more";
+  | "more"
+  | "filter"
+  | "info"
+  | "location"
+  | "sparkles"
+  | "flag"
+  | "ban"
+  | "plus";
 
 /**
  * Satu set ikon 24px dengan grid, ketebalan, dan ujung garis yang sama.
@@ -146,6 +153,57 @@ export function Icon({
         <svg {...common}>
           <rect x="4.6" y="10.4" width="14.8" height="9.6" rx="2.4" />
           <path d="M8.2 10.4V7.9a3.8 3.8 0 0 1 7.6 0v2.5" />
+        </svg>
+      );
+    case "filter":
+      return (
+        <svg {...common}>
+          <path d="M4.4 7h4.2M12.2 7h7.4M4.4 12h8.2M16.2 12h3.4M4.4 17h2.4M10.4 17h9.2" />
+          <circle cx="10.4" cy="7" r="1.7" />
+          <circle cx="14.2" cy="12" r="1.7" />
+          <circle cx="8.2" cy="17" r="1.7" />
+        </svg>
+      );
+    case "info":
+      return (
+        <svg {...common}>
+          <circle cx="12" cy="12" r="8.3" />
+          <path d="M12 11v5.2" />
+          <circle cx="12" cy="7.9" r="0.9" fill="currentColor" stroke="none" />
+        </svg>
+      );
+    case "location":
+      return (
+        <svg {...common}>
+          <path d="M12 21c4-4.2 6-7.4 6-10a6 6 0 1 0-12 0c0 2.6 2 5.8 6 10Z" />
+          <circle cx="12" cy="10.7" r="2.2" />
+        </svg>
+      );
+    case "sparkles":
+      return (
+        <svg {...common}>
+          <path d="M12 3.4l1.5 4.1 4.1 1.5-4.1 1.5L12 14.6l-1.5-4.1L6.4 9l4.1-1.5L12 3.4Z" />
+          <path d="M18.6 14.4l.8 2.2 2.2.8-2.2.8-.8 2.2-.8-2.2-2.2-.8 2.2-.8.8-2.2Z" />
+        </svg>
+      );
+    case "flag":
+      return (
+        <svg {...common}>
+          <path d="M6 21V4.2" />
+          <path d="M6 4.8c3.2-1.8 6.2 1.8 9.4 0v7.4c-3.2 1.8-6.2-1.8-9.4 0" />
+        </svg>
+      );
+    case "ban":
+      return (
+        <svg {...common}>
+          <circle cx="12" cy="12" r="8.2" />
+          <path d="m6.4 17.6 11.2-11.2" />
+        </svg>
+      );
+    case "plus":
+      return (
+        <svg {...common}>
+          <path d="M12 5.6v12.8M5.6 12h12.8" />
         </svg>
       );
     case "more":

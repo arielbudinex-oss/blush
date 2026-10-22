@@ -245,7 +245,7 @@ export default function FaceVerify({ verified }: { verified: boolean }) {
         </span>
         <h2 className="mt-3 text-2xl">Centang biru sudah aktif</h2>
         <p className="mt-2 text-sm text-ink-soft">
-          Badge-nya muncul di profil, kartu deck, dan daftar chat. Satu wajah cuma untuk satu akun.
+          Badge muncul di profil, kartu deck, dan daftar chat. Satu wajah hanya untuk satu akun.
         </p>
         <div className="mt-4 flex flex-wrap gap-2">
           <Link href="/app/profile" className={btnPrimary}>
@@ -281,7 +281,7 @@ export default function FaceVerify({ verified }: { verified: boolean }) {
             </span>
             <p className="font-display text-lg font-bold">Pindai wajah</p>
             <p className="max-w-[26ch] text-xs text-paper/85">
-              Kamera cuma jalan di HP-mu. Yang dikirim angka wajah, bukan foto atau video.
+              Kamera hanya berjalan di perangkatmu. Yang dikirim angka wajah, bukan foto atau video.
             </p>
           </div>
         ) : null}
@@ -332,7 +332,7 @@ export default function FaceVerify({ verified }: { verified: boolean }) {
         <div className="rounded-card border border-line bg-paper-2 p-[var(--space-md)]">
           <span className="text-xs font-semibold text-ink-soft">Kenapa banyak yang verifikasi</span>
           <p className="mt-2 text-sm text-ink-soft">
-            Biar orang lebih gampang percaya. Kamu diminta gerak sedikit, jadi foto diam atau video nggak bisa lolos.
+            Supaya orang lebih mudah percaya. Kamu diminta bergerak sedikit, jadi foto diam atau video tidak bisa lolos.
             Nggak wajib, kok.
           </p>
         </div>

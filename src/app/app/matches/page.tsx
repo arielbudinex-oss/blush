@@ -26,12 +26,14 @@ export default async function MatchesPage() {
   const supabase = await createServerSupabase();
   const { data } = await supabase.rpc("my_matches");
   const rows = (data ?? []) as Row[];
+  const fresh = rows.filter((r) => !r.last_message);
+  const threads = rows.filter((r) => Boolean(r.last_message));
 
   return (
     <main className="mx-auto w-full max-w-2xl px-[var(--space-md)] py-[var(--space-lg)]">
       <h1 className="text-3xl font-bold">Chat</h1>
       <p className="mt-1 text-sm text-ink-soft">
-        Match yang saling suka langsung bisa chat di sini. Balas dalam 24 jam sebelum hilang.
+        Saling suka membuka chat. Balas dalam 24 jam, atau perpanjang sekali dari dalam room.
       </p>
 
       {rows.length === 0 ? (
@@ -49,8 +51,39 @@ export default async function MatchesPage() {
         </div>
       ) : null}
 
-      <Stagger className="mt-[var(--space-lg)] flex flex-col gap-2">
-        {rows.map((m) => {
+      {fresh.length ? (
+        <section className="mt-[var(--space-lg)]">
+          <h2 className="text-sm font-bold text-ink">Match baru</h2>
+          <p className="mt-0.5 text-xs text-ink-soft">Belum ada pesan. Sapa duluan sebelum waktunya habis.</p>
+          <div className="no-scrollbar mt-3 flex gap-3 overflow-x-auto pb-1">
+            {fresh.map((m) => {
+              const url = photoUrl(m.photos?.[0]);
+              return (
+                <Link key={m.match_id} href={`/app/chat/${m.match_id}`} className="flex w-24 shrink-0 flex-col items-center gap-1.5 text-center">
+                  <span className="relative block h-20 w-20 overflow-hidden rounded-full border-2 border-blush-deep bg-paper-2">
+                    {url ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img src={url} alt={`Foto ${m.display_name}`} className="h-full w-full object-cover" />
+                    ) : null}
+                  </span>
+                  <span className="w-full truncate text-xs font-semibold">{m.display_name || "Tanpa nama"}</span>
+                  <ExpiryChip expiresAt={m.expires_at} />
+                </Link>
+              );
+            })}
+          </div>
+        </section>
+      ) : null}
+
+      {rows.length ? (
+        <h2 className="mt-[var(--space-lg)] text-sm font-bold text-ink">Percakapan</h2>
+      ) : null}
+      {rows.length && !threads.length ? (
+        <p className="mt-1 text-xs text-ink-soft">Belum ada percakapan. Sapa salah satu match barumu.</p>
+      ) : null}
+
+      <Stagger className="mt-2 flex flex-col gap-2">
+        {threads.map((m) => {
           const url = photoUrl(m.photos?.[0]);
           return (
             <StaggerItem key={m.match_id}>

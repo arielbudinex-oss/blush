@@ -42,9 +42,9 @@ const FEATURES: { icon: IconName; title: string; body: string }[] = [
     body: "Foto, bio, minat, dan jawaban prompt tampil di kartu yang sama. Tidak ada tebak-tebakan dari foto saja.",
   },
   {
-    icon: "chat",
-    title: "Kuota yang kelihatan",
-    body: "Sisa like dan superlike tampil langsung di deck. Angka yang sama dipakai server, bukan perkiraan.",
+    icon: "filter",
+    title: "Filter yang jelas",
+    body: "Atur umur, jarak, gender, dan hanya profil terverifikasi. Gold bisa jelajah kota lain tanpa pindah domisili.",
   },
   {
     icon: "star",

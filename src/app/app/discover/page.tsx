@@ -28,7 +28,11 @@ export default async function DiscoverPage({
   ] = await Promise.all([
     supabase.rpc("discover_candidates", { p_limit: 20 }),
     supabase.rpc("likes_used_today"),
-    supabase.from("profiles").select("plan, is_verified").eq("id", user!.id).maybeSingle(),
+    supabase
+      .from("profiles")
+      .select("plan, is_verified, preferences(min_age, max_age, max_distance_km, show_gender, verified_only, search_lat, search_lng)")
+      .eq("id", user!.id)
+      .maybeSingle(),
     supabase
       .from("swipes")
       .select("id", { count: "exact", head: true })
@@ -40,6 +44,28 @@ export default async function DiscoverPage({
 
   const plan = (profile?.plan ?? "free") as Plan;
   const quota = PLANS[plan] ?? PLANS.free;
+  const prefRow = (
+    profile as {
+      preferences?: {
+        min_age: number;
+        max_age: number;
+        max_distance_km: number;
+        show_gender: string[];
+        verified_only: boolean;
+        search_lat: number | null;
+        search_lng: number | null;
+      } | null;
+    } | null
+  )?.preferences;
+  const prefs = prefRow ?? {
+    min_age: 18,
+    max_age: 45,
+    max_distance_km: 50,
+    show_gender: ["woman", "man"],
+    verified_only: false,
+    search_lat: null,
+    search_lng: null,
+  };
 
   // Dari halaman "Yang suka kamu": orang itu tampil paling depan, bukan kartu acak.
   const list = ((candidates ?? []) as Candidate[]).slice();
@@ -57,6 +83,8 @@ export default async function DiscoverPage({
         superlikesLeft={Math.max(0, quota.dailySuperlikes - Number(superUsed ?? 0))}
         isVerified={profile?.is_verified === "approved"}
         hasSwipes={(swipeCount ?? 0) > 0}
+        prefs={prefs}
+        gold={plan === "gold"}
       />
     </main>
   );

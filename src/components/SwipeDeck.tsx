@@ -7,6 +7,8 @@ import { motion, useMotionValue, useReducedMotion, useTransform, animate } from 
 import { createClient } from "@/lib/supabase/client";
 import { distanceLabel, photoUrl } from "@/lib/photo";
 import { MatchModal, ReportModal } from "@/components/DeckModals";
+import ProfileSheet from "@/components/ProfileSheet";
+import FiltersSheet from "@/components/FiltersSheet";
 import { CountUp } from "@/components/motion";
 import { Icon } from "@/components/Icon";
 import { btnDanger, btnGhost, btnPrimary } from "@/components/ui";
@@ -64,6 +66,7 @@ function SwipeCard({
   superLeft,
   onReport,
   onBlock,
+  onOpenProfile,
 }: {
   candidate: Candidate;
   busy: boolean;
@@ -73,6 +76,7 @@ function SwipeCard({
   superLeft: number;
   onReport: () => void;
   onBlock: () => void;
+  onOpenProfile: () => void;
 }) {
   const reduce = useReducedMotion();
   const x = useMotionValue(0);
@@ -200,7 +204,7 @@ function SwipeCard({
                   type="button"
                   aria-label={`Foto ${i + 1}`}
                   onClick={() => setPhotoIdx(i)}
-                  className={`h-1 flex-1 rounded-[999px] transition-colors duration-200 ${
+                  className={`h-1.5 flex-1 rounded-[999px] transition-colors duration-200 ${
                     i === photoIdx ? "bg-paper" : "bg-paper/45"
                   }`}
                 />
@@ -220,6 +224,18 @@ function SwipeCard({
             />
           </>
         ) : null}
+
+        <button
+          type="button"
+          aria-label="Lihat profil lengkap"
+          onClick={(e) => {
+            e.stopPropagation();
+            onOpenProfile();
+          }}
+          className="absolute left-3 top-9 z-20 grid h-9 w-9 place-items-center rounded-[999px] bg-paper/90 text-ink backdrop-blur-sm transition-colors hover:bg-paper"
+        >
+          <Icon name="info" className="h-4 w-4" />
+        </button>
 
         <div className="absolute right-3 top-9 z-20">
           <button
@@ -300,6 +316,15 @@ function SwipeCard({
           </div>
         ) : null}
 
+        <button
+          type="button"
+          onClick={onOpenProfile}
+          className="mt-3 flex min-h-10 w-full items-center justify-center gap-1.5 rounded-[10px] border border-line bg-paper-2/60 text-xs font-bold text-ink transition-colors hover:bg-paper-2"
+        >
+          Lihat profil lengkap
+          <Icon name="chevron" className="h-3.5 w-3.5" strokeWidth={2.4} />
+        </button>
+
         {vitalRows.length > 0 ? (
           <dl className="mt-2 hidden grid-cols-2 gap-x-3 gap-y-1 text-2xs text-ink-soft sm:grid">
             {vitalRows.slice(0, 4).map(([k, v]) => (
@@ -365,6 +390,8 @@ export default function SwipeDeck({
   superlikesLeft,
   isVerified,
   hasSwipes,
+  gold,
+  prefs,
 }: {
   candidates: Candidate[];
   likesUsed: number;
@@ -372,6 +399,16 @@ export default function SwipeDeck({
   superlikesLeft: number;
   isVerified: boolean;
   hasSwipes: boolean;
+  gold: boolean;
+  prefs: {
+    min_age: number;
+    max_age: number;
+    max_distance_km: number;
+    show_gender: string[];
+    verified_only: boolean;
+    search_lat: number | null;
+    search_lng: number | null;
+  };
 }) {
   const router = useRouter();
   const supabase = createClient();
@@ -385,6 +422,8 @@ export default function SwipeDeck({
   const [reportDetails, setReportDetails] = useState("");
   const [canUndo, setCanUndo] = useState(hasSwipes);
   const [superLeft, setSuperLeft] = useState(superlikesLeft);
+  const [sheetOpen, setSheetOpen] = useState(false);
+  const [filtersOpen, setFiltersOpen] = useState(false);
 
   const current = candidates[index];
   const unlimited = dailyLikes >= 100000;
@@ -504,25 +543,36 @@ export default function SwipeDeck({
   return (
     <div className="mx-auto w-full max-w-md lg:max-w-[772px]">
       <div className="mb-2 flex items-center justify-between gap-2">
-          <h1 className="text-lg font-bold tracking-[-0.01em]">Untukmu</h1>
+          <h1 className="shrink-0 text-lg font-bold tracking-[-0.01em]">Untukmu</h1>
+          <div className="flex min-w-0 flex-1 items-center justify-end gap-1.5">
+          <button
+            type="button"
+            onClick={() => setFiltersOpen(true)}
+            className="inline-flex min-h-8 items-center gap-1 rounded-[999px] border border-line-strong px-2.5 text-2xs font-bold text-ink transition-colors hover:border-ink hover:bg-paper-2"
+          >
+            <Icon name="filter" className="h-3.5 w-3.5" />
+            Filter
+          </button>
           <span
             className={`rounded-[999px] bg-paper-2 px-2.5 py-1 text-2xs font-bold ${
               likesLeft === 0 ? "text-blush-deep" : "text-ink"
             }`}
           >
             {unlimited ? (
-              "Like tanpa batas"
+              "Tanpa batas"
             ) : (
-              <>
-                Sisa <CountUp value={likesLeft} /> like
-              </>
+              <span className="whitespace-nowrap">
+                <CountUp value={likesLeft} /> like
+              </span>
             )}
           </span>
+          </div>
       </div>
 
       <div className="grid gap-4 lg:grid-cols-[minmax(0,440px)_minmax(0,300px)] lg:gap-8">
         <div className="min-w-0">
         <div className="relative">
+          <div className="pointer-events-none absolute inset-x-3 bottom-0 top-2 -z-10 rounded-[20px] border border-line bg-paper-2" aria-hidden="true" />
           {current ? (
             <SwipeCard
               key={current.id}
@@ -534,6 +584,7 @@ export default function SwipeDeck({
               superLeft={superLeft}
               onReport={() => setReportFor(current)}
               onBlock={() => void block(current)}
+              onOpenProfile={() => setSheetOpen(true)}
             />
           ) : null}
         </div>
@@ -629,6 +680,25 @@ export default function SwipeDeck({
         </Link>
       </aside>
       </div>
+
+      <ProfileSheet
+        candidate={current ?? null}
+        open={sheetOpen}
+        superLeft={superLeft}
+        busy={busy}
+        onClose={() => setSheetOpen(false)}
+        onDecide={(action) => void decide(action)}
+        onReport={() => {
+          setSheetOpen(false);
+          setReportFor(current ?? null);
+        }}
+        onBlock={() => {
+          setSheetOpen(false);
+          if (current) void block(current);
+        }}
+      />
+
+      <FiltersSheet open={filtersOpen} prefs={prefs} gold={gold} onClose={() => setFiltersOpen(false)} />
 
       <MatchModal matched={matched} onClose={() => setMatched(null)} />
 

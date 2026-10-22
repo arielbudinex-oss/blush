@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { createServerSupabase } from "@/lib/supabase/server";
 import { PLANS, formatIdr, type Plan } from "@/lib/plans";
 import Checkout from "@/components/Checkout";
+import BoostButton from "@/components/BoostButton";
 
 // Route ini selalu butuh sesi terbaru dari cookies, jadi memang blocking (Next 16 cache components).
 export const instant = false;
@@ -13,7 +14,11 @@ export default async function PremiumPage() {
   } = await supabase.auth.getUser();
   if (!user) redirect("/login?next=/app/premium");
 
-  const [{ data: profile }, { data: payments }] = await Promise.all([
+  const monthStart = new Date();
+  monthStart.setDate(1);
+  monthStart.setHours(0, 0, 0, 0);
+
+  const [{ data: profile }, { data: payments }, { data: boosts }] = await Promise.all([
     supabase.from("profiles").select("plan, plan_expires_at").eq("id", user.id).maybeSingle(),
     supabase
       .from("payments")
@@ -21,6 +26,12 @@ export default async function PremiumPage() {
       .eq("profile_id", user.id)
       .order("created_at", { ascending: false })
       .limit(10),
+    supabase
+      .from("boosts")
+      .select("started_at, expires_at")
+      .eq("profile_id", user.id)
+      .gte("started_at", monthStart.toISOString())
+      .order("started_at", { ascending: false }),
   ]);
 
   const plan = (profile?.plan ?? "free") as Plan;
@@ -48,6 +59,16 @@ export default async function PremiumPage() {
           />
         ))}
       </div>
+
+      {plan === "gold" ? (
+        <section className="mt-[var(--space-lg)]">
+          <BoostButton
+            activeUntil={(boosts ?? []).find((b: { expires_at: string }) => new Date(b.expires_at) > new Date())?.expires_at ?? null}
+            usedThisMonth={(boosts ?? []).length}
+            quota={PLANS.gold.boostsPerMonth}
+          />
+        </section>
+      ) : null}
 
       <section className="mt-[var(--space-xl)] rounded-card border border-line bg-paper-2 p-[var(--space-md)]">
         <h2 className="text-xl">Riwayat pembayaran</h2>

@@ -5,6 +5,7 @@ import { photoUrl } from "@/lib/photo";
 import { Icon } from "@/components/Icon";
 import { btnPrimary } from "@/components/ui";
 import { Stagger, StaggerItem } from "@/components/motion";
+import LikeBackButton from "@/components/LikeBackButton";
 
 // Route ini selalu butuh sesi terbaru dari cookies, jadi memang blocking (Next 16 cache components).
 export const instant = false;
@@ -146,12 +147,7 @@ export default async function LikesPage() {
                       {l.action === "superlike" ? "Superlike" : "Like"}
                     </p>
                   </div>
-                  <Link
-                    href={`/app/discover?fokus=${l.id}`}
-                    className="shrink-0 rounded-[999px] border border-blush-deep px-3 py-1.5 text-xs font-semibold text-blush-deep"
-                  >
-                    Balas
-                  </Link>
+                  <LikeBackButton targetId={l.id} />
                 </article>
               </StaggerItem>
             );

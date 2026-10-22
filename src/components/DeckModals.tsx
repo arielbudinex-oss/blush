@@ -37,7 +37,7 @@ export function MatchModal({
               Kalian <em className="font-medium text-blush-deep">saling suka</em>.
             </h2>
             <p className="mt-2 text-sm leading-relaxed text-ink-soft">
-              {matched.name} juga suka kamu. Chat-nya sudah kebuka. Balas sebelum 24 jam, biar nggak hilang.
+              {matched.name} juga suka kamu. Chat kalian sudah terbuka. Balas dalam 24 jam supaya tidak hilang.
             </p>
             <div className="mt-4 flex flex-col gap-2">
               <Link href={`/app/chat/${matched.matchId}`} className={btnPrimary}>
