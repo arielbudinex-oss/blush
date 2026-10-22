@@ -121,11 +121,11 @@ async function onboarding(page, user, interestLabels) {
   if (!input) throw new Error("input file onboarding tidak ada");
   await input.uploadFile(user.photo);
   await new Promise((r) => setTimeout(r, 800));
-  const count = await page.evaluate(() => document.querySelectorAll("ul li").length);
-  ok("foto terpilih di langkah 3", count > 0, `${count} file`);
+  const picked = await page.evaluate(() => /\d+ foto dipilih/.test(document.body.innerText));
+  ok("foto terpilih di langkah 3", picked, "pratinjau tampil");
   await clickText(page, "Lanjut");
 
-  await clickText(page, "Selesai, mulai geser");
+  await clickText(page, "Selesai, lihat kartu");
   await page.waitForFunction(() => location.pathname.startsWith("/app/"), { timeout: 20000 });
   log("onboarding selesai ->", page.url());
 }
@@ -156,7 +156,7 @@ try {
   // 1 — landing
   await pa.goto(BASE, { waitUntil: "networkidle2" });
   const h1 = await pa.$eval("h1", (e) => e.textContent.trim());
-  ok("landing h1", h1.includes("beneran") && h1.includes("basa-basi"), h1);
+  ok("landing h1", h1.toLowerCase().includes("kenalan dulu"), h1);
   await pa.screenshot({ path: path.join(OUT, "01-landing.png"), fullPage: false });
 
   // 2 — onboarding Rara

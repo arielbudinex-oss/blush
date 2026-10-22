@@ -88,6 +88,7 @@ export default function ProfileForm({
   );
 
   const [status, setStatus] = useState<string | null>(null);
+  const [confirmDelete, setConfirmDelete] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [uploading, setUploading] = useState(false);
@@ -190,6 +191,11 @@ export default function ProfileForm({
   }
 
   async function removePhoto(photo: Photo) {
+    if (confirmDelete !== photo.id) {
+      setConfirmDelete(photo.id);
+      return;
+    }
+    setConfirmDelete(null);
     setBusy(true);
     await supabase.storage.from("photos").remove([photo.storage_path]);
     await supabase.from("photos").delete().eq("id", photo.id);
@@ -227,9 +233,9 @@ export default function ProfileForm({
       <section className="rounded-card border border-line bg-paper p-[var(--space-md)]">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <h2 className="text-xl">Foto</h2>
-          <span className="text-2xs text-ink-faint">{photos.length}/6 · foto pertama jadi sampul</span>
+          <span className="text-2xs text-ink-faint">{photos.length} dari 6 foto · foto pertama jadi sampul</span>
         </div>
-        <p className="mt-1 text-sm text-ink-soft">Tambah sampai 6 foto. Ketuk bintang buat jadi sampul, isi caption buat cerita singkat.</p>
+        <p className="mt-1 text-sm text-ink-soft">Tambah sampai 6 foto. Ketuk bintang untuk menjadikannya sampul. Keterangan foto muncul saat orang membuka profilmu.</p>
         <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-3">
           {photos.map((p, i) => {
             const url = photoUrl(p.storage_path);
@@ -260,20 +266,31 @@ export default function ProfileForm({
                   <input
                     aria-label={`Caption foto ${i + 1}`}
                     className={`${inputBase} text-xs`}
-                    placeholder="Caption…"
+                    placeholder="Keterangan foto"
                     maxLength={120}
                     value={captions[p.id] ?? ""}
                     onChange={(e) => setCaptions((c) => ({ ...c, [p.id]: e.target.value }))}
                     onBlur={() => saveCaption(p)}
                   />
-                  <button
-                    type="button"
-                    className="mt-1 text-xs font-semibold text-blush-deep"
-                    onClick={() => removePhoto(p)}
-                    disabled={busy}
-                  >
-                    Hapus
-                  </button>
+                  {confirmDelete === p.id ? (
+                    <span className="mt-1 flex items-center gap-2 text-xs font-semibold">
+                      <button type="button" className="text-blush-deep underline" onClick={() => removePhoto(p)} disabled={busy}>
+                        Hapus sekarang
+                      </button>
+                      <button type="button" className="text-ink-soft" onClick={() => setConfirmDelete(null)}>
+                        Batal
+                      </button>
+                    </span>
+                  ) : (
+                    <button
+                      type="button"
+                      className="mt-1 text-xs font-semibold text-blush-deep"
+                      onClick={() => removePhoto(p)}
+                      disabled={busy}
+                    >
+                      Hapus
+                    </button>
+                  )}
                 </div>
               </div>
             );
@@ -311,7 +328,7 @@ export default function ProfileForm({
           </div>
           <div>
             <label className={label} htmlFor="intent">
-              Niat
+              Lagi cari
             </label>
             <select id="intent" className={inputBase} value={intent} onChange={(e) => setIntent(e.target.value as typeof intent)}>
               <option value="relationship">Hubungan serius</option>
@@ -322,7 +339,7 @@ export default function ProfileForm({
         </div>
         <div className="mt-[var(--space-sm)]">
           <label className={label} htmlFor="bio">
-            Bio
+            Bio singkat
           </label>
           <textarea id="bio" rows={3} className={inputBase} value={bio} onChange={(e) => setBio(e.target.value)} maxLength={500} />
         </div>
@@ -330,7 +347,7 @@ export default function ProfileForm({
 
       <section className="rounded-card border border-line bg-paper p-[var(--space-md)]">
         <h2 className="text-xl">Prompts profil</h2>
-        <p className="mt-1 text-sm text-ink-soft">Pilih sampai 3 pertanyaan dan jawab singkat. Jawaban tampil di kartu deck.</p>
+        <p className="mt-1 text-sm text-ink-soft">Pilih sampai 3 pertanyaan. Jawaban singkat lebih sering dibalas daripada paragraf panjang.</p>
         <div className="mt-3 flex flex-col gap-3">
           {slots.map((slot, i) => (
             <div key={i} className="rounded-[10px] border border-line bg-paper-2 p-3">
@@ -358,7 +375,7 @@ export default function ProfileForm({
                 rows={2}
                 maxLength={300}
                 className={`${inputBase} mt-2`}
-                placeholder="Jawaban singkat…"
+                placeholder="Tulis jawaban singkat"
                 value={slot.answer}
                 onChange={(e) => setSlots((s) => s.map((v, j) => (j === i ? { ...v, answer: e.target.value } : v)))}
               />
@@ -479,7 +496,7 @@ export default function ProfileForm({
 
       <section className="rounded-card border border-line bg-paper p-[var(--space-md)]">
         <h2 className="text-xl">Minat</h2>
-        <p className="mt-1 text-sm text-ink-soft">Pilih sampai 8. Dipakai buat nyocokin deck.</p>
+        <p className="mt-1 text-sm text-ink-soft">Pilih sampai 8. Makin lengkap, makin sering profilmu muncul di orang yang cocok.</p>
         <div className="mt-3 flex flex-wrap gap-2">
           {interests.map((it) => (
             <button
@@ -490,10 +507,12 @@ export default function ProfileForm({
                   prev.includes(it.id) ? prev.filter((p) => p !== it.id) : prev.length >= 8 ? prev : [...prev, it.id],
                 )
               }
-              className={`rounded-[999px] border px-3 py-1.5 text-sm font-medium transition-colors duration-200 ${
+              aria-pressed={picked.includes(it.id)}
+              className={`inline-flex items-center gap-1 rounded-[999px] border px-3 py-1.5 text-sm font-medium transition-colors duration-200 ${
                 picked.includes(it.id) ? "border-blush-deep bg-blush-tint text-blush-deep" : "border-line text-ink-soft"
               }`}
             >
+              {picked.includes(it.id) ? <Icon name="check" className="h-3.5 w-3.5" strokeWidth={2.8} /> : null}
               {it.label}
             </button>
           ))}
@@ -523,7 +542,7 @@ export default function ProfileForm({
           </div>
         </div>
         <div className="mt-[var(--space-sm)]">
-          <span className={label}>Tampilkan gender</span>
+          <span className={label}>Gender yang ingin kamu lihat</span>
           <div className="mt-1 flex flex-wrap gap-2">
             {[
               { id: "woman", t: "Perempuan" },
@@ -534,10 +553,12 @@ export default function ProfileForm({
                 key={g.id}
                 type="button"
                 onClick={() => setShowGender((prev) => (prev.includes(g.id) ? prev.filter((p) => p !== g.id) : [...prev, g.id]))}
-                className={`rounded-[999px] border px-4 py-2 text-sm font-semibold transition-colors duration-200 ${
+                aria-pressed={showGender.includes(g.id)}
+                className={`inline-flex items-center gap-1 rounded-[999px] border px-4 py-2 text-sm font-semibold transition-colors duration-200 ${
                   showGender.includes(g.id) ? "border-blush-deep bg-blush-tint text-blush-deep" : "border-line-strong text-ink-soft"
                 }`}
               >
+                {showGender.includes(g.id) ? <Icon name="check" className="h-4 w-4" strokeWidth={2.8} /> : null}
                 {g.t}
               </button>
             ))}

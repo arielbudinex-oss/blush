@@ -27,13 +27,13 @@ export default async function PremiumPage() {
 
   return (
     <main className="mx-auto w-full max-w-3xl px-[var(--space-md)] py-[var(--space-lg)]">
-      <h1 className="text-3xl font-bold">Biar nggak kehabisan</h1>
+      <h1 className="text-3xl font-bold">Paket Blush</h1>
       <p className="mt-1 text-sm text-ink-soft">
         Paket aktif: <strong>{PLANS[plan].name}</strong>
         {profile?.plan_expires_at
-          ? ` · sampai ${new Date(profile.plan_expires_at).toLocaleDateString("id-ID")}`
+          ? ` · berlaku sampai ${new Date(profile.plan_expires_at).toLocaleDateString("id-ID")}`
           : ""}
-        . Bayar sesuai durasi yang dipilih, aktif saat itu juga.
+        . Bayar dengan QRIS, paket aktif setelah pembayaran dikonfirmasi.
       </p>
 
       <div className="mt-[var(--space-lg)] grid gap-[var(--space-md)] md:grid-cols-2">

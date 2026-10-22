@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { Icon } from "@/components/Icon";
 import { btnGhost, btnPrimary } from "@/components/ui";
@@ -44,6 +45,7 @@ export default function Chat({
   otherActiveAt: string | null;
 }) {
   const supabase = createClient();
+  const router = useRouter();
   const [messages, setMessages] = useState<Message[]>([]);
   const [body, setBody] = useState("");
   const [status, setStatus] = useState<{ tone: "error" | "ok"; text: string } | null>(null);
@@ -59,6 +61,7 @@ export default function Chat({
   const endRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const peerTimer = useRef<number | null>(null);
+  const channelRef = useRef<ReturnType<typeof supabase.channel> | null>(null);
   const typingSentAt = useRef(0);
   const scrollOnNext = useRef(true);
 
@@ -123,8 +126,10 @@ export default function Chat({
         peerTimer.current = window.setTimeout(() => setPeerTyping(false), 3200);
       })
       .subscribe();
+    channelRef.current = channel;
 
     return () => {
+      channelRef.current = null;
       alive = false;
       if (peerTimer.current) window.clearTimeout(peerTimer.current);
       void supabase.removeChannel(channel);
@@ -191,7 +196,8 @@ export default function Chat({
     const now = Date.now();
     if (e.target.value.trim() && now - typingSentAt.current > 900) {
       typingSentAt.current = now;
-      void supabase.channel(`match-${matchId}`).send({
+      // Kirim di channel yang sudah subscribe; channel baru tidak akan terkirim.
+      void channelRef.current?.send({
         type: "broadcast",
         event: "typing",
         payload: { userId: meId },
@@ -262,10 +268,12 @@ export default function Chat({
     const { error } = await supabase.from("blocks").insert({ blocker_id: meId, blocked_id: otherId });
     setBusy(false);
     setShowSafety(false);
-    setStatus({
-      tone: error ? "error" : "ok",
-      text: error ? "Blokir gagal. Coba lagi sebentar lagi." : "Diblokir. Kalian nggak akan muncul lagi satu sama lain.",
-    });
+    if (!error) {
+      router.push("/app/matches");
+      router.refresh();
+      return;
+    }
+    setStatus({ tone: "error", text: "Blokir gagal. Coba lagi sebentar lagi." });
   }
 
   async function report() {
@@ -286,10 +294,12 @@ export default function Chat({
     const { error } = await supabase.from("matches").update({ unmatched_by: meId }).eq("id", matchId);
     setBusy(false);
     setConfirmUnmatch(false);
-    setStatus({
-      tone: error ? "error" : "ok",
-      text: error ? "Match gagal dibatalkan. Coba lagi." : "Match dibatalkan. Room ini sudah ditutup.",
-    });
+    if (!error) {
+      router.push("/app/matches");
+      router.refresh();
+      return;
+    }
+    setStatus({ tone: "error", text: "Match gagal dibatalkan. Coba lagi." });
   }
 
   const sinceActive = liveActiveAt ? nowMs - new Date(liveActiveAt).getTime() : Number.POSITIVE_INFINITY;

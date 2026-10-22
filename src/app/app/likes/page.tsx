@@ -38,8 +38,8 @@ export default async function LikesPage() {
         <h1 className="text-3xl font-bold">Yang suka kamu</h1>
         <p className="mt-1 text-sm text-ink-soft">
           {rows.length > 0
-            ? `${rows.length} orang sudah suka duluan. Fotonya disamarkan di paket gratis.`
-            : "Belum ada yang suka."}
+            ? `${rows.length} orang sudah suka duluan. Di paket gratis, fotonya masih disamarkan.`
+            : "Belum ada yang suka. Lengkapi profil supaya lebih mudah ditemukan."}
         </p>
         {preview.length > 0 ? (
           <div aria-hidden="true" className="relative mt-4 overflow-hidden rounded-[12px] border border-line bg-paper-2">
@@ -83,7 +83,7 @@ export default async function LikesPage() {
           <div className="mt-4 rounded-card border border-line bg-paper p-[var(--space-md)]">
             <h2 className="text-xl">Blush Plus</h2>
             <p className="mt-1 text-sm text-ink-soft">
-              Semua like yang masuk kelihatan. Swipe sepuasnya, salah geser bisa dibatalkan.
+              Semua like yang masuk terlihat. Swipe tanpa batas, dan geseran terakhir bisa dibatalkan.
             </p>
             <Link href="/app/premium" className={`${btnPrimary} mt-4 w-full`}>
               Buka Blush Plus
@@ -147,7 +147,7 @@ export default async function LikesPage() {
                     </p>
                   </div>
                   <Link
-                    href="/app/discover"
+                    href={`/app/discover?fokus=${l.id}`}
                     className="shrink-0 rounded-[999px] border border-blush-deep px-3 py-1.5 text-xs font-semibold text-blush-deep"
                   >
                     Balas

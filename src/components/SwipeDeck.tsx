@@ -61,14 +61,16 @@ function SwipeCard({
   onDecide,
   onUndo,
   canUndo,
+  superLeft,
   onReport,
   onBlock,
 }: {
   candidate: Candidate;
   busy: boolean;
-  onDecide: (action: Action) => void;
+  onDecide: (action: Action) => Promise<boolean>;
   onUndo: () => void;
   canUndo: boolean;
+  superLeft: number;
   onReport: () => void;
   onBlock: () => void;
 }) {
@@ -101,7 +103,15 @@ function SwipeCard({
           animate(y, to.y, { duration: 0.3, ease: [0.22, 1, 0.36, 1] }),
         ]);
       }
-      onDecide(action);
+      const accepted = await onDecide(action);
+      if (!accepted) {
+        // Kuota habis atau sesi mati: kartu kembali ke tempatnya, tombol tetap bisa dipakai.
+        setFlying(false);
+        void Promise.all([
+          animate(x, 0, { type: "spring", stiffness: 340, damping: 30 }),
+          animate(y, 0, { type: "spring", stiffness: 340, damping: 30 }),
+        ]);
+      }
     },
     [flying, busy, reduce, x, y, onDecide],
   );
@@ -324,11 +334,15 @@ function SwipeCard({
         <button
           type="button"
           onClick={() => void fly("superlike")}
-          disabled={busy || flying}
-          aria-label="Superlike"
-          className="grid h-14 w-14 place-items-center rounded-[999px] border border-line-strong bg-paper text-ink transition-transform duration-150 active:scale-95 disabled:opacity-50"
+          disabled={busy || flying || superLeft <= 0}
+          aria-label={`Superlike, sisa ${superLeft} hari ini`}
+          title={`Superlike · sisa ${superLeft} hari ini`}
+          className="relative grid h-14 w-14 place-items-center rounded-[999px] border border-line-strong bg-paper text-ink transition-transform duration-150 active:scale-95 disabled:opacity-50"
         >
           <Icon name="star" className="h-6 w-6" />
+          <span className="absolute -right-1 -top-1 grid h-5 min-w-5 place-items-center rounded-full bg-ink px-1 text-[0.6rem] font-bold tabular-nums text-paper ring-2 ring-paper">
+            {superLeft}
+          </span>
         </button>
         <button
           type="button"
@@ -348,12 +362,16 @@ export default function SwipeDeck({
   candidates,
   likesUsed,
   dailyLikes,
+  superlikesLeft,
   isVerified,
+  hasSwipes,
 }: {
   candidates: Candidate[];
   likesUsed: number;
   dailyLikes: number;
+  superlikesLeft: number;
   isVerified: boolean;
+  hasSwipes: boolean;
 }) {
   const router = useRouter();
   const supabase = createClient();
@@ -365,7 +383,8 @@ export default function SwipeDeck({
   const [reportFor, setReportFor] = useState<Candidate | null>(null);
   const [reportReason, setReportReason] = useState(REPORT_REASONS[0]);
   const [reportDetails, setReportDetails] = useState("");
-  const [canUndo, setCanUndo] = useState(false);
+  const [canUndo, setCanUndo] = useState(hasSwipes);
+  const [superLeft, setSuperLeft] = useState(superlikesLeft);
 
   const current = candidates[index];
   const unlimited = dailyLikes >= 100000;
@@ -374,16 +393,17 @@ export default function SwipeDeck({
   const decide = useCallback(
     async (action: Action) => {
       const target = candidates[index];
-      if (!target) return;
+      if (!target) return false;
+      if (action === "superlike" && superLeft <= 0) {
+        setError("Superlike hari ini habis. Blush Plus memberi 5 per hari, Gold 10.");
+        return false;
+      }
       if (action !== "pass" && !unlimited && likesLeft <= 0) {
         setError("Kuota like hari ini habis. Naikkan paket untuk swipe tanpa batas, atau kembali besok.");
-        setIndex((i) => i);
-        return;
+        return false;
       }
       setBusy(true);
       setError(null);
-      setIndex((i) => i + 1);
-      if (action !== "pass") setUsed((u) => u + 1);
 
       const {
         data: { user },
@@ -391,16 +411,20 @@ export default function SwipeDeck({
       if (!user) {
         setError("Sesi habis, masuk ulang.");
         setBusy(false);
-        return;
+        return false;
       }
       const { error: insErr } = await supabase
         .from("swipes")
         .insert({ actor_id: user.id, target_id: target.id, action });
       if (insErr && !insErr.message.includes("duplicate")) {
-        setError(insErr.message);
+        setError("Swipe belum tersimpan. Coba sekali lagi.");
         setBusy(false);
-        return;
+        return false;
       }
+      // Baru geser kartu setelah swipe benar-benar tersimpan.
+      setIndex((i) => i + 1);
+      if (action !== "pass") setUsed((u) => u + 1);
+      if (action === "superlike") setSuperLeft((n) => Math.max(0, n - 1));
       setCanUndo(true);
 
       if (action !== "pass") {
@@ -411,8 +435,9 @@ export default function SwipeDeck({
         if (match?.match_id) setMatched({ matchId: match.match_id, name: target.display_name || "Seseorang" });
       }
       setBusy(false);
+      return true;
     },
-    [candidates, index, unlimited, likesLeft, supabase],
+    [candidates, index, unlimited, likesLeft, superLeft, supabase],
   );
 
   async function undo() {
@@ -437,8 +462,10 @@ export default function SwipeDeck({
     const { error: delErr } = await supabase.from("swipes").delete().eq("id", last.id);
     setBusy(false);
     if (delErr) return setError(delErr.message);
-    setIndex((i) => Math.max(0, i - 1));
+    // Kandidat yang dibatalkan belum pernah di-like, jadi kandidat itu muncul lagi di depan.
+    setIndex(0);
     setUsed((u) => Math.max(0, u - 1));
+    setError(null);
     router.refresh();
   }
 
@@ -475,9 +502,8 @@ export default function SwipeDeck({
   }
 
   return (
-    <div className="mx-auto grid w-full max-w-md gap-4 lg:max-w-4xl lg:grid-cols-[minmax(0,440px)_minmax(0,300px)] lg:justify-center lg:gap-8">
-      <div className="min-w-0">
-        <div className="mb-2 flex items-center justify-between gap-2">
+    <div className="mx-auto w-full max-w-md lg:max-w-[772px]">
+      <div className="mb-2 flex items-center justify-between gap-2">
           <h1 className="text-lg font-bold tracking-[-0.01em]">Untukmu</h1>
           <span
             className={`rounded-[999px] bg-paper-2 px-2.5 py-1 text-2xs font-bold ${
@@ -485,17 +511,31 @@ export default function SwipeDeck({
             }`}
           >
             {unlimited ? (
-              "Swipe tanpa batas"
+              "Like tanpa batas"
             ) : (
               <>
                 Sisa <CountUp value={likesLeft} /> like
               </>
             )}
           </span>
-        </div>
+      </div>
 
+      <div className="grid gap-4 lg:grid-cols-[minmax(0,440px)_minmax(0,300px)] lg:gap-8">
+        <div className="min-w-0">
         <div className="relative">
-          {current ? <SwipeCard key={current.id} candidate={current} busy={busy} onDecide={decide} onUndo={undo} canUndo={canUndo} onReport={() => setReportFor(current)} onBlock={() => void block(current)} /> : null}
+          {current ? (
+            <SwipeCard
+              key={current.id}
+              candidate={current}
+              busy={busy}
+              onDecide={decide}
+              onUndo={undo}
+              canUndo={canUndo}
+              superLeft={superLeft}
+              onReport={() => setReportFor(current)}
+              onBlock={() => void block(current)}
+            />
+          ) : null}
         </div>
 
         <div className="mt-3 flex flex-col gap-2">
@@ -506,8 +546,8 @@ export default function SwipeDeck({
                   <Icon name="heart" className="h-7 w-7" />
                 </span>
                 <h2 className="mt-3 text-lg">Belum ada yang baru</h2>
-                <p className="mx-auto mt-1 max-w-[16rem] text-sm text-ink-soft">
-                  Filter kamu terlalu ketat, atau kamu sudah lihat semua orang di sekitar.
+                <p className="mx-auto mt-1 max-w-[18rem] text-sm text-ink-soft">
+                  Belum ada kandidat baru di jarak dan umur yang kamu pilih. Longgarkan filternya, lalu muat ulang.
                 </p>
                 <div className="mt-4 flex flex-col items-center gap-2">
                   <Link href="/app/profile" className={btnPrimary}>
@@ -557,18 +597,26 @@ export default function SwipeDeck({
         <div className="rounded-[18px] border border-line bg-paper p-4">
           <p className="text-xs font-semibold text-ink-soft">Hari ini</p>
           <div className="mt-2 flex items-center justify-between text-sm">
-            <span className="text-ink-soft">Profil di deck</span>
+            <span className="text-ink-soft">Kandidat tersisa</span>
             <span className="font-bold">{candidates.length}</span>
           </div>
           <div className="mt-1 flex items-center justify-between text-sm">
-            <span className="text-ink-soft">Like terpakai</span>
-            <span className="font-bold">{unlimited ? `${used} · tanpa batas` : `${used} / ${dailyLikes}`}</span>
+            <span className="text-ink-soft">Like dikirim</span>
+            <span className="font-bold tabular-nums">{used}</span>
+          </div>
+          <div className="mt-1 flex items-center justify-between text-sm">
+            <span className="text-ink-soft">Batas harian</span>
+            <span className="font-bold">{unlimited ? "Tanpa batas" : `${dailyLikes}`}</span>
           </div>
         </div>
 
         <Link href="/app/premium" className="rounded-[18px] bg-blush-deep p-4 text-paper">
-          <p className="text-sm font-bold">Swipe tanpa batas</p>
-          <p className="mt-1 text-xs text-paper/95">Blush Plus buka semua like dan superlike harian.</p>
+          <p className="text-sm font-bold">Blush Plus</p>
+          <p className="mt-1 text-xs text-paper/95">Swipe tanpa batas, lihat siapa yang sudah suka duluan, 5 superlike per hari.</p>
+          <span className="mt-3 inline-flex items-center gap-1 rounded-[999px] bg-paper px-3 py-1.5 text-xs font-bold text-ink">
+            Lihat paket
+            <Icon name="chevron" className="h-3.5 w-3.5" strokeWidth={2.4} />
+          </span>
         </Link>
 
         <Link href="/app/likes" className="rounded-[18px] border border-line bg-paper-2 p-4">
@@ -580,6 +628,7 @@ export default function SwipeDeck({
           </span>
         </Link>
       </aside>
+      </div>
 
       <MatchModal matched={matched} onClose={() => setMatched(null)} />
 

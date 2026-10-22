@@ -1,9 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { btnGhost, btnPrimary, inputBase, label } from "@/components/ui";
+import { Icon } from "@/components/Icon";
 
 type Interest = { id: number; slug: string; label: string };
 type Gender = "woman" | "man" | "nonbinary";
@@ -160,6 +161,9 @@ export default function OnboardingForm() {
   }
 
   const steps = ["Tentang kamu", "Minatmu", "Foto", "Preferensi"];
+  // Pratinjau lokal supaya orang tahu foto mana yang akan jadi sampul.
+  const previews = useMemo(() => files.map((f) => ({ name: f.name, url: URL.createObjectURL(f) })), [files]);
+  useEffect(() => () => previews.forEach((p) => URL.revokeObjectURL(p.url)), [previews]);
 
   return (
     <main className="mx-auto flex min-h-dvh w-full max-w-xl flex-col gap-[var(--space-md)] px-[var(--space-md)] py-[var(--space-2xl)]">
@@ -176,7 +180,8 @@ export default function OnboardingForm() {
             <label className={label} htmlFor="name">
               Nama panggilan
             </label>
-            <input id="name" className={inputBase} value={displayName} onChange={(e) => setDisplayName(e.target.value)} />
+            <input id="name" className={inputBase} value={displayName} onChange={(e) => setDisplayName(e.target.value)} placeholder="Nama yang mau kamu pakai" />
+            <p className="mt-1 text-xs text-ink-soft">Nama ini yang tampil di kartu dan chat.</p>
           </div>
           <div>
             <label className={label} htmlFor="bd">
@@ -195,10 +200,12 @@ export default function OnboardingForm() {
                   key={g}
                   type="button"
                   onClick={() => setGender(g)}
-                  className={`rounded-[999px] border px-4 py-2 text-sm font-semibold transition-colors duration-200 ${
+                  aria-pressed={gender === g}
+                  className={`inline-flex items-center gap-1 rounded-[999px] border px-4 py-2 text-sm font-semibold transition-colors duration-200 ${
                     gender === g ? "border-blush-deep bg-blush-tint text-blush-deep" : "border-line-strong text-ink-soft"
                   }`}
                 >
+                  {gender === g ? <Icon name="check" className="h-4 w-4" strokeWidth={2.8} /> : null}
                   {GENDER_LABEL[g]}
                 </button>
               ))}
@@ -216,34 +223,39 @@ export default function OnboardingForm() {
       {step === 1 ? (
         <div className="flex flex-col gap-[var(--space-md)]">
           <div>
-            <span className={label}>Kamu di sini untuk</span>
+            <span className={label}>Lagi cari apa?</span>
             <div className="mt-1 flex flex-wrap gap-2">
               {(Object.keys(INTENT_LABEL) as Intent[]).map((i) => (
                 <button
                   key={i}
                   type="button"
                   onClick={() => setIntent(i)}
-                  className={`rounded-[999px] border px-4 py-2 text-sm font-semibold transition-colors duration-200 ${
+                  aria-pressed={intent === i}
+                  className={`inline-flex items-center gap-1 rounded-[999px] border px-4 py-2 text-sm font-semibold transition-colors duration-200 ${
                     intent === i ? "border-blush-deep bg-blush-tint text-blush-deep" : "border-line-strong text-ink-soft"
                   }`}
                 >
+                  {intent === i ? <Icon name="check" className="h-4 w-4" strokeWidth={2.8} /> : null}
                   {INTENT_LABEL[i]}
                 </button>
               ))}
             </div>
           </div>
           <div>
-            <span className={label}>Minat (pilih 3–8)</span>
+            <span className={label}>Minat · {picked.length} dari 8</span>
+            <p className="mt-0.5 text-xs text-ink-soft">Pilih minimal 3. Yang kamu pilih dipakai untuk mencocokkan kartu.</p>
             <div className="mt-1 flex flex-wrap gap-2">
               {interests.map((it) => (
                 <button
                   key={it.id}
                   type="button"
                   onClick={() => togglePicked(it.id)}
-                  className={`rounded-[999px] border px-3 py-1.5 text-sm font-medium transition-colors duration-200 ${
+                  aria-pressed={picked.includes(it.id)}
+                  className={`inline-flex items-center gap-1 rounded-[999px] border px-3 py-1.5 text-sm font-medium transition-colors duration-200 ${
                     picked.includes(it.id) ? "border-blush-deep bg-blush-tint text-blush-deep" : "border-line text-ink-soft"
                   }`}
                 >
+                  {picked.includes(it.id) ? <Icon name="check" className="h-3.5 w-3.5" strokeWidth={2.8} /> : null}
                   {it.label}
                 </button>
               ))}
@@ -255,22 +267,39 @@ export default function OnboardingForm() {
       {step === 2 ? (
         <div className="flex flex-col gap-[var(--space-sm)]">
           <p className="text-sm text-ink-soft">
-            Unggah 1–6 foto. Foto pertama jadi foto utama. Jangan pakai foto orang lain. Akun bisa dibatasi.
+            Unggah 1 sampai 6 foto. Foto pertama jadi sampul. Pakai foto wajah yang jelas, bukan foto orang lain.
           </p>
-          <input
-            type="file"
-            accept="image/*"
-            multiple
-            className={inputBase}
-            onChange={(e) => setFiles(Array.from(e.target.files ?? []).slice(0, 6))}
-          />
-          <ul className="text-sm text-ink-soft">
-            {files.map((f) => (
-              <li key={f.name}>
-                {f.name} — {(f.size / 1024 / 1024).toFixed(1)} MB
-              </li>
+          <div className="grid grid-cols-3 gap-2">
+            {previews.map((p, i) => (
+              <div key={p.url} className="relative aspect-square overflow-hidden rounded-[10px] border border-line bg-paper-2">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={p.url} alt={`Pratinjau foto ${i + 1}`} className="h-full w-full object-cover" />
+                {i === 0 ? (
+                  <span className="absolute left-1.5 top-1.5 rounded-[999px] bg-ink/85 px-2 py-0.5 text-2xs font-semibold text-paper">
+                    Sampul
+                  </span>
+                ) : null}
+              </div>
             ))}
-          </ul>
+            {files.length < 6 ? (
+              <label className="flex aspect-square cursor-pointer flex-col items-center justify-center gap-1 rounded-[10px] border border-dashed border-line-strong text-xs font-semibold text-ink hover:bg-paper-2">
+                {files.length === 0 ? "Pilih foto" : "Tambah foto"}
+                <span className="text-2xs font-normal text-ink-soft">JPG atau PNG</span>
+                <input
+                  type="file"
+                  accept="image/*"
+                  multiple
+                  className="sr-only"
+                  onChange={(e) => setFiles(Array.from(e.target.files ?? []).slice(0, 6))}
+                />
+              </label>
+            ) : null}
+          </div>
+          {files.length > 0 ? (
+            <p className="text-xs text-ink-soft">
+              {files.length} foto dipilih. Ukuran maksimal 8 MB per foto.
+            </p>
+          ) : null}
         </div>
       ) : null}
 
@@ -297,17 +326,19 @@ export default function OnboardingForm() {
             <input id="dist" type="range" min={1} max={200} value={maxDistance} onChange={(e) => setMaxDistance(Number(e.target.value))} className="w-full" />
           </div>
           <div>
-            <span className={label}>Tampilkan</span>
+            <span className={label}>Gender yang ingin kamu lihat</span>
             <div className="mt-1 flex flex-wrap gap-2">
               {(Object.keys(GENDER_LABEL) as Gender[]).map((g) => (
                 <button
                   key={g}
                   type="button"
                   onClick={() => toggleShowGender(g)}
-                  className={`rounded-[999px] border px-4 py-2 text-sm font-semibold transition-colors duration-200 ${
+                  aria-pressed={showGender.includes(g)}
+                  className={`inline-flex items-center gap-1 rounded-[999px] border px-4 py-2 text-sm font-semibold transition-colors duration-200 ${
                     showGender.includes(g) ? "border-blush-deep bg-blush-tint text-blush-deep" : "border-line-strong text-ink-soft"
                   }`}
                 >
+                  {showGender.includes(g) ? <Icon name="check" className="h-4 w-4" strokeWidth={2.8} /> : null}
                   {GENDER_LABEL[g]}
                 </button>
               ))}
@@ -348,7 +379,7 @@ export default function OnboardingForm() {
           </button>
         ) : (
           <button type="button" className={btnPrimary} onClick={save} disabled={busy}>
-            {busy ? "Menyimpan…" : "Selesai, mulai geser"}
+            {busy ? "Menyimpan…" : "Selesai, lihat kartu"}
           </button>
         )}
       </div>
