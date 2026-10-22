@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Icon } from "@/components/Icon";
 
 const PUBLIC_KEY = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY;
@@ -25,18 +25,22 @@ async function save(subscription: PushSubscription) {
 export default function PushNotifications() {
   const [supported, setSupported] = useState(true);
   const [permission, setPermission] = useState<NotificationPermission>("default");
+  const [subscribed, setSubscribed] = useState(false);
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
+  const syncingRef = useRef<Promise<void> | null>(null);
 
   const sync = useCallback(async () => {
     if (!("serviceWorker" in navigator) || !("PushManager" in window) || !PUBLIC_KEY) {
       setSupported(false);
       throw new Error("Browser ini belum mendukung notifikasi aplikasi.");
     }
-    setPermission(Notification.permission);
     if (Notification.permission !== "granted") return;
 
-    const registration = await navigator.serviceWorker.register("/sw.js");
+    setMessage("Menyiapkan service worker…");
+    await navigator.serviceWorker.register("/sw.js");
+    const registration = await navigator.serviceWorker.ready;
+    setMessage("Mendaftarkan perangkat…");
     let subscription = await registration.pushManager.getSubscription();
     if (!subscription) {
       subscription = await registration.pushManager.subscribe({
@@ -45,12 +49,23 @@ export default function PushNotifications() {
       });
     }
     await save(subscription);
+    setSubscribed(true);
     setMessage("Notifikasi aktif di perangkat ini.");
   }, []);
 
-  useEffect(() => {
-    void sync().catch(() => setMessage("Notifikasi belum bisa disiapkan di browser ini."));
+  const startSync = useCallback(async () => {
+    if (syncingRef.current) return syncingRef.current;
+    const task = sync().finally(() => {
+      syncingRef.current = null;
+    });
+    syncingRef.current = task;
+    return task;
   }, [sync]);
+
+  useEffect(() => {
+    // Jangan minta izin otomatis. Tombol adalah gesture yang jelas untuk browser.
+    setPermission(Notification.permission);
+  }, []);
 
   async function enable() {
     setBusy(true);
@@ -63,10 +78,11 @@ export default function PushNotifications() {
         return;
       }
       await Promise.race([
-        sync(),
+        startSync(),
         new Promise<never>((_, reject) => window.setTimeout(() => reject(new Error("Notifikasi terlalu lama disiapkan. Muat ulang halaman lalu coba lagi.")), 15000)),
       ]);
-    } catch {
+    } catch (e) {
+      console.error("push subscribe", e);
       setMessage("Notifikasi gagal diaktifkan. Coba dari Chrome atau Safari terbaru.");
     } finally {
       setBusy(false);
@@ -86,6 +102,7 @@ export default function PushNotifications() {
         });
         await subscription.unsubscribe();
       }
+      setSubscribed(false);
       setMessage("Notifikasi dimatikan di perangkat ini.");
     } catch {
       setMessage("Gagal mematikan notifikasi.");
@@ -116,7 +133,7 @@ export default function PushNotifications() {
           </p>
           {message ? <p className="mt-2 text-xs font-medium text-ink">{message}</p> : null}
           <div className="mt-3 flex flex-wrap gap-2">
-            {permission === "granted" ? (
+            {permission === "granted" && subscribed ? (
               <button type="button" onClick={disable} disabled={busy} className="inline-flex min-h-10 items-center rounded-full border border-line px-3 text-xs font-semibold text-ink-soft hover:text-ink disabled:opacity-60">
                 Matikan notifikasi
               </button>

@@ -30,6 +30,7 @@ export default function PrivacyPage() {
             <li>Pesan chat, like, match, blokir, dan laporan yang kamu kirim.</li>
             <li>Riwayat pembayaran paket: nominal, status, dan tanggal. Data kartu tidak pernah masuk ke server kami.</li>
             <li>Analitik kunjungan: halaman yang dibuka, tautan yang diklik, jenis perangkat dan browser, serta IP yang disamarkan dan di-hash untuk menghitung pengunjung.</li>
+            <li>Langganan notifikasi: pengenal perangkat dari browser, dipakai untuk mengirim kabar like, match, pesan, dan promosi. Bisa dimatikan kapan saja.</li>
           </ul>
         </section>
 
