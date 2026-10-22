@@ -28,6 +28,11 @@ export default function LikeBackButton({ targetId }: { targetId: string }) {
       setState("error");
       return;
     }
+    void fetch("/api/push/like", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ targetId }),
+    }).catch(() => {});
     setState("done");
     router.refresh();
   }
