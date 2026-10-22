@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import AdminSignOut from "@/components/AdminSignOut";
 
 const GROUPS = [
   {
@@ -85,6 +86,7 @@ export default function AdminSidebar() {
           <a href="/app/discover" className="flex min-h-9 items-center rounded-[8px] px-2 text-xs font-semibold text-ink-soft hover:bg-paper-2 hover:text-ink">
             Kembali ke aplikasi
           </a>
+          <AdminSignOut />
           <p className="mt-2 px-2 text-2xs text-ink-faint">Data pengunjung disamarkan. Akses hanya untuk admin.</p>
         </div>
       </aside>

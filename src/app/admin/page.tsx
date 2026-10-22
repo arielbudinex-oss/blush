@@ -47,8 +47,8 @@ export default async function AdminPage() {
       <header className="flex flex-wrap items-end justify-between gap-3 border-b border-line pb-4">
         <div>
           <p className="text-2xs font-semibold uppercase tracking-[0.14em] text-blush-deep">Blush admin</p>
-          <h1 className="mt-1 text-3xl font-bold tracking-[-0.02em]">Ringkasan hari ini</h1>
-          <p className="mt-1 max-w-2xl text-sm text-ink-soft">
+          <h1 className="mt-1 font-display text-[2rem] font-bold leading-tight tracking-[-0.03em]">Ringkasan hari ini</h1>
+          <p className="mt-2 max-w-2xl text-sm leading-6 text-ink-soft">
             Pengunjung, sesi, klik tautan, pembayaran, dan laporan dalam satu layar. Aksi sensitif memakai service role di server.
           </p>
         </div>
@@ -65,7 +65,7 @@ export default async function AdminPage() {
         <AdminPush />
       </div>
 
-      <section id="pembayaran" className="mt-[var(--space-lg)] scroll-mt-24 rounded-card border border-line bg-paper p-[var(--space-md)]">
+      <section id="pembayaran" className="mt-5 scroll-mt-24 rounded-card border border-line bg-paper p-5">
         <div className="flex flex-wrap items-baseline justify-between gap-2">
           <h2 className="text-xl">Pembayaran menunggu</h2>
           <span className="rounded-full bg-paper-2 px-2 py-0.5 text-xs font-semibold text-ink-soft">{pending?.length ?? 0} transaksi</span>
@@ -91,7 +91,7 @@ export default async function AdminPage() {
         )}
       </section>
 
-      <section id="verifikasi" className="mt-[var(--space-lg)] scroll-mt-24 rounded-card border border-line bg-paper p-[var(--space-md)]">
+      <section id="verifikasi" className="mt-5 scroll-mt-24 rounded-card border border-line bg-paper p-5">
         <div className="flex flex-wrap items-baseline justify-between gap-2">
           <h2 className="text-xl">Verifikasi menunggu</h2>
           <span className="rounded-full bg-paper-2 px-2 py-0.5 text-xs font-semibold text-ink-soft">{verifiedPending?.length ?? 0} akun</span>
@@ -116,7 +116,7 @@ export default async function AdminPage() {
         </p>
       </section>
 
-      <section id="laporan" className="mt-[var(--space-lg)] scroll-mt-24 rounded-card border border-line bg-paper p-[var(--space-md)]">
+      <section id="laporan" className="mt-5 scroll-mt-24 rounded-card border border-line bg-paper p-5">
         <div className="flex flex-wrap items-baseline justify-between gap-2">
           <h2 className="text-xl">Laporan terbuka</h2>
           <span className="rounded-full bg-paper-2 px-2 py-0.5 text-xs font-semibold text-ink-soft">{reports?.length ?? 0} laporan</span>

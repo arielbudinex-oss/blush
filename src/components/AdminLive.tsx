@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { Icon } from "@/components/Icon";
+import TrafficChart from "@/components/TrafficChart";
 
 type LiveRow = {
   sessionId: string;
@@ -58,7 +59,7 @@ function Stat({ label, value, note, icon }: { label: string; value: number | str
           <Icon name={icon} className="h-4 w-4" />
         </span>
       </div>
-      <p className="mt-1 text-3xl font-bold tabular-nums text-ink">{value}</p>
+      <p className="mt-1 font-display text-3xl font-bold tabular-nums text-ink">{value}</p>
       {note ? <p className="mt-1 text-xs text-ink-soft">{note}</p> : null}
     </div>
   );
@@ -89,14 +90,13 @@ export default function AdminLive() {
     return () => window.clearInterval(id);
   }, [load]);
 
-  const maxHour = Math.max(1, ...(data?.hourly.map((h) => h.views + h.clicks) ?? [0]));
   const totalDevices = Math.max(1, (data?.devices ?? []).reduce((sum, d) => sum + d.count, 0));
 
   return (
-    <section className="mt-[var(--space-lg)]" aria-label="Analitik pengunjung">
+    <section className="mt-6" aria-label="Analitik pengunjung">
       <div className="flex flex-wrap items-end justify-between gap-2">
         <div>
-          <h2 className="text-xl">Aktivitas langsung</h2>
+          <h2 className="font-display text-2xl font-semibold tracking-[-0.01em]">Aktivitas langsung</h2>
           <p className="mt-1 text-sm text-ink-soft">
             Data dari pengunjung situs, termasuk tamu yang belum masuk. IP disamarkan; hitungan memakai hash.
             Kunjungan berarti halaman dibuka, sesi berarti satu browser, akun aktif berarti punya aktivitas dalam 24 jam.
@@ -138,40 +138,17 @@ export default function AdminLive() {
             </p>
           ) : null}
 
-          <div className="mt-4 rounded-card border border-line bg-paper p-4">
-            <div className="flex items-baseline justify-between gap-2">
-              <h3 className="text-sm font-semibold text-ink">Trafik 24 jam</h3>
-              <span className="text-2xs text-ink-soft">
+          <div className="mt-4 rounded-card border border-line bg-paper p-5">
+            <div className="flex flex-wrap items-baseline justify-between gap-2">
+              <h3 className="text-base font-semibold text-ink">Trafik 24 jam</h3>
+              <span className="text-xs text-ink-soft">
                 {data.generatedAt ? `Diperbarui ${timeWib(data.generatedAt)} WIB` : ""}
               </span>
             </div>
-            {data.last24.pageViews + data.last24.linkClicks === 0 ? (
-              <p className="mt-4 rounded-[8px] bg-paper-2 px-3 py-6 text-center text-sm text-ink-soft">
-                Belum ada kunjungan tercatat dalam 24 jam terakhir.
-              </p>
-            ) : (
-            <div className="mt-4 flex h-32 items-end gap-1" aria-label="Grafik kunjungan per jam">
-              {data.hourly.map((h) => (
-                <div key={h.label} className="group flex h-full min-w-0 flex-1 flex-col justify-end gap-0.5" title={`${h.label}: ${h.views} kunjungan, ${h.clicks} klik`}>
-                  <span className="w-full rounded-t-[3px] bg-blush-deep/85" style={{ height: `${(h.views / maxHour) * 100}%` }} />
-                  <span className="w-full rounded-b-[3px] bg-ink/70" style={{ height: `${(h.clicks / maxHour) * 100}%` }} />
-                </div>
-              ))}
-            </div>
-            )}
-            <div className="mt-2 flex items-center justify-between text-2xs text-ink-faint">
-              <span className="inline-flex items-center gap-1"><span className="h-1.5 w-1.5 rounded-full bg-blush-deep" /> kunjungan</span>
-              <span className="inline-flex items-center gap-1"><span className="h-1.5 w-1.5 rounded-full bg-ink/70" /> klik</span>
-              <span>per jam, WIB</span>
-            </div>
-            <div className="mt-1 flex justify-between text-2xs text-ink-faint">
-              {[0, 6, 12, 18, 23].map((i) => (
-                <span key={i}>{data.hourly[i]?.label}</span>
-              ))}
-            </div>
+            <TrafficChart hourly={data.hourly} />
           </div>
 
-          <div className="mt-4 grid gap-4 lg:grid-cols-[minmax(0,1.35fr)_minmax(0,1fr)]">
+          <div className="mt-4 grid items-start gap-4 lg:grid-cols-[minmax(0,1.35fr)_minmax(0,1fr)]">
             <div className="rounded-card border border-line bg-paper p-4">
               <h3 className="text-sm font-semibold text-ink">Sesi terbaru (30 menit)</h3>
               {data.live.length === 0 ? (
