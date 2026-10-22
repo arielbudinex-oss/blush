@@ -44,7 +44,7 @@ export const PLANS: Record<Plan, PlanConfig> = {
     name: "Blush Plus",
     priceIdr: 49000,
     period: "per bulan",
-    tagline: "Swipe sepuasnya, nggak usah nunggu kuota.",
+    tagline: "Geser sepuasnya, tanpa menunggu kuota.",
     features: [
       "Swipe tanpa batas",
       "Lihat siapa yang suka kamu duluan",

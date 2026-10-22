@@ -111,7 +111,7 @@ export default function OnboardingForm() {
 
   function useMyLocation() {
     if (!navigator.geolocation) {
-      setError("Browser nggak kasih izin lokasi. Isi kota dulu, jarak dihitung setelah lokasi tersedia.");
+      setError("Browser tidak memberi izin lokasi. Isi kota dulu, jarak dihitung setelah lokasi tersedia.");
       return;
     }
     navigator.geolocation.getCurrentPosition(

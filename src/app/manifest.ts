@@ -4,7 +4,7 @@ export default function manifest(): MetadataRoute.Manifest {
   return {
     name: "Blush",
     short_name: "Blush",
-    description: "Kenalan yang nggak bikin capek. Swipe, match, chat.",
+    description: "Kenalan tanpa ribet. Geser, cocok, ngobrol.",
     start_url: "/app/discover",
     display: "standalone",
     background_color: "#f9f6f2",

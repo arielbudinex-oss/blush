@@ -184,7 +184,7 @@ export default function Home() {
             <h2 className="text-2xl font-bold tracking-[-0.02em] sm:text-3xl">Keamanan yang bisa kamu pakai</h2>
             <ul className="mt-4 flex flex-col gap-3">
               {[
-                ["Lokasi tidak dibagikan mentah", "Orang lain cuma melihat perkiraan jarak, bukan titik koordinat."],
+                ["Lokasi tidak dibagikan mentah", "Orang lain hanya melihat perkiraan jarak, bukan titik koordinat."],
                 ["Blokir dan laporkan kapan saja", "Dari kartu atau dari dalam chat. Pelaku tidak dapat notifikasi."],
                 ["Foto verifikasi tidak tampil", "Disimpan terpisah dan tidak pernah muncul di profil atau deck."],
                 ["Batalkan match", "Chat ditutup untuk kalian berdua, lalu orang itu hilang dari deck."],
