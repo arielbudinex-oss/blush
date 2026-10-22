@@ -57,7 +57,10 @@ export default async function ProfilePage() {
       <div className="mb-[var(--space-md)] flex items-start gap-3">
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-2">
-            <h1 className="text-2xl font-bold">{profile.display_name || "Profil kamu"}</h1>
+            <h1 className="text-2xl font-bold">
+              {profile.display_name || "Profil kamu"}
+              {age ? `, ${age}` : ""}
+            </h1>
             {profile.is_verified === "approved" ? (
               <span
                 title="Terverifikasi"
@@ -94,13 +97,13 @@ export default async function ProfilePage() {
       </div>
 
       <div className="mb-[var(--space-md)]">
-        <Completeness percent={completion} verified={profile.is_verified === "approved"} gaps={gaps} />
+        <Completeness percent={completion} verified={profile.is_verified === "approved"} gaps={gaps} href="#edit-profil" />
       </div>
 
       <section className="mb-[var(--space-lg)]">
         <div className="mb-2 flex items-baseline justify-between gap-3">
           <h2 className="whitespace-nowrap text-base">Pratinjau profil</h2>
-          <a href="#edit-profil" className="text-xs font-semibold text-blush-deep hover:underline">
+          <a href="#edit-profil" className="-mr-2 inline-flex min-h-11 items-center px-2 text-sm font-semibold text-blush-deep hover:underline">
             Edit
           </a>
         </div>
@@ -125,7 +128,7 @@ export default async function ProfilePage() {
                   <span className="sr-only">Terverifikasi</span>
                 </span>
               ) : null}
-              <p className="w-fit max-w-full truncate rounded-[6px] bg-black/90 px-1.5 py-0.5 text-sm font-semibold text-white">
+              <p className="w-fit max-w-full truncate rounded-full bg-black/90 px-2 py-0.5 text-sm font-semibold text-white">
                 {[profile.job, profile.city].filter(Boolean).join(" · ") || "Lengkapi pekerjaan dan kota"}
               </p>
             </div>

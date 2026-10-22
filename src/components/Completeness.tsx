@@ -4,13 +4,16 @@ export default function Completeness({
   percent,
   verified,
   gaps = [],
+  href,
 }: {
   percent: number;
   verified: boolean;
   gaps?: string[];
+  href?: string;
 }) {
   return (
-    <section aria-label="Kelengkapan profil" className="rounded-card border border-line bg-paper px-4 py-3">
+    <a href={href} className="block" aria-label={href ? "Lengkapi profil" : undefined}>
+    <section aria-label="Kelengkapan profil" className="rounded-card border border-line bg-paper px-4 py-3 transition-colors hover:border-line-strong">
       <div className="flex items-baseline justify-between gap-3">
         <p className="text-sm font-semibold text-ink">Kelengkapan profil</p>
         <span className="text-sm font-bold tabular-nums text-ink">{percent}%</span>
@@ -57,5 +60,6 @@ export default function Completeness({
         </p>
       ) : null}
     </section>
+    </a>
   );
 }

@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createServerSupabase } from "@/lib/supabase/server";
 import { photoUrl } from "@/lib/photo";
@@ -6,6 +5,7 @@ import BottomNav from "@/components/BottomNav";
 import AppNav from "@/components/AppNav";
 import AutoLocation from "@/components/AutoLocation";
 import Logo from "@/components/Logo";
+import HeaderAvatar from "@/components/HeaderAvatar";
 
 // Route ini selalu butuh sesi terbaru dari cookies, jadi memang blocking (Next 16 cache components).
 export const instant = false;
@@ -43,20 +43,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
         <div className="mx-auto flex min-h-14 max-w-5xl items-center justify-between gap-2 px-[var(--space-md)]">
           <Logo size="md" href="/app/discover" />
           <AppNav />
-          <div className="flex items-center gap-2">
-            <Link
-              href="/app/profile"
-              aria-label="Profil kamu"
-              className="grid h-11 w-11 shrink-0 place-items-center overflow-hidden rounded-full border border-line-strong bg-paper-2 text-sm font-bold text-ink-soft"
-            >
-              {cover ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img src={cover} alt="" className="h-full w-full object-cover" />
-              ) : (
-                initial
-              )}
-            </Link>
-          </div>
+          <HeaderAvatar cover={cover} initial={initial} />
         </div>
       </header>
       <main className="app-main flex-1">
