@@ -33,6 +33,7 @@ export default function OnboardingForm() {
   const [city, setCity] = useState("");
   const [picked, setPicked] = useState<number[]>([]);
   const [coords, setCoords] = useState<{ lat: number; lng: number } | null>(null);
+  const [locStatus, setLocStatus] = useState<"idle" | "auto" | "denied">("idle");
   const [files, setFiles] = useState<File[]>([]);
   const [minAge, setMinAge] = useState(20);
   const [maxAge, setMaxAge] = useState(38);
@@ -58,7 +59,7 @@ export default function OnboardingForm() {
       const [{ data: profile }, { data: pref }, { data: mine }] = await Promise.all([
         supabase
           .from("profiles")
-          .select("display_name, birthdate, gender, city, intent")
+          .select("display_name, birthdate, gender, city, intent, location")
           .eq("id", uid)
           .maybeSingle(),
         supabase
@@ -81,6 +82,20 @@ export default function OnboardingForm() {
         if (pref.show_gender?.length) setShowGender(pref.show_gender as Gender[]);
       }
       if (mine?.length) setPicked((prev) => prev.length ? prev : mine.map((r: { interest_id: number }) => r.interest_id));
+
+      // Lokasi diminta otomatis sekali; kalau ditolak, user tetap bisa isi kota dan lanjut.
+      if (!profile?.location && navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          (pos) => {
+            setCoords({ lat: pos.coords.latitude, lng: pos.coords.longitude });
+            setLocStatus("auto");
+          },
+          () => setLocStatus("denied"),
+          { enableHighAccuracy: false, timeout: 10000, maximumAge: 10 * 60 * 1000 },
+        );
+      } else if (profile?.location) {
+        setLocStatus("auto");
+      }
     })();
   }, [supabase]);
 
@@ -366,8 +381,15 @@ export default function OnboardingForm() {
             </div>
           </div>
           <button type="button" className={btnGhost} onClick={useMyLocation}>
-            {coords ? "Lokasi tersimpan. Pakai lokasi lain" : "Pakai lokasi saya sekarang"}
+            {coords ? "Perbarui lokasi saya" : "Pakai lokasi saya sekarang"}
           </button>
+          <p className="text-xs text-ink-soft">
+            {locStatus === "auto"
+              ? "Lokasi terdeteksi otomatis. Yang tampil ke orang lain hanya perkiraan jarak."
+              : locStatus === "denied"
+                ? "Izin lokasi belum aktif. Isi kota dulu, atau aktifkan izin lokasi di browser."
+                : "Lokasi dipakai untuk menghitung jarak, bukan ditampilkan mentah."}
+          </p>
           {coords ? (
             <p className="text-xs text-ink-faint">
               Koordinat dipakai hanya untuk menghitung jarak. Yang tampil ke orang lain hanya perkiraan jarak.

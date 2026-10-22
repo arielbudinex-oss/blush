@@ -4,6 +4,7 @@ import { createServerSupabase } from "@/lib/supabase/server";
 import { photoUrl } from "@/lib/photo";
 import BottomNav from "@/components/BottomNav";
 import AppNav from "@/components/AppNav";
+import AutoLocation from "@/components/AutoLocation";
 import Logo from "@/components/Logo";
 
 // Route ini selalu butuh sesi terbaru dari cookies, jadi memang blocking (Next 16 cache components).
@@ -18,7 +19,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
 
   const { data: profile } = await supabase
     .from("profiles")
-    .select("display_name, onboarded_at, plan, is_verified, last_active_at, photos(storage_path, position)")
+    .select("display_name, onboarded_at, plan, is_verified, last_active_at, location, photos(storage_path, position)")
     .eq("id", user.id)
     .maybeSingle();
 
@@ -58,7 +59,10 @@ export default async function AppLayout({ children }: { children: React.ReactNod
           </div>
         </div>
       </header>
-      <main className="app-main flex-1">{children}</main>
+      <main className="app-main flex-1">
+        {profile.location ? null : <AutoLocation userId={user.id} />}
+        {children}
+      </main>
       <BottomNav />
     </div>
   );

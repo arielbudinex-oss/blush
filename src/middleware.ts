@@ -35,6 +35,15 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(url);
   }
 
+  // Akun yang sudah punya sesi tidak boleh membuka form masuk/daftar lagi.
+  if (user && (path === "/login" || path === "/signup")) {
+    const target = request.nextUrl.searchParams.get("next");
+    const url = request.nextUrl.clone();
+    url.pathname = target?.startsWith("/") ? target : "/app/discover";
+    url.search = "";
+    return NextResponse.redirect(url);
+  }
+
   // Akun lama tidak boleh mendarat di form pendaftaran setelah login ulang.
   if (user && path === "/onboarding") {
     const { data: profile } = await supabase.from("profiles").select("onboarded_at").eq("id", user.id).maybeSingle();
