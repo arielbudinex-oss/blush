@@ -1,10 +1,24 @@
-import { connection } from "next/server";
+import { redirect } from "next/navigation";
+import { createServerSupabase } from "@/lib/supabase/server";
 import OnboardingForm from "./OnboardingForm";
 
 export const instant = false;
 
-// Halaman ini butuh Supabase di browser, jadi jangan diprerender saat build.
 export default async function OnboardingPage() {
-  await connection();
+  const supabase = await createServerSupabase();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) redirect("/login?next=/onboarding");
+
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("onboarded_at")
+    .eq("id", user.id)
+    .maybeSingle();
+
+  // Akun yang sudah selesai onboarding tidak boleh melihat form pendaftaran lagi.
+  if (profile?.onboarded_at) redirect("/app/discover");
+
   return <OnboardingForm />;
 }

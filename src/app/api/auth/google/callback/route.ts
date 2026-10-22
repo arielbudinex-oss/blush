@@ -102,7 +102,10 @@ export async function GET(request: Request) {
     }
   }
 
-  const next = saved.next.startsWith("/") ? saved.next : "/app/discover";
+  const { data: me } = await admin.from("profiles").select("onboarded_at").eq("id", userId ?? "").maybeSingle();
+  const wanted = saved.next.startsWith("/") ? saved.next : "/app/discover";
+  // Akun lama yang sudah onboarding tidak dikirim ke form pendaftaran lagi.
+  const next = wanted === "/onboarding" && me?.onboarded_at ? "/app/discover" : wanted;
   const response = NextResponse.redirect(new URL(next, url.origin));
   response.cookies.set("blush_oauth", "", { path: "/", maxAge: 0 });
   return response;

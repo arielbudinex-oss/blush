@@ -15,7 +15,7 @@ export default async function ChatPage({ params }: { params: Promise<{ matchId: 
 
   const { data: match } = await supabase
     .from("matches")
-    .select("id, user_a, user_b, unmatched_by, expires_at, extended_at")
+    .select("id, user_a, user_b, unmatched_by, created_at, expires_at, extended_at")
     .eq("id", matchId)
     .maybeSingle();
 
@@ -64,7 +64,10 @@ export default async function ChatPage({ params }: { params: Promise<{ matchId: 
         otherName={other?.display_name ?? ""}
         otherPhoto={photoUrl(photo?.storage_path)}
         otherActiveAt={other?.last_active_at ?? null}
-        expiresAt={match.expires_at}
+        expiresAt={
+          match.expires_at ??
+          new Date(new Date(match.created_at).getTime() + 24 * 60 * 60 * 1000).toISOString()
+        }
         extendedAt={match.extended_at}
         sharedInterests={(sharedRows ?? []).map((r: { label: string }) => r.label)}
       />

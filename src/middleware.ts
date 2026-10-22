@@ -34,6 +34,17 @@ export async function middleware(request: NextRequest) {
     url.searchParams.set("next", path);
     return NextResponse.redirect(url);
   }
+
+  // Akun lama tidak boleh mendarat di form pendaftaran setelah login ulang.
+  if (user && path === "/onboarding") {
+    const { data: profile } = await supabase.from("profiles").select("onboarded_at").eq("id", user.id).maybeSingle();
+    if (profile?.onboarded_at) {
+      const url = request.nextUrl.clone();
+      url.pathname = "/app/discover";
+      url.search = "";
+      return NextResponse.redirect(url);
+    }
+  }
   return response;
 }
 

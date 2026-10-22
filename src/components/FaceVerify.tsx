@@ -6,8 +6,9 @@ import Link from "next/link";
 import { Meter } from "@/components/motion";
 import { Icon } from "@/components/Icon";
 import { btnGhost, btnPrimary } from "@/components/ui";
+import { stepSatisfied } from "@/lib/face-steps";
+import type { Challenge } from "@/lib/face-steps";
 
-type Challenge = "kiri" | "kanan" | "dekat";
 type Phase = "intro" | "loading" | "live" | "checking" | "done" | "error";
 
 const CHALLENGE_TEXT: Record<Challenge, string> = {
@@ -17,7 +18,8 @@ const CHALLENGE_TEXT: Record<Challenge, string> = {
 };
 
 const ORDER: Challenge[] = ["kiri", "kanan", "dekat"];
-const NEED_HITS = 2;
+const NEED_HITS = 1;
+const FRAME_MS = 120;
 
 type FaceApi = {
   nets: {
@@ -39,6 +41,8 @@ export default function FaceVerify({ verified }: { verified: boolean }) {
   const apiRef = useRef<FaceApi | null>(null);
   const busyRef = useRef(false);
   const hitsRef = useRef(0);
+  const lastFrame = useRef(0);
+  const [slow, setSlow] = useState(false);
 
   const [phase, setPhase] = useState<Phase>(verified ? "done" : "intro");
   const [step, setStep] = useState(0);
@@ -60,9 +64,16 @@ export default function FaceVerify({ verified }: { verified: boolean }) {
     if (apiRef.current) return apiRef.current;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const faceapi = (await import("@vladmandic/face-api")) as unknown as FaceApi;
-    await faceapi.nets.tinyFaceDetector.loadFromUri("/models/face");
-    await faceapi.nets.faceLandmark68Net.loadFromUri("/models/face");
-    await faceapi.nets.faceRecognitionNet.loadFromUri("/models/face");
+    const load = Promise.all([
+      faceapi.nets.tinyFaceDetector.loadFromUri("/models/face"),
+      faceapi.nets.faceLandmark68Net.loadFromUri("/models/face"),
+      faceapi.nets.faceRecognitionNet.loadFromUri("/models/face"),
+    ]);
+    // Jangan biarkan layar "Menyiapkan model" menggantung tanpa akhir.
+    const timeout = new Promise<never>((_, reject) =>
+      setTimeout(() => reject(new Error("Model wajah terlalu lama dimuat. Cek koneksi lalu coba lagi.")), 25000),
+    );
+    await Promise.race([load, timeout]);
     apiRef.current = faceapi;
     return faceapi;
   }
@@ -72,7 +83,10 @@ export default function FaceVerify({ verified }: { verified: boolean }) {
     setError(null);
     setProgress(0);
     setStep(0);
+    setSlow(false);
+    busyRef.current = false;
     hitsRef.current = 0;
+    lastFrame.current = 0;
     try {
       await loadModels();
       const stream = await navigator.mediaDevices.getUserMedia({
@@ -109,20 +123,20 @@ export default function FaceVerify({ verified }: { verified: boolean }) {
         rafRef.current = requestAnimationFrame(() => void tick());
         return;
       }
+      // Batasi inferensi ~8 fps supaya HP kelas menengah tidak tersendat.
+      if (performance.now() - lastFrame.current < FRAME_MS) {
+        rafRef.current = requestAnimationFrame(() => void tick());
+        return;
+      }
+      lastFrame.current = performance.now();
       try {
-        const opts = new api.TinyFaceDetectorOptions({ inputSize: 320, scoreThreshold: 0.5 });
-        const all = await api.detectAllFaces(video, opts);
-        if (all.length > 1) {
+        const opts = new api.TinyFaceDetectorOptions({ inputSize: 320, scoreThreshold: 0.45 });
+        const det = await api.detectSingleFace(video, opts).withFaceLandmarks();
+        if (!det) {
           hitsRef.current = 0;
-          setHint("Ada lebih dari satu wajah. Pastikan hanya kamu di kamera.");
+          setHint("Wajah belum terdeteksi. Cahaya cukup dan hadap kamera.");
         } else {
-          const det = await api.detectSingleFace(video, opts).withFaceLandmarks();
-          if (!det) {
-            hitsRef.current = 0;
-            setHint("Wajah belum terdeteksi. Cahaya cukup dan hadap kamera.");
-          } else {
-            checkStep(det);
-          }
+          checkStep(det);
         }
       } catch {
         // frame gagal sesekali: abaikan, lanjut frame berikutnya
@@ -140,32 +154,28 @@ export default function FaceVerify({ verified }: { verified: boolean }) {
     const nose = det.landmarks.getNose()?.[3] ?? det.landmarks.positions?.[30];
     const video = videoRef.current;
     if (!nose || !video) return;
-    const offset = (nose.x - (box.x + box.width / 2)) / box.width;
-    const ratio = box.width / video.videoWidth;
-
-    let ok = false;
-    if (current === "kiri") ok = offset > 0.1; // preview dicerminkan
-    else if (current === "kanan") ok = offset < -0.1;
-    else ok = ratio > 0.3;
+    const ok = stepSatisfied(current, box, nose, video.videoWidth);
 
     if (ok) {
       hitsRef.current += 1;
       setProgress(Math.min(1, (step + hitsRef.current / NEED_HITS) / ORDER.length));
       setHint("Bagus, tahan sebentar…");
-      if (hitsRef.current >= NEED_HITS) {
-        hitsRef.current = 0;
-        const next = step + 1;
-        setStep(next);
-        setProgress(next / ORDER.length);
-        if (next >= ORDER.length) {
-          void finish();
-        } else {
-          setHint(CHALLENGE_TEXT[ORDER[next]]);
-        }
-      }
+      if (hitsRef.current >= NEED_HITS) advance();
     } else {
       hitsRef.current = 0;
       setHint(CHALLENGE_TEXT[current]);
+    }
+  }
+
+  function advance() {
+    hitsRef.current = 0;
+    const next = step + 1;
+    setStep(next);
+    setProgress(next / ORDER.length);
+    if (next >= ORDER.length) {
+      void finish();
+    } else {
+      setHint(CHALLENGE_TEXT[ORDER[next]]);
     }
   }
 
@@ -211,16 +221,19 @@ export default function FaceVerify({ verified }: { verified: boolean }) {
       canvas.getContext("2d")?.drawImage(video, 0, 0, canvas.width, canvas.height);
       const selfie = canvas.toDataURL("image/jpeg", 0.78);
 
+      const controller = new AbortController();
+      const timeout = window.setTimeout(() => controller.abort(), 15000);
       const res = await fetch("/api/verify/face", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        signal: controller.signal,
         body: JSON.stringify({
           descriptor: merged,
           challenges: ORDER,
           selfie,
           device: navigator.userAgent.slice(0, 120),
         }),
-      });
+      }).finally(() => window.clearTimeout(timeout));
       const json = (await res.json()) as { ok?: boolean; status?: string; error?: string };
       if (!res.ok || !json.ok) throw new Error(json.error ?? "Verifikasi gagal.");
 
@@ -235,6 +248,16 @@ export default function FaceVerify({ verified }: { verified: boolean }) {
       stopCamera();
     }
   }
+
+  // Tantangan yang tidak kunjung lolos biasanya karena kamera gelap atau wajah terlalu kecil.
+  useEffect(() => {
+    if (phase !== "live") {
+      setSlow(false);
+      return;
+    }
+    const id = window.setTimeout(() => setSlow(true), 12000);
+    return () => window.clearTimeout(id);
+  }, [phase, step]);
 
   if (phase === "done") {
     return (
@@ -315,16 +338,41 @@ export default function FaceVerify({ verified }: { verified: boolean }) {
           <p className="mt-2 text-sm font-semibold text-ink" role="status" aria-live="polite">
             {hint}
           </p>
+          {slow && phase === "live" ? (
+            <button
+              type="button"
+              onClick={advance}
+              className="mt-1 text-xs font-semibold text-blush-deep underline underline-offset-2"
+            >
+              Wajah sudah saya gerakkan, lanjut langkah ini
+            </button>
+          ) : null}
+          {slow && phase === "live" ? (
+            <p className="mt-1 text-xs leading-relaxed text-ink-soft">
+              Kalau wajah tetap tidak terbaca: dekatkan wajah sampai memenuhi lingkaran, hadapkan ke cahaya,
+              lalu gerakkan kepala sedikit lebih jauh. Verifikasi ini opsional, kamu bisa lanjut tanpa badge.
+            </p>
+          ) : null}
           {error ? <p className="mt-2 text-xs font-medium text-blush-deep">{error}</p> : null}
           <div className="mt-4 flex flex-wrap gap-2">
             {phase === "live" ? (
-              <button type="button" className={btnGhost} onClick={() => { stopCamera(); setPhase("intro"); setStep(0); setProgress(0); }}>
-                Hentikan kamera
-              </button>
+              <>
+                <button type="button" className={btnGhost} onClick={() => { stopCamera(); setPhase("intro"); setStep(0); setProgress(0); }}>
+                  Hentikan kamera
+                </button>
+                <Link href="/app/discover" className={btnGhost}>
+                  Lewati dulu
+                </Link>
+              </>
             ) : (
-              <button type="button" className={btnPrimary} onClick={start}>
-                {phase === "error" ? "Coba lagi" : "Mulai pindai"}
-              </button>
+              <>
+                <button type="button" className={btnPrimary} onClick={start}>
+                  {phase === "error" ? "Coba lagi" : "Mulai pindai"}
+                </button>
+                <Link href="/app/discover" className={btnGhost}>
+                  Lewati dulu
+                </Link>
+              </>
             )}
           </div>
         </div>

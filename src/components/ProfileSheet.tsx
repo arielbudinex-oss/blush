@@ -220,7 +220,7 @@ export default function ProfileSheet({
               </div>
             </div>
 
-            <div className="grid grid-cols-3 gap-2 border-t border-line bg-paper px-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] pt-3">
+            <div className="grid grid-cols-3 gap-2 border-t border-line bg-paper px-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] pt-3 shadow-[0_-14px_24px_-24px_rgba(0,0,0,0.45)]">
               <button
                 type="button"
                 className={btnGhost}
@@ -241,7 +241,7 @@ export default function ProfileSheet({
                   onClose();
                 }}
               >
-                <Icon name="star" className="h-4 w-4" /> Super
+                <Icon name="star" className="h-4 w-4" /> Superlike
               </button>
               <button
                 type="button"

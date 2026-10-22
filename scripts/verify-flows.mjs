@@ -40,6 +40,8 @@ for (const [table, column] of Object.entries(scoped)) {
   if (error) throw new Error(`reset messages: ${error.message}`);
 }
 await admin.from("profiles").update({ plan: "free" }).neq("display_name", "");
+// Suite ini menguji ulang onboarding, jadi akun uji dibuat seolah belum pernah onboarding.
+await admin.from("profiles").update({ onboarded_at: null }).in("display_name", ["Rara", "Damar"]);
 
 const SCRATCH = "C:/Users/ariel/AppData/Local/hermes/cache/scratch";
 const RARA = { email: "rara@blush.test", pass: process.env.BLUSH_TEST_PASSWORD ?? "", name: "Rara", bd: "1998-05-12", city: "Bandung", gender: "Perempuan", photo: `${SCRATCH}/blush-rara.png` };
@@ -114,7 +116,14 @@ async function onboarding(page, user, interestLabels) {
   await clickText(page, "Lanjut");
 
   await clickText(page, "Cari kencan");
-  for (const label of interestLabels) await clickText(page, label);
+  for (const label of interestLabels) {
+    // Onboarding bisa terisi otomatis; jangan mengetuk dua kali sampai terlepas.
+    await page.evaluate((l) => {
+      const el = [...document.querySelectorAll("button")].find((x) => x.textContent?.trim() === l);
+      if (el && el.getAttribute("aria-pressed") !== "true") el.click();
+    }, label);
+    await new Promise((r) => setTimeout(r, 150));
+  }
   await clickText(page, "Lanjut");
 
   const input = await page.$('input[type="file"]');
@@ -193,7 +202,7 @@ try {
   await pb.waitForSelector('form textarea[aria-label="Pesan"]', { timeout: 15000 });
   await pb.type('form textarea[aria-label="Pesan"]', "Halo Rara, kita sama-sama suka ngopi ya!");
   await pb.click("form button[type=submit]");
-  await new Promise((r) => setTimeout(r, 2500));
+  await pb.waitForFunction(() => document.body.innerText.includes("Halo Rara"), { timeout: 12000 }).catch(() => null);
   const sent = await pb.evaluate(() => document.body.innerText);
   ok("pesan terkirim & tampil", sent.includes("Halo Rara"));
 

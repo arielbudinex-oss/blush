@@ -21,6 +21,7 @@ export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const [notice, setNotice] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
 
   const [next, setNext] = useState("/app/discover");
@@ -29,8 +30,16 @@ export default function LoginPage() {
     const params = new URLSearchParams(window.location.search);
     const code = params.get("error");
     if (code) setError(GOOGLE_ERRORS[code] ?? "Masuk pakai Google gagal. Coba lagi.");
+    if (params.get("bye")) setNotice("Kamu sudah keluar. Masuk lagi kapan saja.");
     const target = params.get("next");
     if (target?.startsWith("/")) setNext(target);
+
+    // Sudah punya sesi? Jangan tampilkan form login lagi.
+    createClient()
+      .auth.getUser()
+      .then(({ data }) => {
+        if (data.user) router.replace(target?.startsWith("/") ? target : "/app/discover");
+      });
   }, []);
 
   async function submit(e: React.FormEvent) {
@@ -80,6 +89,7 @@ export default function LoginPage() {
             onChange={(e) => setPassword(e.target.value)}
           />
         </div>
+        {notice ? <p className="text-sm font-medium text-ok">{notice}</p> : null}
         {error ? <p className="text-sm font-medium text-blush-deep">{error}</p> : null}
         <button type="submit" className={btnPrimary} disabled={busy}>
           {busy ? "Memeriksa…" : "Masuk"}

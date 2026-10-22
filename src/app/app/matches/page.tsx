@@ -67,7 +67,12 @@ export default async function MatchesPage() {
                     ) : null}
                   </span>
                   <span className="w-full truncate text-xs font-semibold">{m.display_name || "Tanpa nama"}</span>
-                  <ExpiryChip expiresAt={m.expires_at} />
+                  <ExpiryChip
+                    expiresAt={
+                      m.expires_at ??
+                      new Date(new Date(m.created_at).getTime() + 24 * 60 * 60 * 1000).toISOString()
+                    }
+                  />
                 </Link>
               );
             })}
@@ -123,7 +128,12 @@ export default async function MatchesPage() {
                       {m.unread}
                     </span>
                   ) : (
-                    <ExpiryChip expiresAt={m.expires_at} />
+                    <ExpiryChip
+                      expiresAt={
+                        m.expires_at ??
+                        new Date(new Date(m.created_at).getTime() + 24 * 60 * 60 * 1000).toISOString()
+                      }
+                    />
                   )}
                 </div>
               </Link>

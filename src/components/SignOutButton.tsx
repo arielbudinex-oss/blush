@@ -13,7 +13,7 @@ export default function SignOutButton() {
   async function signOut() {
     setBusy(true);
     await supabase.auth.signOut();
-    router.push("/");
+    router.push("/login?bye=1");
     router.refresh();
   }
 

@@ -30,6 +30,11 @@ export default function SignupPage() {
       setError(err.message);
       return;
     }
+    // Supabase mengembalikan user tanpa identity kalau email sudah terdaftar.
+    if (data.user && (data.user.identities?.length ?? 0) === 0) {
+      setError("Email ini sudah terdaftar. Masuk lewat halaman masuk.");
+      return;
+    }
     if (!data.session) {
       setNotice("Akun dibuat. Cek email buat konfirmasi, lalu masuk.");
       return;

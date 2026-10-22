@@ -47,20 +47,41 @@ export default function OnboardingForm() {
       .then(({ data }) => setInterests(data ?? []));
   }, [supabase]);
 
-  // Nama dari Google sudah tersimpan di profil, jadi form tidak mulai kosong.
+  // Kalau onboarding sempat terputus, lanjutkan dari data yang sudah tersimpan.
   useEffect(() => {
-    supabase.auth.getUser().then(({ data: auth }) => {
-      const uid = auth.user?.id;
-      if (!uid) return;
-      supabase
-        .from("profiles")
-        .select("display_name")
-        .eq("id", uid)
-        .maybeSingle()
-        .then(({ data }) => {
-          if (data?.display_name) setDisplayName((prev) => prev || data.display_name);
-        });
-    });
+    (async () => {
+      const {
+        data: { user: authUser },
+      } = await supabase.auth.getUser();
+      if (!authUser) return;
+      const uid = authUser.id;
+      const [{ data: profile }, { data: pref }, { data: mine }] = await Promise.all([
+        supabase
+          .from("profiles")
+          .select("display_name, birthdate, gender, city, intent")
+          .eq("id", uid)
+          .maybeSingle(),
+        supabase
+          .from("preferences")
+          .select("min_age, max_age, max_distance_km, show_gender")
+          .eq("user_id", uid)
+          .maybeSingle(),
+        supabase.from("profile_interests").select("interest_id").eq("profile_id", uid),
+      ]);
+
+      if (profile?.display_name) setDisplayName((prev) => prev || profile.display_name);
+      if (profile?.birthdate) setBirthdate((prev) => prev || profile.birthdate);
+      if (profile?.gender) setGender((prev) => prev || profile.gender);
+      if (profile?.city) setCity((prev) => prev || profile.city);
+      if (profile?.intent) setIntent(profile.intent);
+      if (pref) {
+        setMinAge(pref.min_age);
+        setMaxAge(pref.max_age);
+        setMaxDistance(pref.max_distance_km);
+        if (pref.show_gender?.length) setShowGender(pref.show_gender as Gender[]);
+      }
+      if (mine?.length) setPicked((prev) => prev.length ? prev : mine.map((r: { interest_id: number }) => r.interest_id));
+    })();
   }, [supabase]);
 
   const age = birthdate ? Math.floor((Date.now() - new Date(birthdate).getTime()) / 31557600000) : null;
