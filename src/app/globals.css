@@ -183,7 +183,8 @@ a {
 }
 
 .tabbar {
-  padding-bottom: env(safe-area-inset-bottom);
+  /* Sisakan ruang untuk home indicator dan toolbar browser di HP. */
+  padding-bottom: max(0.5rem, env(safe-area-inset-bottom));
 }
 
 /* Tinggi kartu mengikuti viewport dinamis, bukan tinggi statis. */

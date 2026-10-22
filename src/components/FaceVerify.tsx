@@ -23,11 +23,11 @@ const FRAME_MS = 120;
 
 type FaceApi = {
   nets: {
-    tinyFaceDetector: { loadFromUri: (u: string) => Promise<void> };
+    ssdMobilenetv1: { loadFromUri: (u: string) => Promise<void> };
     faceLandmark68Net: { loadFromUri: (u: string) => Promise<void> };
     faceRecognitionNet: { loadFromUri: (u: string) => Promise<void> };
   };
-  TinyFaceDetectorOptions: new (opts: { inputSize?: number; scoreThreshold?: number }) => unknown;
+  SsdMobilenetv1Options: new (opts: { minConfidence?: number }) => unknown;
   detectSingleFace: (input: HTMLVideoElement, opts: unknown) => any;
   detectAllFaces: (input: HTMLVideoElement, opts: unknown) => Promise<unknown[]>;
 };
@@ -39,6 +39,7 @@ export default function FaceVerify({ verified }: { verified: boolean }) {
   const streamRef = useRef<MediaStream | null>(null);
   const rafRef = useRef<number | null>(null);
   const apiRef = useRef<FaceApi | null>(null);
+  const recognitionRef = useRef<Promise<void> | null>(null);
   const busyRef = useRef(false);
   const hitsRef = useRef(0);
   const lastFrame = useRef(0);
@@ -65,17 +66,29 @@ export default function FaceVerify({ verified }: { verified: boolean }) {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const faceapi = (await import("@vladmandic/face-api")) as unknown as FaceApi;
     const load = Promise.all([
-      faceapi.nets.tinyFaceDetector.loadFromUri("/models/face"),
+      faceapi.nets.ssdMobilenetv1.loadFromUri("/models/face"),
       faceapi.nets.faceLandmark68Net.loadFromUri("/models/face"),
-      faceapi.nets.faceRecognitionNet.loadFromUri("/models/face"),
     ]);
     // Jangan biarkan layar "Menyiapkan model" menggantung tanpa akhir.
     const timeout = new Promise<never>((_, reject) =>
-      setTimeout(() => reject(new Error("Model wajah terlalu lama dimuat. Cek koneksi lalu coba lagi.")), 25000),
+      setTimeout(() => reject(new Error("Model wajah terlalu lama dimuat. Cek koneksi lalu coba lagi.")), 60000),
     );
     await Promise.race([load, timeout]);
     apiRef.current = faceapi;
     return faceapi;
+  }
+
+  /** Model pengenal dimuat belakangan supaya kamera cepat terbuka. */
+  async function ensureRecognition(api: FaceApi) {
+    if (!recognitionRef.current) {
+      recognitionRef.current = api.nets.faceRecognitionNet.loadFromUri("/models/face");
+    }
+    await Promise.race([
+      recognitionRef.current,
+      new Promise<never>((_, reject) =>
+        setTimeout(() => reject(new Error("Model pengenal wajah belum siap. Muat ulang halaman lalu coba lagi.")), 45000),
+      ),
+    ]);
   }
 
   async function start() {
@@ -89,24 +102,44 @@ export default function FaceVerify({ verified }: { verified: boolean }) {
     lastFrame.current = 0;
     try {
       await loadModels();
-      const stream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: "user", width: { ideal: 720 }, height: { ideal: 720 } },
-        audio: false,
-      });
+      let stream: MediaStream;
+      try {
+        stream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: "user", width: { ideal: 720 }, height: { ideal: 720 } },
+          audio: false,
+        });
+      } catch {
+        // Beberapa HP menolak constraint resolusi; minta kamera apa adanya.
+        stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" }, audio: false });
+      }
       streamRef.current = stream;
       const video = videoRef.current;
       if (!video) throw new Error("Elemen kamera tidak siap.");
       video.srcObject = stream;
+      if (video.readyState < 2) {
+        await new Promise<void>((resolve) => {
+          const done = () => resolve();
+          video.addEventListener("loadedmetadata", done, { once: true });
+          window.setTimeout(done, 4000);
+        });
+      }
       await video.play();
       setPhase("live");
       setHint("Posisikan wajah di dalam bingkai.");
+      void ensureRecognition(apiRef.current!).catch(() => {
+        // Kalau gagal, error muncul saat menyelesaikan tantangan.
+      });
       loop();
     } catch (e) {
       const msg = e instanceof Error ? e.message : "Kamera tidak bisa dibuka.";
       setError(
         /permission|denied|NotAllowed/i.test(msg)
           ? "Izin kamera ditolak. Aktifkan izin kamera di browser lalu coba lagi."
-          : msg,
+          : /NotFoundError|Requested device not found/i.test(msg)
+            ? "Kamera tidak ditemukan. Coba dari HP atau colok kamera."
+            : /NotReadableError|Could not start video/i.test(msg)
+              ? "Kamera sedang dipakai aplikasi lain. Tutup aplikasi itu lalu coba lagi."
+              : msg,
       );
       setPhase("error");
     }
@@ -130,7 +163,7 @@ export default function FaceVerify({ verified }: { verified: boolean }) {
       }
       lastFrame.current = performance.now();
       try {
-        const opts = new api.TinyFaceDetectorOptions({ inputSize: 320, scoreThreshold: 0.45 });
+        const opts = new api.SsdMobilenetv1Options({ minConfidence: 0.35 });
         const det = await api.detectSingleFace(video, opts).withFaceLandmarks();
         if (!det) {
           hitsRef.current = 0;
@@ -188,7 +221,8 @@ export default function FaceVerify({ verified }: { verified: boolean }) {
     setHint("Mengunci wajah…");
 
     try {
-      const opts = new api.TinyFaceDetectorOptions({ inputSize: 416, scoreThreshold: 0.55 });
+      await ensureRecognition(api);
+      const opts = new api.SsdMobilenetv1Options({ minConfidence: 0.4 });
       const shots: Float32Array[] = [];
       for (let i = 0; i < 4; i += 1) {
         const det = await api.detectSingleFace(video, opts).withFaceLandmarks().withFaceDescriptor();
@@ -381,7 +415,7 @@ export default function FaceVerify({ verified }: { verified: boolean }) {
           <span className="text-xs font-semibold text-ink-soft">Kenapa banyak yang verifikasi</span>
           <p className="mt-2 text-sm text-ink-soft">
             Supaya orang lebih mudah percaya. Kamu diminta bergerak sedikit, jadi foto diam atau video tidak bisa lolos.
-            Nggak wajib, kok.
+            Verifikasi ini opsional.
           </p>
         </div>
       </div>

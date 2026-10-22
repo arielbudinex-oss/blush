@@ -3,7 +3,7 @@ import { createServerSupabase } from "@/lib/supabase/server";
 import { createAdminSupabase } from "@/lib/supabase/admin";
 
 const ALLOWED_CHALLENGES = new Set(["kiri", "kanan", "dekat"]);
-const MAX_DESC_DISTANCE = 0.52; // ambang euclidean: < 0.52 dianggap wajah yang sama
+const MAX_DESC_DISTANCE = 0.55; // wajah yang sama ±0.45, wajah berbeda ±0.78
 const ATTEMPT_COOLDOWN_MS = 60 * 60 * 1000;
 
 function euclidean(a: number[], b: number[]) {
@@ -92,7 +92,10 @@ export async function POST(request: Request) {
     if (d < best) best = d;
     if (d < MAX_DESC_DISTANCE) {
       return NextResponse.json(
-        { error: "Wajah ini sudah terdaftar di akun lain. Satu wajah hanya untuk satu akun." },
+        {
+          error:
+            "Wajah ini sudah dipakai di akun Blush lain. Satu wajah hanya untuk satu akun. Masuk ke akun itu, atau lewati verifikasi.",
+        },
         { status: 409 },
       );
     }
