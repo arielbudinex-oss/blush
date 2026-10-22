@@ -24,10 +24,12 @@ const FRAME_MS = 120;
 type FaceApi = {
   nets: {
     ssdMobilenetv1: { loadFromUri: (u: string) => Promise<void> };
+    tinyFaceDetector: { loadFromUri: (u: string) => Promise<void> };
     faceLandmark68Net: { loadFromUri: (u: string) => Promise<void> };
     faceRecognitionNet: { loadFromUri: (u: string) => Promise<void> };
   };
   SsdMobilenetv1Options: new (opts: { minConfidence?: number }) => unknown;
+  TinyFaceDetectorOptions: new (opts: { inputSize?: number; scoreThreshold?: number }) => unknown;
   detectSingleFace: (input: HTMLVideoElement, opts: unknown) => any;
   detectAllFaces: (input: HTMLVideoElement, opts: unknown) => Promise<unknown[]>;
 };
@@ -43,6 +45,7 @@ export default function FaceVerify({ verified }: { verified: boolean }) {
   const busyRef = useRef(false);
   const hitsRef = useRef(0);
   const lastFrame = useRef(0);
+  const missRef = useRef(0);
   const [slow, setSlow] = useState(false);
 
   const [phase, setPhase] = useState<Phase>(verified ? "done" : "intro");
@@ -67,6 +70,7 @@ export default function FaceVerify({ verified }: { verified: boolean }) {
     const faceapi = (await import("@vladmandic/face-api")) as unknown as FaceApi;
     const load = Promise.all([
       faceapi.nets.ssdMobilenetv1.loadFromUri("/models/face"),
+      faceapi.nets.tinyFaceDetector.loadFromUri("/models/face"),
       faceapi.nets.faceLandmark68Net.loadFromUri("/models/face"),
     ]);
     // Jangan biarkan layar "Menyiapkan model" menggantung tanpa akhir.
@@ -81,7 +85,10 @@ export default function FaceVerify({ verified }: { verified: boolean }) {
   /** Model pengenal dimuat belakangan supaya kamera cepat terbuka. */
   async function ensureRecognition(api: FaceApi) {
     if (!recognitionRef.current) {
-      recognitionRef.current = api.nets.faceRecognitionNet.loadFromUri("/models/face");
+      recognitionRef.current = api.nets.faceRecognitionNet.loadFromUri("/models/face").catch((e) => {
+        recognitionRef.current = null;
+        throw e;
+      });
     }
     await Promise.race([
       recognitionRef.current,
@@ -99,6 +106,7 @@ export default function FaceVerify({ verified }: { verified: boolean }) {
     setSlow(false);
     busyRef.current = false;
     hitsRef.current = 0;
+    missRef.current = 0;
     lastFrame.current = 0;
     try {
       await loadModels();
@@ -164,7 +172,17 @@ export default function FaceVerify({ verified }: { verified: boolean }) {
       lastFrame.current = performance.now();
       try {
         const opts = new api.SsdMobilenetv1Options({ minConfidence: 0.35 });
-        const det = await api.detectSingleFace(video, opts).withFaceLandmarks();
+        let det = await api.detectSingleFace(video, opts).withFaceLandmarks();
+        if (!det) {
+          missRef.current += 1;
+          // Detektor kecil lebih cepat pada wajah yang jauh atau kamera gelap.
+          if (missRef.current >= 2) {
+            const tiny = new api.TinyFaceDetectorOptions({ inputSize: 416, scoreThreshold: 0.3 });
+            det = await api.detectSingleFace(video, tiny).withFaceLandmarks();
+          }
+        } else {
+          missRef.current = 0;
+        }
         if (!det) {
           hitsRef.current = 0;
           setHint("Wajah belum terdeteksi. Cahaya cukup dan hadap kamera.");
@@ -228,6 +246,15 @@ export default function FaceVerify({ verified }: { verified: boolean }) {
         const det = await api.detectSingleFace(video, opts).withFaceLandmarks().withFaceDescriptor();
         if (det?.descriptor) shots.push(det.descriptor as Float32Array);
         await new Promise((r) => setTimeout(r, 180));
+      }
+      if (shots.length < 2) {
+        // Satu percobaan terakhir dengan detektor kecil sebelum menyerah.
+        const tiny = new api.TinyFaceDetectorOptions({ inputSize: 416, scoreThreshold: 0.3 });
+        for (let i = 0; i < 3 && shots.length < 2; i += 1) {
+          const det = await api.detectSingleFace(video, tiny).withFaceLandmarks().withFaceDescriptor();
+          if (det?.descriptor) shots.push(det.descriptor as Float32Array);
+          await new Promise((r) => setTimeout(r, 120));
+        }
       }
       if (shots.length < 2) throw new Error("Wajah sulit dibaca. Coba lagi dengan cahaya lebih terang.");
 
@@ -344,7 +371,7 @@ export default function FaceVerify({ verified }: { verified: boolean }) {
         ) : null}
         {phase === "loading" || phase === "checking" ? (
           <div className="absolute inset-0 grid place-items-center bg-ink/70 text-sm font-semibold text-paper">
-            {phase === "loading" ? "Menyiapkan model wajah…" : "Memeriksa…"}
+            {phase === "loading" ? "Menyiapkan model wajah… pertama kali bisa 10 sampai 20 detik." : "Memeriksa…"}
           </div>
         ) : null}
       </div>
