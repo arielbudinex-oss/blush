@@ -20,7 +20,7 @@ function ipInfo(raw: string) {
     return { hash, masked: groups.slice(0, 4).join(":") + "::" };
   }
   const parts = ip.split(".");
-  return { hash, masked: parts.length === 4 ? `${parts[0]}.${parts[1]}.${parts[2]}.0` : ip };
+  return { hash, masked: parts.length === 4 ? `${parts[0]}.${parts[1]}.${parts[2]}.x` : ip };
 }
 
 function deviceFromUa(ua: string) {
@@ -59,6 +59,9 @@ function deviceFromUa(ua: string) {
 
 /** Titik masuk data analitik. Hanya server yang menulis, pengunjung tidak bisa membaca. */
 export async function POST(request: Request) {
+  const host = new URL(request.url).hostname;
+  if (["localhost", "127.0.0.1", "::1"].includes(host)) return new NextResponse(null, { status: 204 });
+
   let body: Record<string, unknown>;
   try {
     body = (await request.json()) as Record<string, unknown>;

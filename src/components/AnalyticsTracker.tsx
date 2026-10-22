@@ -42,6 +42,8 @@ export default function AnalyticsTracker() {
 
   useEffect(() => {
     if (!pathname || pathname.startsWith("/admin")) return;
+    // Jangan kotori analitik produksi dengan kunjungan dari server lokal.
+    if (["localhost", "127.0.0.1", "::1"].includes(window.location.hostname)) return;
 
     if (lastPath.current !== pathname) {
       lastPath.current = pathname;

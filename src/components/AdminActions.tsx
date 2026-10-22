@@ -10,6 +10,8 @@ export function PaymentRowActions({ paymentId }: { paymentId: string }) {
   const [msg, setMsg] = useState<string | null>(null);
 
   async function call(action: "paid" | "expire") {
+    const label = action === "paid" ? "Tandai transaksi ini lunas?" : "Kedaluwarsakan transaksi ini?";
+    if (!window.confirm(label)) return;
     setBusy(true);
     setMsg(null);
     const res = await fetch("/api/admin/payments/confirm", {
@@ -42,6 +44,7 @@ export function VerifyRowActions({ userId }: { userId: string }) {
   const [msg, setMsg] = useState<string | null>(null);
 
   async function call(action: "approve" | "reject") {
+    if (!window.confirm(action === "approve" ? "Setujui verifikasi wajah ini?" : "Tolak verifikasi wajah ini?")) return;
     setBusy(true);
     setMsg(null);
     const res = await fetch("/api/admin/verify/review", {

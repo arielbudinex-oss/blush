@@ -24,7 +24,7 @@ type ProfileRow = { id: string; name: string; plan: string; verified: boolean; l
 type Analytics = {
   generatedAt: string;
   truncated?: boolean;
-  now: { sessions: number; accounts: number; ips: number };
+  now: { sessions: number; accounts: number; guests: number; ips: number; people: number };
   last24: { pageViews: number; linkClicks: number; sessions: number; accounts: number; ips: number; clickIps: number };
   bots24: number;
   live: LiveRow[];
@@ -92,6 +92,7 @@ export default function AdminLive() {
           <h2 className="text-xl">Aktivitas langsung</h2>
           <p className="mt-1 text-sm text-ink-soft">
             Data dari pengunjung situs, termasuk tamu yang belum masuk. IP disamarkan; hitungan memakai hash.
+            Kunjungan berarti halaman dibuka, sesi berarti satu browser, akun aktif berarti punya aktivitas dalam 24 jam.
           </p>
         </div>
         <button
@@ -118,7 +119,7 @@ export default function AdminLive() {
       {data ? (
         <>
           <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-            <Stat label="Aktif sekarang" value={data.now.sessions} note={`${data.now.accounts} akun dalam 5 menit`} />
+            <Stat label="Aktif sekarang" value={data.now.people} note={`${data.now.accounts} akun · ${data.now.guests} tamu`} />
             <Stat label="IP aktif" value={data.now.ips} note="5 menit terakhir" />
             <Stat label="Kunjungan 24 jam" value={data.last24.pageViews} note={`${data.last24.sessions} sesi, ${data.last24.accounts} akun`} />
             <Stat label="Klik tautan 24 jam" value={data.last24.linkClicks} note={`${data.last24.clickIps} IP unik yang klik`} />

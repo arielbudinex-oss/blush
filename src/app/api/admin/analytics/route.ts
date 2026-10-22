@@ -86,7 +86,9 @@ export async function GET() {
 
   const liveMap = new Map<string, EventRow>();
   for (const e of recent30) {
-    if (!liveMap.has(e.session_id)) liveMap.set(e.session_id, e);
+    // Satu akun tampil sekali walau membuka beberapa tab; tamu tetap per sesi.
+    const key = e.user_id ? `u:${e.user_id}` : `s:${e.session_id}`;
+    if (!liveMap.has(key)) liveMap.set(key, e);
   }
   const live = [...liveMap.values()]
     .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
@@ -190,7 +192,9 @@ export async function GET() {
     now: {
       sessions: sessionSet(recent5).size,
       accounts: activeAccountIds.size,
+      guests: new Set(recent5.filter((e) => !e.user_id).map((e) => e.session_id)).size,
       ips: ipSet(recent5).size,
+      people: activeAccountIds.size + new Set(recent5.filter((e) => !e.user_id).map((e) => e.session_id)).size,
     },
     last24: {
       pageViews: events.filter((e) => e.event_type === "page_view").length,
