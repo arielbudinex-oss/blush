@@ -4,6 +4,7 @@ import { PLANS, formatIdr, type Plan } from "@/lib/plans";
 import { PaymentRowActions, VerifyRowActions } from "@/components/AdminActions";
 import AdminLive from "@/components/AdminLive";
 import AdminPush from "@/components/AdminPush";
+import AdminSidebar from "@/components/AdminSidebar";
 
 // Route ini selalu butuh sesi terbaru dari cookies, jadi memang blocking (Next 16 cache components).
 export const instant = false;
@@ -38,16 +39,11 @@ export default async function AdminPage() {
     supabase.from("reports").select("id, reporter_id, reported_id, reason, details, status").eq("status", "open"),
   ]);
 
-  const sections = [
-    ["#aktivitas", "Aktivitas"],
-    ["#notifikasi", "Notifikasi"],
-    ["#pembayaran", "Pembayaran"],
-    ["#verifikasi", "Verifikasi"],
-    ["#laporan", "Laporan"],
-  ] as const;
-
   return (
-    <main className="mx-auto w-full max-w-6xl px-[var(--space-md)] py-[var(--space-lg)]">
+    <div className="min-h-dvh bg-[#f6f3ee]">
+      <div className="mx-auto flex w-full max-w-[1400px]">
+        <AdminSidebar />
+        <main className="min-w-0 flex-1 px-4 py-5 lg:px-8 lg:py-8">
       <header className="flex flex-wrap items-end justify-between gap-3 border-b border-line pb-4">
         <div>
           <p className="text-2xs font-semibold uppercase tracking-[0.14em] text-blush-deep">Blush admin</p>
@@ -56,13 +52,9 @@ export default async function AdminPage() {
             Pengunjung, sesi, klik tautan, pembayaran, dan laporan dalam satu layar. Aksi sensitif memakai service role di server.
           </p>
         </div>
-        <nav aria-label="Bagian admin" className="flex flex-wrap gap-1.5 text-xs font-semibold">
-          {sections.map(([href, label]) => (
-            <a key={href} href={href} className="inline-flex min-h-9 items-center rounded-full border border-line bg-paper px-3 text-ink-soft hover:border-line-strong hover:text-ink">
-              {label}
-            </a>
-          ))}
-        </nav>
+        <span className="inline-flex items-center gap-1.5 rounded-full border border-line bg-paper px-3 py-1.5 text-xs font-semibold text-ink-soft">
+          <span className="h-1.5 w-1.5 rounded-full bg-ok" /> Live data
+        </span>
       </header>
 
       <div id="aktivitas" className="scroll-mt-24">
@@ -143,6 +135,8 @@ export default async function AdminPage() {
           </ul>
         )}
       </section>
-    </main>
+        </main>
+      </div>
+    </div>
   );
 }
