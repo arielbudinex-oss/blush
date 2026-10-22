@@ -17,6 +17,7 @@ type LiveRow = {
   eventType: "page_view" | "link_click";
 };
 type LinkRow = { target: string; label: string; clicks: number; ips: number; sessions: number };
+type ClickRow = { target: string; label: string; device: string; browser: string; ipMasked: string; at: string };
 type CountRow = { device?: string; browser?: string; count: number };
 type HourRow = { label: string; views: number; clicks: number };
 type ProfileRow = { id: string; name: string; plan: string; verified: boolean; lastActiveAt: string | null };
@@ -29,6 +30,7 @@ type Analytics = {
   bots24: number;
   live: LiveRow[];
   topLinks: LinkRow[];
+  recentClicks: ClickRow[];
   devices: CountRow[];
   browsers: CountRow[];
   hourly: HourRow[];
@@ -166,7 +168,7 @@ export default function AdminLive() {
 
           <div className="mt-4 grid gap-4 lg:grid-cols-[minmax(0,1.35fr)_minmax(0,1fr)]">
             <div className="rounded-card border border-line bg-paper p-4">
-              <h3 className="text-sm font-semibold text-ink">Sesi langsung</h3>
+              <h3 className="text-sm font-semibold text-ink">Sesi langsung (30 menit)</h3>
               {data.live.length === 0 ? (
                 <p className="mt-2 text-sm text-ink-soft">Belum ada pengunjung dalam 30 menit terakhir.</p>
               ) : (
@@ -209,6 +211,19 @@ export default function AdminLive() {
                   ))}
                 </ul>
               )}
+              {data.recentClicks.length ? (
+                <div className="mt-3 border-t border-line pt-3">
+                  <h4 className="text-xs font-semibold text-ink">Klik terbaru</h4>
+                  <ul className="mt-2 flex flex-col gap-1.5">
+                    {data.recentClicks.map((c, i) => (
+                      <li key={`${c.at}-${i}`} className="text-2xs text-ink-soft">
+                        <span className="font-semibold text-ink">{c.label || c.target}</span> · {c.device} · {c.ipMasked} ·{" "}
+                        {timeAgo(c.at)}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ) : null}
             </div>
           </div>
 

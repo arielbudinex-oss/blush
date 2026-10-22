@@ -70,16 +70,12 @@ export async function GET() {
 
   const recent5 = events.filter((e) => new Date(e.created_at).getTime() >= now - 5 * 60 * 1000);
   const recent30 = events.filter((e) => new Date(e.created_at).getTime() >= now - 30 * 60 * 1000);
+  // Satu sumber: akun dihitung dari event pengunjung, bukan dari presence profil,
+  // supaya angka kartu, sesi langsung, dan daftar akun tidak saling bertentangan.
   const activeAccountIds = new Set<string>();
   for (const e of recent5) if (e.user_id) activeAccountIds.add(e.user_id);
-  for (const p of profiles) {
-    if (p.last_active_at && new Date(p.last_active_at).getTime() >= now - 5 * 60 * 1000) activeAccountIds.add(p.id);
-  }
   const accountIds24 = new Set<string>();
   for (const e of events) if (e.user_id) accountIds24.add(e.user_id);
-  for (const p of profiles) {
-    if (p.last_active_at && new Date(p.last_active_at).getTime() >= now - 24 * HOUR) accountIds24.add(p.id);
-  }
 
   const sessionSet = (list: EventRow[]) => new Set(list.map((e) => e.session_id));
   const ipSet = (list: EventRow[]) => new Set(list.map((e) => e.ip_hash).filter(Boolean) as string[]);
@@ -132,6 +128,18 @@ export async function GET() {
     .sort((a, b) => b.clicks - a.clicks)
     .slice(0, 10)
     .map((l) => ({ target: l.target, label: l.label, clicks: l.clicks, ips: l.ips.size, sessions: l.sessions.size }));
+
+  const recentClicks = events
+    .filter((e) => e.event_type === "link_click")
+    .slice(0, 8)
+    .map((e) => ({
+      target: e.target || "",
+      label: e.label || e.target || "",
+      device: e.device_type || "Lainnya",
+      browser: e.browser || "Lainnya",
+      ipMasked: e.ip_masked || "tidak diketahui",
+      at: e.created_at,
+    }));
 
   const deviceCounts = new Map<string, number>();
   for (const e of events) {
@@ -207,6 +215,7 @@ export async function GET() {
     bots24,
     live,
     topLinks,
+    recentClicks,
     devices,
     browsers,
     hourly,
