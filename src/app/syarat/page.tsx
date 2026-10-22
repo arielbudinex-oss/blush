@@ -1,7 +1,11 @@
 import Link from "next/link";
 import { Wordmark } from "@/components/Logo";
 
-export const metadata = { title: "Syarat pemakaian · Blush" };
+export const metadata = {
+  title: "Syarat pemakaian",
+  description: "Aturan pemakaian Blush: umur minimum, satu akun satu orang, verifikasi wajah, dan larangan penyalahgunaan.",
+  alternates: { canonical: "/syarat" },
+};
 
 export default function TermsPage() {
   return (

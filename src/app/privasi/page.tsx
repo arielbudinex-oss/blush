@@ -1,7 +1,11 @@
 import Link from "next/link";
 import { Wordmark } from "@/components/Logo";
 
-export const metadata = { title: "Kebijakan privasi · Blush" };
+export const metadata = {
+  title: "Kebijakan privasi",
+  description: "Cara Blush menyimpan dan memakai data akun, profil, lokasi, verifikasi wajah, dan analitik kunjungan.",
+  alternates: { canonical: "/privasi" },
+};
 
 export default function PrivacyPage() {
   return (
@@ -25,6 +29,7 @@ export default function PrivacyPage() {
             <li>Data verifikasi wajah berupa angka ciri wajah, bukan foto atau video.</li>
             <li>Pesan chat, like, match, blokir, dan laporan yang kamu kirim.</li>
             <li>Riwayat pembayaran paket: nominal, status, dan tanggal. Data kartu tidak pernah masuk ke server kami.</li>
+            <li>Analitik kunjungan: halaman yang dibuka, tautan yang diklik, jenis perangkat dan browser, serta IP yang disamarkan dan di-hash untuk menghitung pengunjung.</li>
           </ul>
         </section>
 

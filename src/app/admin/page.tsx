@@ -2,9 +2,11 @@ import { redirect } from "next/navigation";
 import { createServerSupabase } from "@/lib/supabase/server";
 import { PLANS, formatIdr, type Plan } from "@/lib/plans";
 import { PaymentRowActions, VerifyRowActions } from "@/components/AdminActions";
+import AdminLive from "@/components/AdminLive";
 
 // Route ini selalu butuh sesi terbaru dari cookies, jadi memang blocking (Next 16 cache components).
 export const instant = false;
+export const metadata = { title: "Admin", robots: { index: false, follow: false } };
 
 export default async function AdminPage() {
   const supabase = await createServerSupabase();
@@ -39,11 +41,13 @@ export default async function AdminPage() {
   ]);
 
   return (
-    <main className="mx-auto w-full max-w-4xl px-[var(--space-md)] py-[var(--space-lg)]">
+    <main className="mx-auto w-full max-w-6xl px-[var(--space-md)] py-[var(--space-lg)]">
       <h1 className="text-3xl">Admin Blush</h1>
       <p className="mt-1 text-sm text-ink-soft">
         Semua aksi di sini memakai service role di server dan hanya bisa dipanggil oleh akun ber-role admin.
       </p>
+
+      <AdminLive />
 
       <section className="mt-[var(--space-lg)] rounded-card border border-line bg-paper p-[var(--space-md)]">
         <h2 className="text-xl">Pembayaran menunggu ({pending?.length ?? 0})</h2>

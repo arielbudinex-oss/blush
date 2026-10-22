@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
+import AnalyticsTracker from "@/components/AnalyticsTracker";
 
 const jakarta = localFont({
   src: [
@@ -30,8 +31,15 @@ export const metadata: Metadata = {
     siteName: "Blush",
     title: "Blush · kenalan dulu, urusan belakangan",
     description: "Profil yang jelas, badge wajah asli, chat yang kebuka setelah saling suka.",
+    images: [{ url: "/og.png", width: 1200, height: 630, alt: "Blush, aplikasi kencan dengan profil jelas dan badge wajah asli." }],
   },
-  twitter: { card: "summary_large_image", title: "Blush", description: "Kenalan dulu, urusan belakangan." },
+  twitter: {
+    card: "summary_large_image",
+    title: "Blush · kenalan dulu, urusan belakangan",
+    description: "Profil yang jelas, badge wajah asli, chat yang kebuka setelah saling suka.",
+    images: ["/og.png"],
+  },
+  alternates: { canonical: "/" },
   robots: { index: true, follow: true },
 };
 
@@ -44,7 +52,22 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="id" className={jakarta.variable}>
-      <body>{children}</body>
+      <body>
+        <AnalyticsTracker />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "WebSite",
+              name: "Blush",
+              url: siteUrl,
+              description: "Aplikasi kencan Indonesia dengan profil jelas, badge wajah asli, dan chat setelah saling suka.",
+            }),
+          }}
+        />
+        {children}
+      </body>
     </html>
   );
 }
