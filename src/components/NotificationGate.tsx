@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Icon } from "@/components/Icon";
-import { pushSupported } from "@/lib/push-client";
+import { needsHomeScreen, pushSupported, subscribeToPush } from "@/lib/push-client";
 
 const FLAG = "blush_notif_prompted";
 
@@ -12,8 +12,10 @@ export default function NotificationGate() {
   const [denied, setDenied] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [iosInstall, setIosInstall] = useState(false);
 
   useEffect(() => {
+    setIosInstall(needsHomeScreen());
     if (!pushSupported()) return;
     if (Notification.permission === "granted") return;
     if (Notification.permission === "denied") return;
@@ -49,11 +51,22 @@ export default function NotificationGate() {
       } catch {
         // abaikan
       }
-      setError("Izin aktif. Memuat ulang…");
-      window.location.reload();
-      return;
+      // Jangan langsung reload: selesaikan langganan di halaman yang sama.
+      await subscribeToPush();
+      try {
+        localStorage.removeItem("blush_push_pending");
+        localStorage.setItem("blush_push_active", "1");
+      } catch {
+        // abaikan
+      }
+      finish();
     } catch (e) {
       setError(e instanceof Error ? e.message : "Notifikasi belum bisa diaktifkan.");
+      try {
+        localStorage.setItem("blush_push_pending", "1");
+      } catch {
+        // abaikan
+      }
     } finally {
       setBusy(false);
     }
@@ -79,6 +92,11 @@ export default function NotificationGate() {
           <li className="flex items-center gap-2"><Icon name="shield" className="h-4 w-4 text-blush-deep" /> Bisa dimatikan kapan saja</li>
         </ul>
 
+        {iosInstall ? (
+          <p className="mt-4 rounded-[10px] bg-paper-2 px-3 py-2 text-xs leading-relaxed text-ink-soft">
+            Di iPhone, notifikasi hanya bekerja setelah Blush ditambahkan ke Home Screen. Buka menu Bagikan, pilih Tambahkan ke Home Screen, lalu buka Blush dari ikon itu.
+          </p>
+        ) : null}
         {denied ? (
           <p className="mt-4 rounded-[10px] bg-paper-2 px-3 py-2 text-xs leading-relaxed text-ink-soft">
             Browser memblokir izin. Buka ikon gembok di address bar, izinkan notifikasi, lalu muat ulang. Kamu tetap bisa lanjut sekarang.
@@ -87,7 +105,7 @@ export default function NotificationGate() {
         {error ? <p className="mt-3 text-xs font-medium text-blush-deep">{error}</p> : null}
 
         <div className="mt-5 flex flex-col gap-2">
-          {!denied ? (
+          {!denied && !iosInstall ? (
             <button
               type="button"
               onClick={enable}
@@ -97,9 +115,9 @@ export default function NotificationGate() {
               {busy ? "Menyiapkan…" : "Aktifkan notifikasi"}
             </button>
           ) : null}
-          {error || denied ? (
+          {error || denied || iosInstall ? (
             <button type="button" onClick={finish} className="inline-flex min-h-11 items-center justify-center rounded-full border border-line px-4 text-sm font-semibold text-ink-soft hover:text-ink">
-              Lanjut tanpa notifikasi
+              {iosInstall ? "Mengerti" : "Lanjut tanpa notifikasi"}
             </button>
           ) : null}
           <p className="text-center text-2xs text-ink-faint">Izin hanya diminta sekali di awal.</p>

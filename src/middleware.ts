@@ -28,10 +28,12 @@ export async function middleware(request: NextRequest) {
   } = await supabase.auth.getUser();
 
   const path = request.nextUrl.pathname;
-  if (!user && PROTECTED.some((p) => path.startsWith(p))) {
+  const adminLogin = path === "/admin/login";
+  if (!user && !adminLogin && PROTECTED.some((p) => path.startsWith(p))) {
     const url = request.nextUrl.clone();
-    url.pathname = "/login";
-    url.searchParams.set("next", path);
+    url.pathname = path.startsWith("/admin") ? "/admin/login" : "/login";
+    url.search = "";
+    if (!path.startsWith("/admin")) url.searchParams.set("next", path);
     return NextResponse.redirect(url);
   }
 

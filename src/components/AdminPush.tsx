@@ -35,31 +35,31 @@ export default function AdminPush() {
   }
 
   return (
-    <section className="mt-[var(--space-lg)] rounded-card border border-line bg-paper p-[var(--space-md)]">
-      <h2 className="text-xl">Kirim notifikasi</h2>
-      <p className="mt-1 text-sm text-ink-soft">Promosi, pengumuman, atau pengingat. Hanya terkirim ke perangkat yang sudah mengizinkan notifikasi.</p>
-      <form onSubmit={send} className="mt-3 grid gap-2 sm:grid-cols-2">
-        <label className="flex flex-col gap-1 text-xs font-semibold text-ink-soft">
+    <section className="mt-5 rounded-card border border-line bg-paper p-5">
+      <h2 className="font-display text-xl font-semibold">Kirim notifikasi</h2>
+      <p className="mt-2 max-w-2xl text-sm leading-6 text-ink-soft">Promosi, pengumuman, atau pengingat. Hanya terkirim ke perangkat yang sudah mengizinkan notifikasi.</p>
+      <form onSubmit={send} className="mt-5 grid gap-4 sm:grid-cols-2">
+        <label className="flex flex-col gap-2 text-xs font-semibold text-ink-soft">
           Judul
           <input
             required
             maxLength={80}
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            className="min-h-10 rounded-[8px] border border-line bg-paper px-3 text-sm font-normal text-ink"
+            className="min-h-11 rounded-[9px] border border-line bg-paper px-3 text-sm font-normal text-ink"
             placeholder="Contoh: Match baru menunggu"
           />
         </label>
-        <label className="flex flex-col gap-1 text-xs font-semibold text-ink-soft">
+        <label className="flex flex-col gap-2 text-xs font-semibold text-ink-soft">
           Tujuan
           <input
             value={url}
             onChange={(e) => setUrl(e.target.value)}
-            className="min-h-10 rounded-[8px] border border-line bg-paper px-3 text-sm font-normal text-ink"
+            className="min-h-11 rounded-[9px] border border-line bg-paper px-3 text-sm font-normal text-ink"
             placeholder="/app/discover"
           />
         </label>
-        <label className="flex flex-col gap-1 text-xs font-semibold text-ink-soft sm:col-span-2">
+        <label className="flex flex-col gap-2 text-xs font-semibold text-ink-soft sm:col-span-2">
           Isi
           <textarea
             required
@@ -67,12 +67,12 @@ export default function AdminPush() {
             rows={2}
             value={message}
             onChange={(e) => setMessage(e.target.value)}
-            className="rounded-[8px] border border-line bg-paper px-3 py-2 text-sm font-normal text-ink"
+            className="rounded-[9px] border border-line bg-paper px-3 py-2.5 text-sm font-normal leading-6 text-ink"
             placeholder="Tulis pesan singkat yang berguna, bukan spam."
           />
         </label>
         <div className="flex flex-wrap items-center gap-3 sm:col-span-2">
-          <button type="submit" disabled={busy} className="inline-flex min-h-10 items-center rounded-full bg-ink px-4 text-xs font-semibold text-paper disabled:opacity-60">
+          <button type="submit" disabled={busy} className="inline-flex min-h-11 items-center rounded-full bg-ink px-5 text-sm font-semibold text-paper disabled:opacity-60">
             {busy ? "Mengirim…" : "Kirim ke semua"}
           </button>
           {status ? <span className="text-xs font-medium text-ink">{status}</span> : null}

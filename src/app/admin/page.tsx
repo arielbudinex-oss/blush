@@ -5,6 +5,7 @@ import { PaymentRowActions, VerifyRowActions } from "@/components/AdminActions";
 import AdminLive from "@/components/AdminLive";
 import AdminPush from "@/components/AdminPush";
 import AdminSidebar from "@/components/AdminSidebar";
+import AdminSignOut from "@/components/AdminSignOut";
 
 // Route ini selalu butuh sesi terbaru dari cookies, jadi memang blocking (Next 16 cache components).
 export const instant = false;
@@ -15,16 +16,19 @@ export default async function AdminPage() {
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  if (!user) redirect("/login?next=/admin");
+  if (!user) redirect("/admin/login");
 
   const { data: me } = await supabase.from("profiles").select("role").eq("id", user.id).maybeSingle();
   if (me?.role !== "admin") {
     return (
       <main className="mx-auto w-full max-w-2xl px-[var(--space-md)] py-[var(--space-xl)]">
         <h1 className="text-3xl">Halaman admin</h1>
-        <p className="mt-2 text-sm text-ink-soft">
+        <p className="mt-2 text-sm leading-6 text-ink-soft">
           Akun ini bukan admin. Hubungi pemilik Blush kalau kamu merasa seharusnya punya akses.
         </p>
+        <div className="mt-5 max-w-xs">
+          <AdminSignOut />
+        </div>
       </main>
     );
   }
@@ -44,11 +48,11 @@ export default async function AdminPage() {
       <div className="mx-auto flex w-full max-w-[1400px]">
         <AdminSidebar />
         <main className="min-w-0 flex-1 px-4 py-5 lg:px-8 lg:py-8">
-      <header className="flex flex-wrap items-end justify-between gap-3 border-b border-line pb-4">
+      <header className="flex flex-wrap items-end justify-between gap-4 border-b border-line pb-5">
         <div>
           <p className="text-2xs font-semibold uppercase tracking-[0.14em] text-blush-deep">Blush admin</p>
           <h1 className="mt-1 font-display text-[2rem] font-bold leading-tight tracking-[-0.03em]">Ringkasan hari ini</h1>
-          <p className="mt-2 max-w-2xl text-sm leading-6 text-ink-soft">
+          <p className="mt-2 max-w-2xl text-left text-sm leading-6 text-ink-soft">
             Pengunjung, sesi, klik tautan, pembayaran, dan laporan dalam satu layar. Aksi sensitif memakai service role di server.
           </p>
         </div>
@@ -67,7 +71,7 @@ export default async function AdminPage() {
 
       <section id="pembayaran" className="mt-5 scroll-mt-24 rounded-card border border-line bg-paper p-5">
         <div className="flex flex-wrap items-baseline justify-between gap-2">
-          <h2 className="text-xl">Pembayaran menunggu</h2>
+          <h2 className="font-display text-xl font-semibold tracking-[-0.01em]">Pembayaran menunggu</h2>
           <span className="rounded-full bg-paper-2 px-2 py-0.5 text-xs font-semibold text-ink-soft">{pending?.length ?? 0} transaksi</span>
         </div>
         {(pending ?? []).length === 0 ? (
@@ -93,7 +97,7 @@ export default async function AdminPage() {
 
       <section id="verifikasi" className="mt-5 scroll-mt-24 rounded-card border border-line bg-paper p-5">
         <div className="flex flex-wrap items-baseline justify-between gap-2">
-          <h2 className="text-xl">Verifikasi menunggu</h2>
+          <h2 className="font-display text-xl font-semibold tracking-[-0.01em]">Verifikasi menunggu</h2>
           <span className="rounded-full bg-paper-2 px-2 py-0.5 text-xs font-semibold text-ink-soft">{verifiedPending?.length ?? 0} akun</span>
         </div>
         {(verifiedPending ?? []).length === 0 ? (
@@ -118,7 +122,7 @@ export default async function AdminPage() {
 
       <section id="laporan" className="mt-5 scroll-mt-24 rounded-card border border-line bg-paper p-5">
         <div className="flex flex-wrap items-baseline justify-between gap-2">
-          <h2 className="text-xl">Laporan terbuka</h2>
+          <h2 className="font-display text-xl font-semibold tracking-[-0.01em]">Laporan terbuka</h2>
           <span className="rounded-full bg-paper-2 px-2 py-0.5 text-xs font-semibold text-ink-soft">{reports?.length ?? 0} laporan</span>
         </div>
         {(reports ?? []).length === 0 ? (

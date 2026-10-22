@@ -45,6 +45,10 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Deskriptor wajah tidak valid." }, { status: 400 });
   }
 
+  if (typeof body.selfie !== "string" || !body.selfie.startsWith("data:image/")) {
+    return NextResponse.json({ error: "Selfie verifikasi tidak ada. Ambil ulang dari kamera." }, { status: 400 });
+  }
+
   const challenges = Array.isArray(body.challenges) ? body.challenges.map(String) : [];
   const unique = new Set(challenges);
   if (challenges.length < 1 || unique.size < 1 || [...unique].some((c) => !ALLOWED_CHALLENGES.has(c))) {

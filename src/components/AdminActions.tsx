@@ -26,14 +26,14 @@ export function PaymentRowActions({ paymentId }: { paymentId: string }) {
   }
 
   return (
-    <span className="flex items-center gap-2">
-      <button type="button" className={btnPrimary + " !px-3 !py-1.5 !text-xs"} disabled={busy} onClick={() => call("paid")}>
+    <span className="flex flex-wrap items-center gap-3">
+      <button type="button" className={btnPrimary + " !min-h-10 !px-4 !text-xs"} disabled={busy} onClick={() => call("paid")}>
         Tandai lunas
       </button>
-      <button type="button" className={btnGhost + " !px-3 !py-1.5 !text-xs"} disabled={busy} onClick={() => call("expire")}>
+      <button type="button" className={btnGhost + " !min-h-10 !px-4 !text-xs"} disabled={busy} onClick={() => call("expire")}>
         Kedaluwarsakan
       </button>
-      {msg ? <span className="text-xs text-ink-faint">{msg}</span> : null}
+      {msg ? <span className="text-xs text-ink-soft">{msg}</span> : null}
     </span>
   );
 }
@@ -59,14 +59,14 @@ export function VerifyRowActions({ userId }: { userId: string }) {
   }
 
   return (
-    <span className="flex items-center gap-2">
-      <button type="button" className={btnPrimary + " !px-3 !py-1.5 !text-xs"} disabled={busy} onClick={() => call("approve")}>
+    <span className="flex flex-wrap items-center gap-3">
+      <button type="button" className={btnPrimary + " !min-h-10 !px-4 !text-xs"} disabled={busy} onClick={() => call("approve")}>
         Setujui
       </button>
-      <button type="button" className={btnGhost + " !px-3 !py-1.5 !text-xs"} disabled={busy} onClick={() => call("reject")}>
+      <button type="button" className={btnGhost + " !min-h-10 !px-4 !text-xs"} disabled={busy} onClick={() => call("reject")}>
         Tolak
       </button>
-      {msg ? <span className="text-xs text-ink-faint">{msg}</span> : null}
+      {msg ? <span className="text-xs text-ink-soft">{msg}</span> : null}
     </span>
   );
 }

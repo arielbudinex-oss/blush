@@ -50,17 +50,17 @@ function timeWib(iso: string | null) {
   return new Intl.DateTimeFormat("id-ID", { hour: "2-digit", minute: "2-digit", timeZone: "Asia/Jakarta" }).format(new Date(iso));
 }
 
-function Stat({ label, value, note, icon }: { label: string; value: number | string; note?: string; icon: "user" | "location" | "deck" | "heart" }) {
+function Stat({ label, value, note, icon }: { label: string; value: number | string; note?: string; icon: "user" | "location" | "deck" | "heart" | "sparkles" }) {
   return (
-    <div className="relative overflow-hidden rounded-card border border-line bg-gradient-to-b from-paper to-paper-2 p-4">
-      <div className="flex items-start justify-between gap-2">
-        <p className="text-xs font-semibold text-ink-soft">{label}</p>
-        <span className="grid h-8 w-8 place-items-center rounded-full bg-paper text-ink-soft ring-1 ring-line">
+    <div className="h-full min-w-0 rounded-card border border-line bg-gradient-to-b from-paper to-paper-2 p-5">
+      <div className="flex items-start justify-between gap-3">
+        <p className="max-w-[13rem] text-xs font-semibold leading-5 text-ink-soft">{label}</p>
+        <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-paper text-ink-soft ring-1 ring-line">
           <Icon name={icon} className="h-4 w-4" />
         </span>
       </div>
-      <p className="mt-1 font-display text-3xl font-bold tabular-nums text-ink">{value}</p>
-      {note ? <p className="mt-1 text-xs text-ink-soft">{note}</p> : null}
+      <p className="mt-2 font-display text-3xl font-bold tabular-nums leading-none text-ink">{value}</p>
+      {note ? <p className="mt-2 text-xs leading-5 text-ink-soft">{note}</p> : null}
     </div>
   );
 }
@@ -94,10 +94,10 @@ export default function AdminLive() {
 
   return (
     <section className="mt-6" aria-label="Analitik pengunjung">
-      <div className="flex flex-wrap items-end justify-between gap-2">
+      <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
           <h2 className="font-display text-2xl font-semibold tracking-[-0.01em]">Aktivitas langsung</h2>
-          <p className="mt-1 text-sm text-ink-soft">
+          <p className="mt-2 max-w-3xl text-sm leading-6 text-ink-soft">
             Data dari pengunjung situs, termasuk tamu yang belum masuk. IP disamarkan; hitungan memakai hash.
             Kunjungan berarti halaman dibuka, sesi berarti satu browser, akun aktif berarti punya aktivitas dalam 24 jam.
           </p>
@@ -125,11 +125,11 @@ export default function AdminLive() {
 
       {data ? (
         <>
-          <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="mt-5 grid auto-rows-fr gap-4 sm:grid-cols-2 lg:grid-cols-4">
             <Stat icon="user" label="Aktif sekarang" value={data.now.people} note={`${data.now.accounts} akun · ${data.now.guests} tamu`} />
             <Stat icon="location" label="IP aktif" value={data.now.ips} note="5 menit terakhir" />
             <Stat icon="deck" label="Kunjungan 24 jam" value={data.last24.pageViews} note={`${data.last24.sessions} sesi · ${data.last24.accounts} akun aktif`} />
-            <Stat icon="heart" label="Klik tautan 24 jam" value={data.last24.linkClicks} note={`${data.last24.clickIps} IP unik yang klik`} />
+            <Stat icon="sparkles" label="Klik tautan 24 jam" value={data.last24.linkClicks} note={`${data.last24.clickIps} IP unik yang klik`} />
           </div>
 
           {data.bots24 > 0 ? (
@@ -138,7 +138,7 @@ export default function AdminLive() {
             </p>
           ) : null}
 
-          <div className="mt-4 rounded-card border border-line bg-paper p-5">
+          <div className="mt-5 rounded-card border border-line bg-paper p-5">
             <div className="flex flex-wrap items-baseline justify-between gap-2">
               <h3 className="text-base font-semibold text-ink">Trafik 24 jam</h3>
               <span className="text-xs text-ink-soft">
@@ -148,45 +148,54 @@ export default function AdminLive() {
             <TrafficChart hourly={data.hourly} />
           </div>
 
-          <div className="mt-4 grid items-start gap-4 lg:grid-cols-[minmax(0,1.35fr)_minmax(0,1fr)]">
-            <div className="rounded-card border border-line bg-paper p-4">
-              <h3 className="text-sm font-semibold text-ink">Sesi terbaru (30 menit)</h3>
+          <div className="mt-5 grid items-start gap-4 lg:grid-cols-[minmax(0,1.35fr)_minmax(0,1fr)]">
+            <div className="rounded-card border border-line bg-paper p-5">
+              <h3 className="text-base font-semibold text-ink">Sesi terbaru</h3>
+              <p className="mt-1 text-xs text-ink-soft">30 menit terakhir</p>
               {data.live.length === 0 ? (
-                <p className="mt-2 text-sm text-ink-soft">Belum ada pengunjung dalam 30 menit terakhir.</p>
+                <p className="mt-4 rounded-[9px] bg-paper-2 px-3 py-4 text-sm text-ink-soft">Belum ada pengunjung dalam 30 menit terakhir.</p>
               ) : (
-                <ul className="mt-3 divide-y divide-line">
-                  {data.live.map((row) => (
-                    <li key={row.sessionId} className="flex flex-wrap items-start justify-between gap-2 py-2.5 text-sm">
-                      <div className="min-w-0">
-                        <p className="truncate font-semibold text-ink">
-                          {row.name}
-                          <span className="ml-2 text-xs font-normal text-ink-soft">{row.device} · {row.browser}</span>
-                        </p>
-                        <p className="truncate text-xs text-ink-soft">
-                          {row.eventType === "link_click" ? `Klik ${row.label || row.target}` : row.path}
-                        </p>
-                      </div>
-                      <div className="text-right text-2xs text-ink-soft">
-                        <p className="font-mono">{row.ipMasked}</p>
-                        <p>{timeAgo(row.lastAt)}</p>
-                      </div>
-                    </li>
-                  ))}
-                </ul>
+                <div className="mt-4 overflow-x-auto">
+                  <table className="w-full min-w-[560px] border-collapse text-left text-sm">
+                    <thead>
+                      <tr className="border-b border-line text-[11px] font-semibold uppercase tracking-[0.08em] text-ink-soft">
+                        <th className="pb-2 pr-4 font-semibold">Pengunjung</th>
+                        <th className="pb-2 pr-4 font-semibold">Halaman</th>
+                        <th className="pb-2 pr-4 font-semibold">IP</th>
+                        <th className="pb-2 text-right font-semibold">Waktu</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-line">
+                      {data.live.map((row) => (
+                        <tr key={row.sessionId}>
+                          <td className="py-3 pr-4 align-top">
+                            <p className="truncate font-semibold text-ink">{row.name}</p>
+                            <p className="mt-1 text-xs leading-5 text-ink-soft">{row.device} · {row.browser}</p>
+                          </td>
+                          <td className="max-w-[220px] py-3 pr-4 align-top text-xs leading-5 text-ink-soft">
+                            <span className="block truncate">{row.eventType === "link_click" ? `Klik ${row.label || row.target}` : row.path}</span>
+                          </td>
+                          <td className="py-3 pr-4 align-top font-mono text-xs leading-5 text-ink-soft">{row.ipMasked}</td>
+                          <td className="py-3 align-top text-right text-xs leading-5 text-ink-soft">{timeAgo(row.lastAt)}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
               )}
             </div>
 
-            <div className="rounded-card border border-line bg-paper p-4">
-              <h3 className="text-sm font-semibold text-ink">Tautan paling diklik</h3>
+            <div className="rounded-card border border-line bg-paper p-5">
+              <h3 className="text-base font-semibold text-ink">Tautan paling diklik</h3>
               {data.topLinks.length === 0 ? (
-                <p className="mt-2 text-sm text-ink-soft">Belum ada klik tautan yang tercatat.</p>
+                <p className="mt-4 rounded-[9px] bg-paper-2 px-3 py-4 text-sm text-ink-soft">Belum ada klik tautan yang tercatat.</p>
               ) : (
                 <ul className="mt-3 flex flex-col gap-2">
                   {data.topLinks.map((link) => (
-                    <li key={link.target} className="rounded-[8px] bg-paper-2 px-2.5 py-2">
-                      <p className="truncate text-xs font-semibold text-ink">{link.label || link.target}</p>
-                      <p className="truncate text-2xs text-ink-soft">{link.target}</p>
-                      <p className="mt-0.5 text-2xs font-semibold text-ink-soft">
+                    <li key={link.target} className="rounded-[9px] bg-paper-2 px-3 py-2.5">
+                      <p className="truncate text-sm font-semibold text-ink">{link.label || link.target}</p>
+                      <p className="mt-1 truncate text-xs leading-5 text-ink-soft">{link.target}</p>
+                      <p className="mt-1 text-xs font-medium leading-5 text-ink-soft">
                         {link.clicks} klik · {link.ips} IP · {link.sessions} sesi
                       </p>
                     </li>
@@ -198,7 +207,7 @@ export default function AdminLive() {
                   <h4 className="text-xs font-semibold text-ink">Klik terbaru</h4>
                   <ul className="mt-2 flex flex-col gap-1.5">
                     {data.recentClicks.map((c, i) => (
-                      <li key={`${c.at}-${i}`} className="text-2xs text-ink-soft">
+                      <li key={`${c.at}-${i}`} className="text-xs leading-5 text-ink-soft">
                         <span className="font-semibold text-ink">{c.label || c.target}</span> · {c.device} · {c.ipMasked} ·{" "}
                         {timeAgo(c.at)}
                       </li>
@@ -210,8 +219,9 @@ export default function AdminLive() {
           </div>
 
           <div className="mt-4 grid gap-4 md:grid-cols-2">
-            <div className="rounded-card border border-line bg-paper p-4">
-              <h3 className="text-sm font-semibold text-ink">Perangkat (24 jam)</h3>
+            <div className="rounded-card border border-line bg-paper p-5">
+              <h3 className="text-base font-semibold text-ink">Perangkat</h3>
+              <p className="mt-1 text-xs text-ink-soft">24 jam terakhir</p>
               <div className="mt-3 flex flex-col gap-2">
                 {data.devices.length === 0 ? <p className="text-sm text-ink-soft">Belum ada data.</p> : null}
                 {data.devices.map((d) => (
@@ -231,10 +241,11 @@ export default function AdminLive() {
               </p>
             </div>
 
-            <div className="rounded-card border border-line bg-paper p-4">
-              <h3 className="text-sm font-semibold text-ink">Akun aktif (24 jam)</h3>
+            <div className="rounded-card border border-line bg-paper p-5">
+              <h3 className="text-base font-semibold text-ink">Akun aktif</h3>
+              <p className="mt-1 text-xs text-ink-soft">24 jam terakhir</p>
               {data.activeProfiles.length === 0 ? (
-                <p className="mt-2 text-sm text-ink-soft">Belum ada akun aktif.</p>
+                <p className="mt-4 rounded-[9px] bg-paper-2 px-3 py-4 text-sm text-ink-soft">Belum ada akun aktif.</p>
               ) : (
                 <ul className="mt-3 divide-y divide-line">
                   {data.activeProfiles.map((p) => (

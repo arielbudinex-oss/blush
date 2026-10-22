@@ -6,6 +6,10 @@ import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { Shell, btnGhost, btnPrimary, inputBase, label } from "@/components/ui";
 
+function safeNext(value: string | null) {
+  return value?.startsWith("/") && !value.startsWith("//") ? value : "/app/discover";
+}
+
 const GOOGLE_ERRORS: Record<string, string> = {
   google_cancelled: "Jendela Google ditutup sebelum selesai. Coba lagi ya.",
   google_state: "Sesi login kedaluwarsa. Coba masuk lagi.",
@@ -32,13 +36,13 @@ export default function LoginPage() {
     if (code) setError(GOOGLE_ERRORS[code] ?? "Masuk pakai Google gagal. Coba lagi.");
     if (params.get("bye")) setNotice("Kamu sudah keluar. Masuk lagi kapan saja.");
     const target = params.get("next");
-    if (target?.startsWith("/")) setNext(target);
+    if (target) setNext(safeNext(target));
 
     // Sudah punya sesi? Jangan tampilkan form login lagi.
     createClient()
       .auth.getUser()
       .then(({ data }) => {
-        if (data.user) router.replace(target?.startsWith("/") ? target : "/app/discover");
+        if (data.user) router.replace(safeNext(target));
       });
   }, []);
 
@@ -53,7 +57,7 @@ export default function LoginPage() {
       setError(err.message === "Invalid login credentials" ? "Email atau password salah." : err.message);
       return;
     }
-    const next = new URLSearchParams(window.location.search).get("next") ?? "/app/discover";
+    const next = safeNext(new URLSearchParams(window.location.search).get("next"));
     router.push(next);
     router.refresh();
   }
