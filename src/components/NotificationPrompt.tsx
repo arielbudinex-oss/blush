@@ -24,7 +24,11 @@ export default function NotificationPrompt() {
         setShow(false);
         return;
       }
-      await subscribeToPush();
+      setMessage("Mendaftarkan perangkat…");
+      await Promise.race([
+        subscribeToPush(),
+        new Promise<never>((_, reject) => window.setTimeout(() => reject(new Error("Terlalu lama menyiapkan notifikasi. Coba lagi dari Pengaturan.")), 12000)),
+      ]);
       setShow(false);
     } catch (e) {
       setMessage(e instanceof Error ? e.message : "Notifikasi belum bisa diaktifkan.");
