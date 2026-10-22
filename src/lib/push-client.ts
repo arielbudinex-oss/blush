@@ -1,5 +1,5 @@
 const PUBLIC_KEY = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY;
-const READY_TIMEOUT_MS = 15_000;
+const READY_TIMEOUT_MS = 8_000;
 
 export function pushSupported() {
   return typeof window !== "undefined" && "serviceWorker" in navigator && "PushManager" in window && Boolean(PUBLIC_KEY);
@@ -68,7 +68,7 @@ export async function subscribeToPush() {
 
   const registration = await withTimeout(
     navigator.serviceWorker.register("/sw.js", { scope: "/" }),
-    12_000,
+    8_000,
     "Service worker notifikasi tidak siap. Muat ulang halaman lalu coba lagi.",
   );
   await withTimeout(
@@ -90,7 +90,7 @@ export async function subscribeToPush() {
         userVisibleOnly: true,
         applicationServerKey: keyBytes(),
       }),
-      20_000,
+      12_000,
       "Perangkat belum menyelesaikan pendaftaran notifikasi. Coba lagi.",
     );
   } catch (error) {

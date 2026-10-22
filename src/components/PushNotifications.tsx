@@ -58,15 +58,24 @@ export default function PushNotifications() {
       } catch {
         // abaikan
       }
-      await subscribeToPush();
-      try {
-        localStorage.removeItem("blush_push_pending");
-        localStorage.setItem("blush_push_active", "1");
-      } catch {
-        // abaikan
-      }
-      setSubscribed(true);
-      setMessage("Notifikasi aktif di perangkat ini.");
+      setBusy(false);
+      setMessage("Izin aktif. Menyelesaikan langganan…");
+      void subscribeToPush()
+        .then(() => {
+          try {
+            localStorage.removeItem("blush_push_pending");
+            localStorage.setItem("blush_push_active", "1");
+          } catch {
+            // abaikan
+          }
+          setSubscribed(true);
+          setMessage("Notifikasi aktif di perangkat ini. Kirim notifikasi uji untuk memastikan.");
+        })
+        .catch((e: unknown) => {
+          console.error("push subscribe", e);
+          setMessage(e instanceof Error ? e.message : "Notifikasi gagal diaktifkan.");
+        });
+      return;
     } catch (e) {
       console.error("push subscribe", e);
       setMessage(e instanceof Error ? e.message : "Notifikasi gagal diaktifkan.");

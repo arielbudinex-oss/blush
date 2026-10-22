@@ -51,15 +51,19 @@ export default function NotificationGate() {
       } catch {
         // abaikan
       }
-      // Jangan langsung reload: selesaikan langganan di halaman yang sama.
-      await subscribeToPush();
-      try {
-        localStorage.removeItem("blush_push_pending");
-        localStorage.setItem("blush_push_active", "1");
-      } catch {
-        // abaikan
-      }
+      // Jangan tahan modal: izin sudah diberikan, langganan diselesaikan di latar belakang.
       finish();
+      setBusy(false);
+      void subscribeToPush()
+        .then(() => {
+          try {
+            localStorage.removeItem("blush_push_pending");
+            localStorage.setItem("blush_push_active", "1");
+          } catch {
+            // abaikan
+          }
+        })
+        .catch((e) => console.error("push subscribe", e));
     } catch (e) {
       setError(e instanceof Error ? e.message : "Notifikasi belum bisa diaktifkan.");
       try {
