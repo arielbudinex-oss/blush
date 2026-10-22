@@ -17,7 +17,8 @@ const CHALLENGE_TEXT: Record<Challenge, string> = {
   dekat: "Dekatkan wajah ke kamera",
 };
 
-const ORDER: Challenge[] = ["kiri", "kanan", "dekat"];
+// Satu langkah yang paling jarang gagal: pastikan wajah cukup besar untuk dipindai.
+const ORDER: Challenge[] = ["dekat"];
 const NEED_HITS = 1;
 const FRAME_MS = 120;
 
@@ -441,7 +442,7 @@ export default function FaceVerify({ verified }: { verified: boolean }) {
         <div className="rounded-card border border-line bg-paper-2 p-[var(--space-md)]">
           <span className="text-xs font-semibold text-ink-soft">Kenapa banyak yang verifikasi</span>
           <p className="mt-2 text-sm text-ink-soft">
-            Supaya orang lebih mudah percaya. Kamu diminta bergerak sedikit, jadi foto diam atau video tidak bisa lolos.
+            Supaya orang lebih mudah percaya. Kamera memastikan wajah terlihat jelas, dan satu wajah hanya untuk satu akun.
             Verifikasi ini opsional.
           </p>
         </div>

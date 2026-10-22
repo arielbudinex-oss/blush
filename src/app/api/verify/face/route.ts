@@ -47,7 +47,7 @@ export async function POST(request: Request) {
 
   const challenges = Array.isArray(body.challenges) ? body.challenges.map(String) : [];
   const unique = new Set(challenges);
-  if (challenges.length < 3 || unique.size < 3 || [...unique].some((c) => !ALLOWED_CHALLENGES.has(c))) {
+  if (challenges.length < 1 || unique.size < 1 || [...unique].some((c) => !ALLOWED_CHALLENGES.has(c))) {
     return NextResponse.json({ error: "Tantangan liveness tidak lengkap." }, { status: 400 });
   }
 

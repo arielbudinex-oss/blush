@@ -51,14 +51,10 @@ export default function Completeness({
         )}
       </p>
       {gaps.length ? (
-        <div className="mt-2 flex flex-wrap items-center gap-1">
-          <span className="text-xs font-medium text-ink">Berikutnya:</span>
-          {gaps.map((g) => (
-            <span key={g} className="rounded-[5px] bg-paper-2 px-1.5 py-0.5 text-xs font-medium text-ink">
-              {g}
-            </span>
-          ))}
-        </div>
+        <p className="mt-1.5 pl-[18px] text-xs text-ink-soft">
+          Berikutnya:{" "}
+          {gaps.map((g, i) => (i === 0 ? g : g.charAt(0).toLowerCase() + g.slice(1))).join(", ")}.
+        </p>
       ) : null}
     </section>
   );

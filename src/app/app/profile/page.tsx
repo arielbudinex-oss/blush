@@ -7,6 +7,7 @@ import { Icon } from "@/components/Icon";
 import ProfileForm from "@/components/ProfileForm";
 import Completeness from "@/components/Completeness";
 import { profileCompletion, profileGaps } from "@/lib/completeness";
+import { btnGhost } from "@/components/ui";
 
 // Route ini selalu butuh sesi terbaru dari cookies, jadi memang blocking (Next 16 cache components).
 export const instant = false;
@@ -53,20 +54,10 @@ export default async function ProfilePage() {
 
   return (
     <main className="mx-auto w-full max-w-3xl px-[var(--space-md)] py-[var(--space-lg)]">
-      <div className="mb-[var(--space-lg)] flex items-start gap-[var(--space-md)]">
-        <div className="h-[72px] w-[72px] shrink-0 overflow-hidden rounded-[999px] border border-line bg-paper-2">
-          {cover ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img src={cover} alt="Foto profil" className="h-full w-full object-cover" />
-          ) : (
-            <span className="flex h-full w-full items-center justify-center font-display text-2xl font-bold text-ink-soft">
-              {(profile.display_name || "B").charAt(0).toUpperCase()}
-            </span>
-          )}
-        </div>
+      <div className="mb-[var(--space-md)] flex items-start gap-3">
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-2">
-            <h1 className="text-3xl font-bold">{profile.display_name || "Profil kamu"}</h1>
+            <h1 className="text-2xl font-bold">{profile.display_name || "Profil kamu"}</h1>
             {profile.is_verified === "approved" ? (
               <span
                 title="Terverifikasi"
@@ -82,29 +73,36 @@ export default async function ProfilePage() {
               </Link>
             )}
           </div>
-          <p className="mt-1 text-sm text-ink-soft">
-            Paket aktif: <strong className="text-ink">{PLANS[plan].name}</strong>
+          <p className="mt-0.5 text-sm text-ink-soft">
+            {[profile.job, profile.city].filter(Boolean).join(" · ") || "Lengkapi pekerjaan dan kota"}
           </p>
-          <div className="mt-1 flex items-center gap-3 text-sm font-semibold">
-            <Link href="/app/premium" className="inline-flex min-h-9 items-center text-blush-deep hover:underline">
-              {plan === "free" ? "Lihat paket" : "Kelola paket"}
+          <div className="mt-1.5 flex items-center gap-2 text-xs font-semibold">
+            <Link
+              href="/app/premium"
+              className="inline-flex min-h-7 items-center rounded-[999px] border border-line bg-paper px-2.5 text-ink-soft hover:text-ink"
+            >
+              {PLANS[plan].name}
             </Link>
-            <span className="text-ink-faint" aria-hidden="true">·</span>
-            <Link href="/app/settings" className="inline-flex min-h-9 items-center text-ink-soft hover:text-ink">
+            <Link
+              href="/app/settings"
+              className="inline-flex min-h-7 items-center rounded-[999px] border border-line px-2.5 text-ink-soft hover:text-ink"
+            >
               Pengaturan
             </Link>
           </div>
         </div>
       </div>
 
-      <div className="mb-[var(--space-lg)]">
+      <div className="mb-[var(--space-md)]">
         <Completeness percent={completion} verified={profile.is_verified === "approved"} gaps={gaps} />
       </div>
 
       <section className="mb-[var(--space-lg)]">
-        <div className="mb-2 flex flex-wrap items-baseline justify-between gap-x-3 gap-y-0.5">
+        <div className="mb-2 flex items-baseline justify-between gap-3">
           <h2 className="whitespace-nowrap text-base">Pratinjau profil</h2>
-          <span className="text-xs text-ink-soft">Begini tampilnya</span>
+          <a href="#edit-profil" className="text-xs font-semibold text-blush-deep hover:underline">
+            Edit
+          </a>
         </div>
         <div className="overflow-hidden rounded-[22px] border border-line bg-paper">
           <div className="relative aspect-[16/11] w-full bg-paper-2">
@@ -133,7 +131,7 @@ export default async function ProfilePage() {
             </div>
           </div>
           <div className="grid gap-2.5 p-4">
-            <p className="line-clamp-3 text-sm leading-relaxed text-ink">
+            <p className={`line-clamp-3 text-sm leading-relaxed ${profile.bio ? "text-ink" : "text-ink-soft"}`}>
               {profile.bio || "Belum ada bio. Tambahkan satu kalimat yang bikin orang penasaran."}
             </p>
             {shownPrompts.map((p) => (
@@ -157,6 +155,15 @@ export default async function ProfilePage() {
         </div>
       </section>
 
+      <details id="edit-profil" className="group mt-[var(--space-md)] rounded-card border border-line bg-paper px-4 py-3">
+        <summary className={`${btnGhost} w-full cursor-pointer list-none justify-between [&::-webkit-details-marker]:hidden`}>
+          <span className="inline-flex items-center gap-2">
+            <Icon name="plus" className="h-4 w-4 transition-transform group-open:rotate-45" />
+            Edit profil
+          </span>
+          <Icon name="chevron" className="h-4 w-4 transition-transform group-open:rotate-180" />
+        </summary>
+        <div className="mt-4 border-t border-line pt-4">
       <ProfileForm
         userId={user.id}
         profile={profile as never}
@@ -174,6 +181,8 @@ export default async function ProfilePage() {
         prompts={prompts ?? []}
         myPrompts={(myPrompts ?? []) as never}
       />
+        </div>
+      </details>
     </main>
   );
 }
