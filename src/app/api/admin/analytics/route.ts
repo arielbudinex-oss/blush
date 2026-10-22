@@ -63,12 +63,11 @@ export async function GET() {
   const profiles = (rawProfiles ?? []) as ProfileRow[];
   const profileById = new Map(profiles.map((p) => [p.id, p]));
   const names = new Map(profiles.map((p) => [p.id, p.display_name || "Tanpa nama"]));
-  const lastEventByUser = new Map<string, string>();
-  for (const e of events) if (e.user_id && !lastEventByUser.has(e.user_id)) lastEventByUser.set(e.user_id, e.created_at);
-
   // Bot tidak dihitung sebagai pengunjung; angkanya tetap dilaporkan terpisah.
   const events = allEvents.filter((e) => e.device_type !== "Bot");
   const bots24 = allEvents.filter((e) => e.device_type === "Bot").length;
+  const lastEventByUser = new Map<string, string>();
+  for (const e of events) if (e.user_id && !lastEventByUser.has(e.user_id)) lastEventByUser.set(e.user_id, e.created_at);
 
   const recent5 = events.filter((e) => new Date(e.created_at).getTime() >= now - 5 * 60 * 1000);
   const recent30 = events.filter((e) => new Date(e.created_at).getTime() >= now - 30 * 60 * 1000);
