@@ -554,15 +554,15 @@ export default function SwipeDeck({
             Filter
           </button>
           <span
-            className={`rounded-[999px] bg-paper-2 px-2.5 py-1 text-2xs font-bold ${
-              likesLeft === 0 ? "text-blush-deep" : "text-ink"
+            className={`whitespace-nowrap text-2xs font-semibold ${
+              likesLeft === 0 ? "text-blush-deep" : "text-ink-soft"
             }`}
           >
             {unlimited ? (
               "Tanpa batas"
             ) : (
               <span className="whitespace-nowrap">
-                <CountUp value={likesLeft} /> like
+                Sisa <CountUp value={likesLeft} /> like
               </span>
             )}
           </span>

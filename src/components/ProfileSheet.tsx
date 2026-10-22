@@ -124,8 +124,8 @@ export default function ProfileSheet({
               </button>
             </div>
 
-            <div className="overflow-y-auto overscroll-contain">
-              <div className="relative aspect-[4/5] w-full bg-paper-2">
+            <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain">
+              <div className="relative aspect-[4/5] max-h-[42dvh] w-full bg-paper-2">
                 {photos[photo] ? (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img src={photos[photo]} alt={`Foto ${candidate.display_name} ${photo + 1}`} className="h-full w-full object-cover" />
@@ -160,7 +160,7 @@ export default function ProfileSheet({
                 ) : null}
               </div>
 
-              <div className="flex flex-col gap-3 px-4 py-4">
+              <div className="flex flex-col gap-3 px-4 pb-6 pt-4">
                 <div className="flex flex-wrap gap-1.5">
                   <Chip icon="sparkles" text={INTENT[candidate.intent] ?? "Lagi cari"} />
                   {candidate.distance_m !== null ? <Chip icon="location" text={distanceLabel(candidate.distance_m)} /> : null}
