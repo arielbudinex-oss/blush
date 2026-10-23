@@ -34,7 +34,7 @@ export default async function ChatPage({ params }: { params: Promise<{ matchId: 
   const otherId = match.user_a === meId ? match.user_b : match.user_a;
   const { data: other } = await supabase
     .from("profiles")
-    .select("display_name, last_active_at")
+    .select("display_name, last_active_at, birthdate, bio, job, city, intent, is_verified")
     .eq("id", otherId)
     .maybeSingle();
   const [{ data: mine }, { data: theirs }] = await Promise.all([
@@ -70,6 +70,12 @@ export default async function ChatPage({ params }: { params: Promise<{ matchId: 
         }
         extendedAt={match.extended_at}
         sharedInterests={(sharedRows ?? []).map((r: { label: string }) => r.label)}
+        otherAge={other?.birthdate ? Math.floor((Date.now() - new Date(`${other.birthdate}T00:00:00Z`).getTime()) / 31_557_600_000) : null}
+        otherBio={other?.bio ?? ""}
+        otherJob={other?.job ?? ""}
+        otherCity={other?.city ?? ""}
+        otherIntent={other?.intent ?? "dating"}
+        otherVerified={other?.is_verified === "approved"}
       />
     </main>
   );

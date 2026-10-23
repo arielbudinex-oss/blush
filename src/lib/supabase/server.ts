@@ -2,12 +2,13 @@ import { cookies } from "next/headers";
 import { createServerClient } from "@supabase/ssr";
 
 /** Client yang jalan sebagai user yang sedang login (RLS berlaku). */
-export async function createServerSupabase() {
+export async function createServerSupabase(scope: "user" | "admin" = "user") {
   const cookieStore = await cookies();
   return createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!,
     {
+      cookieOptions: scope === "admin" ? { name: "blush-admin-auth" } : undefined,
       cookies: {
         getAll() {
           return cookieStore.getAll();

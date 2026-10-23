@@ -10,7 +10,11 @@ export async function GET(request: Request) {
   }
 
   const url = new URL(request.url);
-  const next = url.searchParams.get("next") || "/app/discover";
+  const scope = url.searchParams.get("scope") === "admin" ? "admin" : "user";
+  const requestedNext = url.searchParams.get("next") || "/app/discover";
+  const next = scope === "admin"
+    ? requestedNext.startsWith("/admin") && !requestedNext.startsWith("//") ? requestedNext : "/admin"
+    : requestedNext.startsWith("/") && !requestedNext.startsWith("//") && !requestedNext.startsWith("/admin") ? requestedNext : "/app/discover";
   const state = randomUUID();
   const nonce = randomUUID();
   const redirectUri = new URL("/api/auth/google/callback", url.origin).toString();
@@ -26,7 +30,7 @@ export async function GET(request: Request) {
   authorize.searchParams.set("access_type", "online");
 
   const response = NextResponse.redirect(authorize.toString());
-  response.cookies.set("blush_oauth", JSON.stringify({ state, nonce, next, redirectUri }), {
+  response.cookies.set(scope === "admin" ? "blush_oauth_admin" : "blush_oauth", JSON.stringify({ state, nonce, next, redirectUri, scope }), {
     httpOnly: true,
     sameSite: "lax",
     secure: url.protocol === "https:",

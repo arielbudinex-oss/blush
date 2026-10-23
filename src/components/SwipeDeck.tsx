@@ -76,10 +76,13 @@ function SwipeCard({
   const reduce = useReducedMotion();
   const x = useMotionValue(0);
   const y = useMotionValue(0);
-  const rotate = useTransform(x, [-280, 0, 280], [-15, 0, 15]);
-  const likeOpacity = useTransform(x, [28, 120], [0, 1]);
-  const passOpacity = useTransform(x, [-28, -120], [0, 1]);
-  const superOpacity = useTransform(y, [-28, -118], [0, 1]);
+  const rotate = useTransform(x, [-280, 0, 280], [-10, 0, 10]);
+  const likeOpacity = useTransform(x, [32, 112], [0, 1]);
+  const passOpacity = useTransform(x, [-32, -112], [0, 1]);
+  const superOpacity = useTransform(y, [-32, -108], [0, 1]);
+  const cardScale = useTransform(x, [-280, 0, 280], [0.965, 1, 0.965]);
+  const likeX = useTransform(x, [0, 220], [0, 22]);
+  const passX = useTransform(x, [-220, 0], [-22, 0]);
   const [photoIdx, setPhotoIdx] = useState(0);
   const [flying, setFlying] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -97,11 +100,12 @@ function SwipeCard({
       if (flying || busy) return;
       setFlying(true);
       if (typeof navigator !== "undefined" && navigator.vibrate) navigator.vibrate(action === "superlike" ? 18 : 10);
-      const to = action === "pass" ? { x: -640, y: 70 } : action === "like" ? { x: 640, y: 70 } : { x: 0, y: -740 };
+      const direction = action === "pass" ? -1 : 1;
+      const to = action === "superlike" ? { x: 0, y: -Math.max(420, window.innerHeight * 0.8) } : { x: direction * Math.max(420, window.innerWidth * 1.15), y: 24 };
       if (!reduce) {
         await Promise.all([
-          animate(x, to.x, { duration: 0.3, ease: [0.22, 1, 0.36, 1] }),
-          animate(y, to.y, { duration: 0.3, ease: [0.22, 1, 0.36, 1] }),
+          animate(x, to.x, { type: "spring", stiffness: 300, damping: 34, mass: 0.9 }),
+          animate(y, to.y, { type: "spring", stiffness: 280, damping: 34, mass: 0.85 }),
         ]);
       }
       const accepted = await onDecide(action);
@@ -136,13 +140,13 @@ function SwipeCard({
   return (
     <motion.article
       drag
-      dragElastic={0.16}
+      dragElastic={0.08}
       dragMomentum={false}
       dragConstraints={{ left: 0, right: 0, top: 0, bottom: 0 }}
       onDragEnd={(_, info) => {
-        if (info.offset.y < -125 && Math.abs(info.offset.x) < 95) void fly("superlike");
-        else if (info.offset.x > 108 || info.velocity.x > 620) void fly("like");
-        else if (info.offset.x < -108 || info.velocity.x < -620) void fly("pass");
+        if (info.offset.y < -118 && Math.abs(info.offset.x) < 90) void fly("superlike");
+        else if (info.offset.x > 116 || info.velocity.x > 760) void fly("like");
+        else if (info.offset.x < -116 || info.velocity.x < -760) void fly("pass");
         else {
           void Promise.all([
             animate(x, 0, { type: "spring", stiffness: 340, damping: 30 }),
@@ -150,7 +154,7 @@ function SwipeCard({
           ]);
         }
       }}
-      style={{ x, y, rotate }}
+      style={{ x, y, rotate, scale: cardScale, touchAction: "pan-y" }}
       initial={reduce ? false : { opacity: 0, scale: 0.985 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
@@ -158,13 +162,13 @@ function SwipeCard({
     >
       <div className="pointer-events-none absolute inset-0 z-20">
         <motion.span
-          style={{ opacity: likeOpacity }}
+          style={{ opacity: likeOpacity, x: likeX }}
           className="absolute left-4 top-5 -rotate-12 rounded-[8px] border-2 border-ok px-3 py-1 font-display text-lg font-bold uppercase tracking-[0.1em] text-ok"
         >
           Suka
         </motion.span>
         <motion.span
-          style={{ opacity: passOpacity }}
+          style={{ opacity: passOpacity, x: passX }}
           className="absolute right-4 top-5 rotate-12 rounded-[10px] border-[2.5px] border-ink-faint px-3 py-1 text-xl text-ink-faint"
         >
           lewat
@@ -420,13 +424,14 @@ export default function SwipeDeck({
   const [used, setUsed] = useState(likesUsed);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [matched, setMatched] = useState<{ matchId: string; name: string } | null>(null);
+  const [matched, setMatched] = useState<{ matchId: string; name: string; candidate: Candidate } | null>(null);
   const [reportFor, setReportFor] = useState<Candidate | null>(null);
   const [reportReason, setReportReason] = useState(REPORT_REASONS[0]);
   const [reportDetails, setReportDetails] = useState("");
   const [canUndo, setCanUndo] = useState(hasSwipes);
   const [superLeft, setSuperLeft] = useState(superlikesLeft);
   const [sheetOpen, setSheetOpen] = useState(false);
+  const [sheetCandidate, setSheetCandidate] = useState<Candidate | null>(null);
   const [filtersOpen, setFiltersOpen] = useState(false);
 
   const current = candidates[index];
@@ -480,7 +485,7 @@ export default function SwipeDeck({
         const match = (myMatches ?? []).find(
           (m: { match_id: string; other_id: string }) => m.other_id === target.id,
         );
-        if (match?.match_id) setMatched({ matchId: match.match_id, name: target.display_name || "Seseorang" });
+        if (match?.match_id) setMatched({ matchId: match.match_id, name: target.display_name || "Seseorang", candidate: target });
       }
       setBusy(false);
       return true;
@@ -593,7 +598,10 @@ export default function SwipeDeck({
               superLeft={superLeft}
               onReport={() => setReportFor(current)}
               onBlock={() => void block(current)}
-              onOpenProfile={() => setSheetOpen(true)}
+              onOpenProfile={() => {
+                              setSheetCandidate(current ?? null);
+                              setSheetOpen(true);
+                            }}
               myInterests={myInterests}
             />
           ) : null}
@@ -692,25 +700,40 @@ export default function SwipeDeck({
       </div>
 
       <ProfileSheet
-        candidate={current ?? null}
+        candidate={sheetCandidate ?? current ?? null}
         open={sheetOpen}
         superLeft={superLeft}
         busy={busy}
-        onClose={() => setSheetOpen(false)}
+        onClose={() => {
+          setSheetOpen(false);
+          setSheetCandidate(null);
+        }}
         onDecide={(action) => void decide(action)}
         onReport={() => {
           setSheetOpen(false);
-          setReportFor(current ?? null);
+          setReportFor(sheetCandidate ?? current ?? null);
+          setSheetCandidate(null);
         }}
         onBlock={() => {
           setSheetOpen(false);
-          if (current) void block(current);
+          const target = sheetCandidate ?? current;
+          setSheetCandidate(null);
+          if (target) void block(target);
         }}
       />
 
       <FiltersSheet open={filtersOpen} prefs={prefs} gold={gold} onClose={() => setFiltersOpen(false)} />
 
-      <MatchModal matched={matched} onClose={() => setMatched(null)} />
+      <MatchModal
+        matched={matched}
+        onClose={() => setMatched(null)}
+        onViewProfile={() => {
+          if (!matched) return;
+          setSheetCandidate(matched.candidate);
+          setMatched(null);
+          setSheetOpen(true);
+        }}
+      />
 
       {reportFor ? (
         <ReportModal

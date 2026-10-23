@@ -7,7 +7,7 @@ export const instant = false;
 export const metadata = { title: "Admin", robots: { index: false, follow: false } };
 
 export default async function AdminOverviewPage() {
-  const supabase = await createServerSupabase();
+  const supabase = await createServerSupabase("admin");
   const [{ count: pendingPayments }, { count: pendingVerify }, { count: openReports }] = await Promise.all([
     supabase.from("payments").select("*", { count: "exact", head: true }).eq("status", "pending"),
     supabase.from("profiles").select("*", { count: "exact", head: true }).eq("is_verified", "pending"),

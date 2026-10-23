@@ -33,7 +33,7 @@ function keyOf(value: string | null | undefined) {
 }
 
 export async function GET() {
-  const supabase = await createServerSupabase();
+  const supabase = await createServerSupabase("admin");
   const {
     data: { user },
   } = await supabase.auth.getUser();

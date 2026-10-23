@@ -8,8 +8,8 @@ export default function AdminSignOut() {
   const [busy, setBusy] = useState(false);
   async function signOut() {
     setBusy(true);
-    const supabase = createClient();
-    await supabase.auth.signOut();
+    const supabase = createClient("admin");
+    await supabase.auth.signOut({ scope: "local" });
     window.location.href = "/admin/login?bye=1";
   }
   return (

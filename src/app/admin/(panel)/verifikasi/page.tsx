@@ -6,7 +6,7 @@ export const instant = false;
 export const metadata = { title: "Verifikasi admin", robots: { index: false, follow: false } };
 
 export default async function AdminVerificationPage() {
-  const supabase = await createServerSupabase();
+  const supabase = await createServerSupabase("admin");
   const { data: pending } = await supabase
     .from("profiles")
     .select("id, display_name, city")

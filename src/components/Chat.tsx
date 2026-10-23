@@ -1,6 +1,7 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import type { CSSProperties } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
@@ -8,6 +9,10 @@ import { Icon } from "@/components/Icon";
 import { btnGhost, btnPrimary } from "@/components/ui";
 import { formatClock, formatDayLabel, formatRelative, sameDay } from "@/lib/time";
 import AudioCall from "@/components/AudioCall";
+const Picker = lazy(() => import("@emoji-mart/react"));
+import emojiData from "@emoji-mart/data";
+import ProfileSheet from "@/components/ProfileSheet";
+import VerifiedBadge from "@/components/VerifiedBadge";
 
 type Message = {
   id: number;
@@ -21,7 +26,6 @@ type Message = {
 
 const REPORT_REASONS = ["Kasar atau melecehkan", "Spam atau promosi", "Minta uang", "Ajakan tidak pantas", "Lainnya"];
 const GROUP_WINDOW_MS = 5 * 60_000;
-const EMOJIS = ["😀", "😂", "🥰", "😍", "😘", "😊", "😎", "🤍", "❤️", "🔥", "👏", "🙌", "👍", "🤔", "😅", "😭", "😤", "💬", "🎉", "☕", "🍜", "🌙", "✨", "💫"];
 
 function sameGroup(a: Message, b: Message) {
   return (
@@ -41,6 +45,12 @@ export default function Chat({
   expiresAt,
   extendedAt,
   sharedInterests = [],
+  otherAge,
+  otherBio = "",
+  otherJob = "",
+  otherCity = "",
+  otherIntent = "dating",
+  otherVerified = false,
 }: {
   matchId: string;
   meId: string;
@@ -51,6 +61,12 @@ export default function Chat({
   expiresAt: string | null;
   extendedAt: string | null;
   sharedInterests?: string[];
+  otherAge?: number | null;
+  otherBio?: string;
+  otherJob?: string;
+  otherCity?: string;
+  otherIntent?: string;
+  otherVerified?: boolean;
 }) {
   const supabase = createClient();
   const router = useRouter();
@@ -69,6 +85,8 @@ export default function Chat({
   const [extended, setExtended] = useState(Boolean(extendedAt));
   const [extendBusy, setExtendBusy] = useState(false);
   const [emojiOpen, setEmojiOpen] = useState(false);
+  const [emojiPickerReady, setEmojiPickerReady] = useState(false);
+  const [profileOpen, setProfileOpen] = useState(false);
 
   const endRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
@@ -371,21 +389,29 @@ export default function Chat({
         >
           <Icon name="back" className="h-5 w-5" />
         </Link>
-        <div className="relative h-11 w-11 shrink-0">
-          <div className="h-11 w-11 overflow-hidden rounded-full bg-paper-2">
+        <button
+          type="button"
+          onClick={() => setProfileOpen(true)}
+          aria-label={`Lihat profil ${otherName || "pasangan"}`}
+          className="relative h-11 w-11 shrink-0 rounded-full focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blush-deep"
+        >
+          <span className="block h-11 w-11 overflow-hidden rounded-full bg-paper-2">
             {otherPhoto ? <img src={otherPhoto} alt="" className="h-full w-full object-cover" /> : null}
-          </div>
+          </span>
           {activeNow ? <span className="absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full bg-ok ring-2 ring-paper" /> : null}
-        </div>
-        <div className="min-w-0 flex-1">
-          <p className="truncate font-display text-[0.95rem] font-bold leading-tight tracking-[-0.01em]">{otherName || "Tanpa nama"}</p>
+        </button>
+        <button type="button" onClick={() => setProfileOpen(true)} className="min-w-0 flex-1 text-left">
+          <p className="flex min-w-0 items-center gap-1 truncate font-display text-[0.95rem] font-bold leading-tight tracking-[-0.01em]">
+            <span className="truncate">{otherName || "Tanpa nama"}</span>
+            {otherVerified ? <VerifiedBadge size={15} /> : null}
+          </p>
           <p
             className={`truncate text-xs leading-tight ${peerTyping ? "font-semibold text-blush-deep" : "text-ink-soft"}`}
             aria-live="polite"
           >
             {peerTyping ? "sedang menulis…" : statusLine}
           </p>
-        </div>
+        </button>
         <AudioCall matchId={matchId} meId={meId} otherName={otherName} />
         <button
           type="button"
@@ -609,15 +635,24 @@ export default function Chat({
 
       <form onSubmit={send} className="relative border-t border-line p-2">
         {emojiOpen ? (
-          <div className="blush-pop-in absolute bottom-[calc(100%-4px)] right-2 z-30 w-[min(18rem,calc(100vw-2rem))] rounded-[18px] border border-line bg-paper p-2 shadow-[0_18px_50px_-20px_rgba(32,26,20,0.45)]" role="dialog" aria-label="Pilih emoji">
-            <div className="grid grid-cols-8 gap-1">
-              {EMOJIS.map((emoji) => (
-                <button key={emoji} type="button" onClick={() => insertEmoji(emoji)} className="grid h-9 w-9 place-items-center rounded-[9px] text-xl transition-colors hover:bg-paper-2 focus-visible:bg-paper-2" aria-label={`Sisipkan ${emoji}`}>
-                  {emoji}
-                </button>
-              ))}
+          <div className="blush-pop-in absolute bottom-[calc(100%-4px)] right-2 z-30 overflow-hidden rounded-[18px] border border-line bg-paper shadow-[0_18px_50px_-20px_rgba(32,26,20,0.45)]" role="dialog" aria-label="Pilih emoji">
+            <div className="h-[min(360px,55dvh)] w-[min(352px,calc(100vw-24px))] overflow-hidden bg-paper text-ink" style={{ ["--em-rgb-background" as string]: "var(--paper)", ["--em-rgb-input" as string]: "var(--paper-2)", ["--em-rgb-color" as string]: "var(--ink)", ["--em-rgb-accent" as string]: "var(--blush-deep)" }}>
+              <Suspense fallback={<div className="grid h-full place-items-center text-sm text-ink-soft">Memuat emoji…</div>}>
+                <Picker
+                  data={emojiData}
+                  set="apple"
+                  theme="light"
+                  previewPosition="none"
+                  skinTonePosition="none"
+                  perLine={8}
+                  emojiSize={24}
+                  emojiButtonSize={38}
+                  maxFrequentRows={0}
+                  onEmojiSelect={(item: { native: string }) => insertEmoji(item.native)}
+                  style={{ width: "100%", height: "100%" } as CSSProperties}
+                />
+              </Suspense>
             </div>
-            <p className="mt-1 px-1 text-[10px] leading-4 text-ink-soft">Emoji mengikuti sistem perangkat. Di iPhone tampil gaya Apple.</p>
           </div>
         ) : null}
         <div className="flex items-end gap-1.5 rounded-[22px] border border-line-input bg-paper px-2 py-1.5 transition-colors focus-within:border-blush-deep">
@@ -660,6 +695,35 @@ export default function Chat({
           <span className="ml-auto tabular-nums">{body.length > 1800 ? `${body.length}/2000` : ""}</span>
         </div>
       </form>
+
+      <ProfileSheet
+        candidate={{
+          id: otherId,
+          display_name: otherName,
+          age: otherAge ?? null,
+          bio: otherBio,
+          job: otherJob,
+          city: otherCity,
+          intent: otherIntent === "relationship" || otherIntent === "friends" ? otherIntent : "dating",
+          is_verified: otherVerified ? "approved" : "none",
+          distance_m: null,
+          photos: otherPhoto ? [otherPhoto] : [],
+          interests: sharedInterests,
+        }}
+        open={profileOpen}
+        superLeft={0}
+        busy={busy}
+        onClose={() => setProfileOpen(false)}
+        onDecide={() => setProfileOpen(false)}
+        onReport={() => {
+          setProfileOpen(false);
+          setShowSafety(true);
+        }}
+        onBlock={() => {
+          setProfileOpen(false);
+          void block();
+        }}
+      />
 
       {confirmUnmatch ? (
         <div className="fixed inset-0 z-40 flex items-center justify-center bg-ink/60 p-[var(--space-md)]">

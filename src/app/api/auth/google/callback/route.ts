@@ -5,7 +5,7 @@ import { createServerSupabase } from "@/lib/supabase/server";
 import { readNonce, verifyGoogleIdToken } from "@/lib/google-oauth";
 
 
-type OauthCookie = { state: string; nonce: string; next: string; redirectUri: string };
+type OauthCookie = { state: string; nonce: string; next: string; redirectUri: string; scope?: "user" | "admin" };
 
 /**
  * Balikan dari Google. Alurnya: tukar code -> verifikasi ID token ->
@@ -13,9 +13,15 @@ type OauthCookie = { state: string; nonce: string; next: string; redirectUri: st
  */
 export async function GET(request: Request) {
   const url = new URL(request.url);
-  const loginUrl = (code: string) => NextResponse.redirect(new URL(`/login?error=${code}`, url.origin));
+  const cookieStore = await cookies();
+  const adminFlowCookie = cookieStore.get("blush_oauth_admin")?.value;
+  const userFlowCookie = cookieStore.get("blush_oauth")?.value;
+  const scope = adminFlowCookie ? "admin" : "user";
+  const cookieName = scope === "admin" ? "blush_oauth_admin" : "blush_oauth";
+  const flowCookieValue = scope === "admin" ? adminFlowCookie : userFlowCookie;
+  const loginUrl = (code: string) => NextResponse.redirect(new URL(`${scope === "admin" ? "/admin/login" : "/login"}?error=${code}`, url.origin));
 
-  const raw = (await cookies()).get("blush_oauth")?.value;
+  const raw = flowCookieValue;
   if (!raw) return loginUrl("google_state");
   let saved: OauthCookie;
   try {
@@ -63,6 +69,7 @@ export async function GET(request: Request) {
     process.env.SUPABASE_SERVICE_ROLE_KEY!,
     { auth: { persistSession: false, autoRefreshToken: false } },
   );
+  let createdUserId: string | null = null;
 
   const created = await admin.auth.admin.createUser({
     email: identity.email,
@@ -77,20 +84,29 @@ export async function GET(request: Request) {
   });
   // email_exists = user sudah pernah masuk; lanjut terbitkan sesi.
   if (created.error && created.error.code !== "email_exists") return loginUrl("google_user");
+  createdUserId = created.data.user?.id ?? null;
 
   const link = await admin.auth.admin.generateLink({ type: "magiclink", email: identity.email });
   const tokenHash = link.data?.properties?.hashed_token;
   if (link.error || !tokenHash) return loginUrl("google_session");
 
-  const supabase = await createServerSupabase();
-  const { data: session, error: verifyError } = await supabase.auth.verifyOtp({
-    type: "magiclink",
-    token_hash: tokenHash,
-  });
-  if (verifyError) return loginUrl("google_session");
-
+  let userId: string | undefined;
+  if (scope === "admin") {
+    const { data: authUser } = await admin.auth.admin.listUsers({ page: 1, perPage: 1000 });
+    userId = authUser.users.find((candidate) => candidate.email?.toLowerCase() === identity.email.toLowerCase())?.id;
+    if (!userId) return loginUrl("google_session");
+    const { data: profile } = await admin.from("profiles").select("role").eq("id", userId).maybeSingle();
+    if (profile?.role !== "admin") {
+      if (createdUserId && createdUserId === userId) await admin.auth.admin.deleteUser(userId);
+      return loginUrl("admin_required");
+    }
+  } else {
+    const supabase = await createServerSupabase("user");
+    const { data: session, error: verifyError } = await supabase.auth.verifyOtp({ type: "magiclink", token_hash: tokenHash });
+    if (verifyError) return loginUrl("google_session");
+    userId = session.user?.id;
+  }
   // Onboarding tidak boleh mulai dengan nama kosong kalau Google sudah memberi nama.
-  const userId = session.user?.id;
   if (userId) {
     const alias = identity.name.split(" ")[0]?.slice(0, 32) || "";
     if (alias) {
@@ -102,18 +118,19 @@ export async function GET(request: Request) {
     }
   }
 
-  const { data: me } = await admin.from("profiles").select("onboarded_at").eq("id", userId ?? "").maybeSingle();
-  const wanted = saved.next.startsWith("/") && !saved.next.startsWith("//") ? saved.next : "/app/discover";
+  const { data: me } = await admin.from("profiles").select("onboarded_at, role").eq("id", userId ?? "").maybeSingle();
+  const wanted = saved.next.startsWith("/") && !saved.next.startsWith("//") ? saved.next : (scope === "admin" ? "/admin" : "/app/discover");
   // Akun lama yang sudah onboarding tidak dikirim ke form pendaftaran lagi.
   // Akun yang belum onboarding dan masuk lewat tombol Masuk tetap melihat
   // halaman login dengan pilihan lanjut pendaftaran atau ganti akun.
-  const next =
-    !me?.onboarded_at && wanted === "/app/discover"
+  const next = scope === "admin"
+    ? wanted.startsWith("/admin") ? wanted : "/admin"
+    : !me?.onboarded_at && wanted === "/app/discover"
       ? "/login?incomplete=1"
       : wanted === "/onboarding" && me?.onboarded_at
         ? "/app/discover"
         : wanted;
   const response = NextResponse.redirect(new URL(next, url.origin));
-  response.cookies.set("blush_oauth", "", { path: "/", maxAge: 0 });
+  response.cookies.set(cookieName, "", { path: "/", maxAge: 0 });
   return response;
 }

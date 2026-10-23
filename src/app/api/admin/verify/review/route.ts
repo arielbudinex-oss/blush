@@ -4,7 +4,7 @@ import { createAdminSupabase } from "@/lib/supabase/admin";
 
 /** Admin menyetujui / menolak verifikasi foto. Menyetujui memasang badge terverifikasi. */
 export async function POST(request: Request) {
-  const supabase = await createServerSupabase();
+  const supabase = await createServerSupabase("admin");
   const {
     data: { user },
   } = await supabase.auth.getUser();

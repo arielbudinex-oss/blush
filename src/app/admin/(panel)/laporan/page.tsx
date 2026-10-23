@@ -5,7 +5,7 @@ export const instant = false;
 export const metadata = { title: "Laporan admin", robots: { index: false, follow: false } };
 
 export default async function AdminReportsPage() {
-  const supabase = await createServerSupabase();
+  const supabase = await createServerSupabase("admin");
   const { data: reports } = await supabase
     .from("reports")
     .select("id, reporter_id, reported_id, reason, details, status")

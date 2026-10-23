@@ -6,10 +6,14 @@ const PROTECTED = ["/app", "/onboarding", "/admin"];
 export async function middleware(request: NextRequest) {
   let response = NextResponse.next({ request });
 
+  const path = request.nextUrl.pathname;
+  const isAdminPath = path.startsWith("/admin");
+  const adminLogin = path === "/admin/login";
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!,
     {
+      cookieOptions: adminLogin || path.startsWith("/admin/") || path === "/admin" ? { name: "blush-admin-auth" } : undefined,
       cookies: {
         getAll() {
           return request.cookies.getAll();
@@ -22,13 +26,7 @@ export async function middleware(request: NextRequest) {
       },
     },
   );
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  const path = request.nextUrl.pathname;
-  const adminLogin = path === "/admin/login";
+  const { data: { user } } = await supabase.auth.getUser();
   if (!user && !adminLogin && PROTECTED.some((p) => path.startsWith(p))) {
     const url = request.nextUrl.clone();
     url.pathname = path.startsWith("/admin") ? "/admin/login" : "/login";
@@ -40,7 +38,7 @@ export async function middleware(request: NextRequest) {
   // Akun yang sudah selesai onboarding tidak perlu melihat form masuk lagi.
   // Akun yang belum onboarding tetap boleh membuka /login untuk ganti akun;
   // halaman login menampilkan pilihan lanjut pendaftaran atau keluar.
-  if (user && path === "/login") {
+  if (!isAdminPath && user && path === "/login") {
     const { data: profile } = await supabase.from("profiles").select("onboarded_at").eq("id", user.id).maybeSingle();
     if (profile?.onboarded_at) {
       const target = request.nextUrl.searchParams.get("next");
@@ -52,7 +50,7 @@ export async function middleware(request: NextRequest) {
   }
 
   // Signup tetap tidak boleh dibuka oleh sesi yang sudah ada.
-  if (user && path === "/signup") {
+  if (!isAdminPath && user && path === "/signup") {
     const target = request.nextUrl.searchParams.get("next");
     const url = request.nextUrl.clone();
     url.pathname = target?.startsWith("/") && !target.startsWith("//") ? target : "/app/discover";

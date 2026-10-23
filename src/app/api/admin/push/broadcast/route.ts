@@ -4,7 +4,7 @@ import { pushToAll } from "@/lib/push";
 
 /** Promosi atau pengumuman dari admin ke semua perangkat yang berlangganan. */
 export async function POST(request: Request) {
-  const supabase = await createServerSupabase();
+  const supabase = await createServerSupabase("admin");
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return NextResponse.json({ error: "Belum masuk." }, { status: 401 });
 

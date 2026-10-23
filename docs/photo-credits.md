@@ -4,18 +4,37 @@ Foto profil akun demo memakai stok Pexels dengan lisensi Pexels (gratis untuk pe
 
 | Akun | Foto | Sumber |
 |---|---|---|
-| Rara | 33564096 | https://www.pexels.com/photo/elegant-outdoor-portrait-of-a-woman-in-jakarta-33564096/ |
-| Ayu Larasati | 32061616 | https://www.pexels.com/photo/smiling-woman-in-batik-dress-in-jakarta-street-32061616/ |
-| Nadia Prameswari | 971335 | https://www.pexels.com/photo/portrait-of-a-woman-971335/ |
-| Sinta Maharani | 30437414 | https://www.pexels.com/photo/indonesian-woman-in-red-dress-with-umbrella-30437414/ |
-| Tara Wulandari | 36616406 | https://www.pexels.com/photo/portrait-of-a-woman-in-elegant-hijab-attire-36616406/ |
-| Kirana Maheswari | 40379395 | https://www.pexels.com/photo/portrait-of-a-smiling-woman-in-traditional-attire-40379395/ |
-| Alya Puspita | 32072610 | https://www.pexels.com/photo/smiling-woman-in-colorful-batik-attire-jakarta-32072610/ |
-| Raka Aditya | 34402673 | https://www.pexels.com/photo/portrait-of-a-young-man-in-traditional-batik-shirt-34402673/ |
-| Damar | 14363138 | https://www.pexels.com/photo/a-man-in-traditional-outfit-leaning-on-a-concrete-railing-while-smiling-at-the-camera-14363138/ |
+| Rara | 40292614 | https://www.pexels.com/photo/young-woman-smiling-on-a-busy-city-street-40292614/ |
+| Ayu Larasati | 36223756 | https://www.pexels.com/photo/young-woman-enjoying-dessert-indoors-36223756/ |
+| Nadia Prameswari | 28409890 | https://www.pexels.com/photo/smiling-woman-in-cafe-with-modern-design-28409890/ |
+| Sinta Maharani | 4350179 | https://www.pexels.com/photo/smiling-young-asian-woman-sitting-in-cafe-with-chin-on-hand-and-using-smartphone-4350179/ |
+| Tara Wulandari | 8357252 | https://www.pexels.com/photo/a-woman-sitting-at-the-table-8357250/ |
+| Kirana Maheswari | 32057175 | https://www.pexels.com/photo/young-woman-in-batik-dress-in-jakarta-32057175/ |
+| Alya Puspita | 5338627 | https://www.pexels.com/photo/woman-in-pink-hijab-white-sitting-5338627/ |
+| Raka Aditya | 6666773 | https://www.pexels.com/photo/man-in-blue-crew-neck-t-shirt-smiling-6666773/ |
+| Damar | 15480251 | https://www.pexels.com/photo/woman-posing-on-city-street-15276729/ |
+| Rani Kusuma | 33402413 | https://www.pexels.com/photo/traditional-indonesian-attire-on-jakarta-street-33402413/ |
+| Anisa | 15428639 | https://www.pexels.com/photo/pesona-wanita-15428639/ |
 | Rio Pratama | 20226018 | https://www.pexels.com/photo/a-young-man-standing-on-a-balcony-in-front-of-a-building-20226018/ |
-| Dinda Pramesti | 33402414 | https://www.pexels.com/photo/elegant-woman-in-traditional-indonesian-attire-33402414/ |
+| Dinda Pramesti | 40334127 | https://www.pexels.com/photo/casual-portrait-of-a-woman-in-jakarta-streets-40334131/ |
 | Rani Kusuma | 32068157 | https://www.pexels.com/photo/indonesian-fashion-portrait-in-vibrant-batik-32068157/ |
 | Anisa | 31637796 | https://www.pexels.com/photo/31637796/ |
+
+**Foto natural terbaru yang sudah diterapkan di sembilan akun uji/bot**
+
+| Akun | Foto | Sumber |
+|---|---|---|
+| Rara | 40292614 | https://www.pexels.com/photo/young-woman-smiling-on-a-busy-city-street-40292614/ |
+| Ayu Larasati | 36223756 | https://www.pexels.com/photo/young-woman-enjoying-dessert-indoors-36223756/ |
+| Sinta Maharani | 4350179 | https://www.pexels.com/photo/smiling-young-asian-woman-sitting-in-cafe-with-chin-on-hand-and-using-smartphone-4350179/ |
+| Nadia Prameswari | 15938260 | https://www.pexels.com/photo/smiling-hijab-girl-enjoying-a-book-in-a-cozy-coffee-shop-in-the-city-15938260/ |
+| Dinda Pramesti | 8357251 | https://www.pexels.com/photo/a-woman-sitting-at-the-table-8357250/ |
+| Kirana Maheswari | 32057175 | https://www.pexels.com/photo/young-woman-in-batik-dress-in-jakarta-32057175/ |
+| Alya Puspita | 5338627 | https://www.pexels.com/photo/woman-in-pink-hijab-white-sitting-5338627/ |
+| Raka Aditya | 6666773 | https://www.pexels.com/photo/man-in-blue-crew-neck-t-shirt-smiling-6666773/ |
+| Damar | 15480251 | https://www.pexels.com/photo/woman-posing-on-city-street-15276729/ |
+| Rani Kusuma | 33402413 | https://www.pexels.com/photo/traditional-indonesian-attire-on-jakarta-street-33402413/ |
+| Anisa | 15428639 | https://www.pexels.com/photo/pesona-wanita-15428639/ |
+| Rio Pratama | 20226018 | https://www.pexels.com/photo/a-young-man-standing-on-a-balcony-in-front-of-a-building-20226018/ |
 
 Foto dipotong 4:5 dan dikompres untuk kartu deck. Semua profil demo memakai nama dan foto orang Indonesia. Wajah pada foto stok bukan identitas akun nyata; profil demo hanya untuk pengujian dan tangkapan layar produk.

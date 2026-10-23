@@ -7,7 +7,7 @@ export const instant = false;
 export const metadata = { title: "Pembayaran admin", robots: { index: false, follow: false } };
 
 export default async function AdminPaymentsPage() {
-  const supabase = await createServerSupabase();
+  const supabase = await createServerSupabase("admin");
   const { data: pending } = await supabase
     .from("payments")
     .select("id, profile_id, plan, months, amount_idr, status, created_at")

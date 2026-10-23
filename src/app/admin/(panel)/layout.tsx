@@ -7,7 +7,7 @@ import { PageFade } from "@/components/motion";
 export const instant = false;
 
 export default async function AdminPanelLayout({ children }: { children: React.ReactNode }) {
-  const supabase = await createServerSupabase();
+  const supabase = await createServerSupabase("admin");
   const {
     data: { user },
   } = await supabase.auth.getUser();

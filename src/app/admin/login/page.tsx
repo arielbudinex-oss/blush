@@ -1,6 +1,5 @@
 import { redirect } from "next/navigation";
 import { createServerSupabase } from "@/lib/supabase/server";
-import AdminSignOut from "@/components/AdminSignOut";
 import { Icon } from "@/components/Icon";
 
 export const instant = false;
@@ -12,10 +11,17 @@ export default async function AdminLoginPage({
   searchParams: Promise<{ bye?: string; error?: string }>;
 }) {
   const params = await searchParams;
-  const supabase = await createServerSupabase();
+  const supabase = await createServerSupabase("admin");
   const {
     data: { user },
   } = await supabase.auth.getUser();
+  const userClient = await createServerSupabase();
+  const { data: { user: userSession } } = await userClient.auth.getUser();
+  const loginError = params.error === "admin_required"
+    ? "Akun Google ini bukan admin Blush. Gunakan akun admin yang terdaftar."
+    : params.error
+      ? "Login Google belum selesai. Coba lagi."
+      : null;
 
   if (user) {
     const { data: me } = await supabase.from("profiles").select("role").eq("id", user.id).maybeSingle();
@@ -42,30 +48,29 @@ export default async function AdminLoginPage({
               Kamu sudah keluar dari admin.
             </p>
           ) : null}
-          {params.error ? (
+          {loginError ? (
             <p className="mt-4 rounded-[9px] border border-blush-deep/30 bg-blush/10 px-3 py-2 text-sm text-blush-deep">
-              Login Google belum selesai. Coba lagi.
+              {loginError}
             </p>
           ) : null}
 
-          {user ? (
-            <div className="mt-5">
-              <p className="rounded-[9px] border border-line bg-paper-2 px-3 py-2 text-sm leading-6 text-ink-soft">
-                Akun yang sedang masuk bukan admin. Keluar dulu, lalu masuk dengan akun admin.
-              </p>
-              <div className="mt-3">
-                <AdminSignOut />
-              </div>
-            </div>
-          ) : (
-            <a
-              href="/api/auth/google/start?next=/admin"
-              className="mt-7 flex min-h-12 w-full items-center justify-center gap-3 rounded-full bg-ink px-5 text-sm font-semibold text-paper transition-opacity hover:opacity-90"
-            >
-              <span className="grid h-6 w-6 place-items-center rounded-full bg-paper font-display text-sm font-bold text-ink">G</span>
-              Lanjutkan dengan Google
-            </a>
-          )}
+          <a
+            href="/api/auth/google/start?scope=admin&next=/admin"
+            className="mt-7 flex min-h-12 w-full items-center justify-center gap-3 rounded-full bg-ink px-5 text-sm font-semibold text-paper transition-opacity hover:opacity-90"
+          >
+            <span className="grid h-6 w-6 place-items-center rounded-full bg-paper font-display text-sm font-bold text-ink">G</span>
+            Masuk dengan Google
+          </a>
+          {userSession ? (
+            <p className="mt-3 text-xs leading-5 text-ink-soft">
+              Sesi user tetap aktif di Blush. Sesi admin terpisah.
+            </p>
+          ) : null}
+          {user && !userSession ? (
+            <p className="mt-3 text-xs leading-5 text-ink-soft">
+              Sesi admin tidak aktif. Masuk dengan akun admin untuk membuka panel.
+            </p>
+          ) : null}
 
           <p className="mt-6 flex items-start gap-2.5 text-xs font-medium leading-5 text-ink-soft">
             <Icon name="shield" className="mt-0.5 h-4 w-4 shrink-0" />

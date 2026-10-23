@@ -6,7 +6,7 @@ import type { Plan } from "@/lib/plans";
 
 /** Admin menandai transaksi QRIS lunas setelah cek mutasi. Tidak ada jalur lain mengaktifkan premium. */
 export async function POST(request: Request) {
-  const supabase = await createServerSupabase();
+  const supabase = await createServerSupabase("admin");
   const {
     data: { user },
   } = await supabase.auth.getUser();

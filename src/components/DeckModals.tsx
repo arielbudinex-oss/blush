@@ -1,16 +1,19 @@
 "use client";
 
 import Link from "next/link";
-import { AnimatePresence, MatchBurst, motion, useReducedMotion } from "@/components/motion";
+import { AnimatePresence, motion, useReducedMotion } from "@/components/motion";
+import VerifiedBadge from "@/components/VerifiedBadge";
 import { btnGhost, btnPrimary, inputBase, label } from "@/components/ui";
 
 /** Modal match: kartu pegas + cincin partikel. Konten tetap tampil walau reduced motion. */
 export function MatchModal({
   matched,
   onClose,
+  onViewProfile,
 }: {
-  matched: { matchId: string; name: string } | null;
+  matched: { matchId: string; name: string; candidate: import("@/components/SwipeDeck").Candidate } | null;
   onClose: () => void;
+  onViewProfile: () => void;
 }) {
   const reduce = useReducedMotion();
   return (
@@ -32,21 +35,45 @@ export function MatchModal({
             exit={{ scale: 0.96, opacity: 0 }}
             transition={{ type: "spring", stiffness: 320, damping: 28 }}
           >
-            <MatchBurst label={matched.name} />
-            <h2 className="text-[1.75rem] leading-[1.1]">
-              Kalian <em className="font-medium text-blush-deep">saling suka</em>.
+            <div className="relative mx-auto mb-5 flex h-36 w-full items-center justify-center" aria-hidden="true">
+              <motion.span
+                className="absolute h-24 w-24 rounded-full border border-blush-deep/35"
+                initial={reduce ? false : { scale: 0.35, opacity: 0 }}
+                animate={reduce ? { opacity: 1 } : { scale: [0.55, 1.28], opacity: [0.5, 0] }}
+                transition={{ duration: 0.85, ease: [0.16, 1, 0.3, 1] }}
+              />
+              <motion.span
+                className="absolute h-32 w-32 rounded-full border border-blush-deep/20"
+                initial={reduce ? false : { scale: 0.35, opacity: 0 }}
+                animate={reduce ? { opacity: 1 } : { scale: [0.45, 1.18], opacity: [0.32, 0] }}
+                transition={{ duration: 0.9, delay: 0.08, ease: [0.16, 1, 0.3, 1] }}
+              />
+              <div className="relative flex -space-x-4">
+                {matched.candidate.photos.slice(0, 1).map((path) => (
+                  <motion.img key={path} src={path.startsWith("http") ? path : `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/photos/${path}`} alt="" className="h-20 w-20 rounded-full border-4 border-paper object-cover shadow-md" initial={reduce ? false : { x: -28, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ duration: 0.32, ease: [0.16, 1, 0.3, 1] }} />
+                ))}
+                <motion.span className="grid h-20 w-20 place-items-center rounded-full border-4 border-paper bg-blush-tint text-blush-deep shadow-md" initial={reduce ? false : { x: 28, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ duration: 0.32, delay: 0.06, ease: [0.16, 1, 0.3, 1] }}>
+                  <VerifiedBadge size={25} />
+                </motion.span>
+              </div>
+            </div>
+            <h2 className="font-display text-[1.75rem] font-bold leading-[1.1] text-ink">
+              Kalian saling suka.
             </h2>
             <p className="mt-2 text-sm leading-relaxed text-ink-soft">
-              {matched.name} juga suka kamu. Chat kalian sudah terbuka. Balas dalam 24 jam supaya tidak hilang.
+              {matched.name} juga suka kamu. Kirim pesan pertama kalau siap.
             </p>
-            <div className="mt-4 flex flex-col gap-2">
+            <div className="mt-5 grid grid-cols-2 gap-2">
               <Link href={`/app/chat/${matched.matchId}`} className={btnPrimary}>
-                Buka chat
+                Kirim pesan
               </Link>
-              <button type="button" className={btnGhost} onClick={onClose}>
-                Lanjut swipe
+              <button type="button" className={btnGhost} onClick={onViewProfile}>
+                Lihat profil
               </button>
             </div>
+            <button type="button" className="mt-3 min-h-11 w-full text-sm font-semibold text-ink-soft" onClick={onClose}>
+              Lanjut geser
+            </button>
           </motion.div>
         </motion.div>
       ) : null}
