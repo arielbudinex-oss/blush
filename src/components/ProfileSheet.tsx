@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "@/components/motion";
 import { Icon } from "@/components/Icon";
+import VerifiedBadge from "@/components/VerifiedBadge";
 import { photoUrl, distanceLabel } from "@/lib/photo";
 import { btnGhost, btnPrimary, btnDanger } from "@/components/ui";
 
@@ -154,8 +155,8 @@ export default function ProfileSheet({
                   </>
                 ) : null}
                 {candidate.is_verified === "approved" ? (
-                  <span className="absolute bottom-3 left-3 inline-flex items-center gap-1 rounded-full bg-paper/95 px-2 py-1 text-2xs font-bold text-verify">
-                    <Icon name="check" className="h-3 w-3" strokeWidth={3} /> Terverifikasi
+                  <span className="absolute bottom-3 left-3 inline-flex items-center gap-1.5 rounded-full bg-paper/95 px-2 py-1 text-2xs font-bold text-ink">
+                    <VerifiedBadge size={14} /> Terverifikasi
                   </span>
                 ) : null}
               </div>

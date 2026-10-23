@@ -28,7 +28,9 @@ export type IconName =
   | "pulse"
   | "wallet"
   | "bell"
-  | "logout";
+  | "logout"
+  | "smile"
+  | "phone";
 
 /**
  * Satu set ikon 24px dengan grid, ketebalan, dan ujung garis yang sama.
@@ -243,6 +245,21 @@ export function Icon({
         <svg {...common}>
           <path d="M10 5H5v14h5" />
           <path d="M13 8.5 16.5 12 13 15.5M9 12h7.5" />
+        </svg>
+      );
+    case "smile":
+      return (
+        <svg {...common}>
+          <circle cx="12" cy="12" r="8.2" />
+          <path d="M8.4 14.1c.8 1.3 2 2 3.6 2s2.8-.7 3.6-2" />
+          <circle cx="9" cy="9.8" r=".9" fill="currentColor" stroke="none" />
+          <circle cx="15" cy="9.8" r=".9" fill="currentColor" stroke="none" />
+        </svg>
+      );
+    case "phone":
+      return (
+        <svg {...common}>
+          <path d="M6.3 3.9 8.7 7l-1.5 2c1.1 2.4 2.7 4 5.1 5.1l2-1.5 3.1 2.4c.5.4.6 1 .2 1.5l-1.2 1.4c-.5.6-1.2.8-2 .6-4.1-1.2-7.6-4.7-8.8-8.8-.2-.8 0-1.5.6-2L6.3 3.9Z" />
         </svg>
       );
     default:

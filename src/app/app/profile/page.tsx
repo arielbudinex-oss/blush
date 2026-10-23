@@ -4,6 +4,7 @@ import { createServerSupabase } from "@/lib/supabase/server";
 import { PLANS, type Plan } from "@/lib/plans";
 import { photoUrl } from "@/lib/photo";
 import { Icon } from "@/components/Icon";
+import VerifiedBadge from "@/components/VerifiedBadge";
 import ProfileForm from "@/components/ProfileForm";
 import Completeness from "@/components/Completeness";
 import { profileCompletion, profileGaps } from "@/lib/completeness";
@@ -62,13 +63,7 @@ export default async function ProfilePage() {
               {age ? `, ${age}` : ""}
             </h1>
             {profile.is_verified === "approved" ? (
-              <span
-                title="Terverifikasi"
-                className="inline-grid h-[18px] w-[18px] shrink-0 place-items-center rounded-full bg-verify text-white"
-              >
-                <Icon name="check" className="h-3 w-3" strokeWidth={2.8} />
-                <span className="sr-only">Terverifikasi</span>
-              </span>
+              <VerifiedBadge />
             ) : (
               <Link href="/app/verify" className="inline-flex min-h-9 items-center gap-1.5 whitespace-nowrap text-xs font-semibold text-ink-soft hover:text-ink">
                 Verifikasi wajah
@@ -123,13 +118,7 @@ export default async function ProfilePage() {
                 {age ? `, ${age}` : ""}
               </p>
               {profile.is_verified === "approved" ? (
-                <span
-                  title="Terverifikasi"
-                  className="inline-grid h-[18px] w-[18px] shrink-0 place-items-center rounded-full bg-verify text-white"
-                >
-                  <Icon name="check" className="h-3 w-3" strokeWidth={2.8} />
-                  <span className="sr-only">Terverifikasi</span>
-                </span>
+                <VerifiedBadge />
               ) : null}
               <p className="w-fit max-w-full truncate rounded-full bg-black/90 px-2 py-0.5 text-sm font-semibold text-white">
                 {[profile.job, profile.city].filter(Boolean).join(" · ") || "Lengkapi pekerjaan dan kota"}

@@ -23,8 +23,8 @@ export default function ExpiryChip({ expiresAt }: { expiresAt: string | null }) 
 
   return (
     <span
-      className={`shrink-0 whitespace-nowrap rounded-[999px] border px-2 py-0.5 text-2xs font-semibold ${
-        urgent ? "border-blush-deep bg-blush-tint text-blush-deep" : "border-line text-ink-faint"
+      className={`shrink-0 whitespace-nowrap rounded-[999px] border px-1.5 py-px text-[10px] font-medium leading-4 tracking-normal ${
+        urgent ? "border-blush-deep/50 bg-blush-tint text-blush-deep" : "border-line text-ink-soft"
       }`}
     >
       {label}

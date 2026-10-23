@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { usePathname } from "next/navigation";
 import AdminSignOut from "@/components/AdminSignOut";
 import { Icon, type IconName } from "@/components/Icon";
@@ -11,7 +12,10 @@ const GROUPS: { label: string; items: { href: string; label: string; icon: IconN
   },
   {
     label: "Pantau",
-    items: [{ href: "/admin/aktivitas", label: "Aktivitas", icon: "pulse" }],
+    items: [
+      { href: "/admin/aktivitas", label: "Aktivitas", icon: "pulse" },
+      { href: "/admin/aktivitas/tautan", label: "Tautan", icon: "flag" },
+    ],
   },
   {
     label: "Operasional",
@@ -29,7 +33,8 @@ const GROUPS: { label: string; items: { href: string; label: string; icon: IconN
 
 export default function AdminSidebar() {
   const pathname = usePathname();
-  const active = (href: string) => (href === "/admin" ? pathname === "/admin" : pathname.startsWith(href));
+  const active = (href: string) =>
+    href === "/admin" || href === "/admin/aktivitas" ? pathname === href : pathname.startsWith(href);
 
   const nav = (compact: boolean) => (
     <nav aria-label="Navigasi admin" className={compact ? "flex flex-wrap gap-1.5 pb-1" : "flex flex-col gap-6"}>
@@ -40,9 +45,10 @@ export default function AdminSidebar() {
             {group.items.map((item) => {
               const isActive = active(item.href);
               return (
-                <a
+                <Link
                   key={item.href}
                   href={item.href}
+                  prefetch
                   aria-current={isActive ? "page" : undefined}
                   className={
                     compact
@@ -52,7 +58,7 @@ export default function AdminSidebar() {
                 >
                   <Icon name={item.icon} className={`h-4 w-4 shrink-0 ${isActive ? "opacity-90" : "opacity-70"}`} />
                   {item.label}
-                </a>
+                </Link>
               );
             })}
           </div>
@@ -66,7 +72,7 @@ export default function AdminSidebar() {
       <div className="border-b border-line bg-paper px-4 py-3 lg:hidden">
         <div className="flex items-center justify-between gap-3">
           <span className="font-display text-lg font-bold tracking-[-0.03em]">blush admin</span>
-          <a href="/app/discover" className="text-xs font-semibold text-ink-soft">Buka app</a>
+          <Link href="/app/discover" className="text-xs font-semibold text-ink-soft">Buka app</Link>
         </div>
         <div className="mt-3">{nav(true)}</div>
       </div>
@@ -80,10 +86,10 @@ export default function AdminSidebar() {
           {nav(false)}
         </div>
         <div className="border-t border-line px-1 pt-3">
-          <a href="/app/discover" className="flex min-h-10 items-center gap-3 rounded-[8px] px-3 text-[13px] font-medium text-ink-soft hover:bg-paper-2 hover:text-ink">
+          <Link href="/app/discover" className="flex min-h-10 items-center gap-3 rounded-[8px] px-3 text-[13px] font-medium text-ink-soft hover:bg-paper-2 hover:text-ink">
             <Icon name="chevron" className="h-4 w-4 rotate-180 opacity-70" />
             Kembali ke aplikasi
-          </a>
+          </Link>
           <AdminSignOut />
           <p className="mt-3 px-3 text-[11px] leading-5 text-ink-faint">Data pengunjung disamarkan. Akses hanya untuk admin.</p>
         </div>

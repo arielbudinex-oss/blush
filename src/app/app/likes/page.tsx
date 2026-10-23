@@ -3,6 +3,7 @@ import { createServerSupabase } from "@/lib/supabase/server";
 import { isPremium, type Plan } from "@/lib/plans";
 import { photoUrl } from "@/lib/photo";
 import { Icon } from "@/components/Icon";
+import VerifiedBadge from "@/components/VerifiedBadge";
 import { btnPrimary } from "@/components/ui";
 import { Stagger, StaggerItem } from "@/components/motion";
 import LikeBackButton from "@/components/LikeBackButton";
@@ -134,13 +135,7 @@ export default async function LikesPage() {
                       <span className="min-w-0 truncate">{l.display_name || "Tanpa nama"}</span>
                       {l.age ? <span className="shrink-0 text-ink-faint">· {l.age}</span> : null}
                       {l.is_verified === "approved" ? (
-                        <span
-                          title="Terverifikasi"
-                          className="inline-grid h-[18px] w-[18px] shrink-0 place-items-center rounded-full bg-verify text-white"
-                        >
-                          <Icon name="check" className="h-3 w-3" strokeWidth={2.8} />
-                          <span className="sr-only">Terverifikasi</span>
-                        </span>
+                        <VerifiedBadge />
                       ) : null}
                     </p>
                     <p className={`text-xs font-semibold ${l.action === "superlike" ? "text-blush-deep" : "text-ink-faint"}`}>

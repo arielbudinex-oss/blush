@@ -7,6 +7,7 @@ import { createClient } from "@/lib/supabase/client";
 import { Icon } from "@/components/Icon";
 import { btnGhost, btnPrimary } from "@/components/ui";
 import { formatClock, formatDayLabel, formatRelative, sameDay } from "@/lib/time";
+import AudioCall from "@/components/AudioCall";
 
 type Message = {
   id: number;
@@ -20,6 +21,7 @@ type Message = {
 
 const REPORT_REASONS = ["Kasar atau melecehkan", "Spam atau promosi", "Minta uang", "Ajakan tidak pantas", "Lainnya"];
 const GROUP_WINDOW_MS = 5 * 60_000;
+const EMOJIS = ["😀", "😂", "🥰", "😍", "😘", "😊", "😎", "🤍", "❤️", "🔥", "👏", "🙌", "👍", "🤔", "😅", "😭", "😤", "💬", "🎉", "☕", "🍜", "🌙", "✨", "💫"];
 
 function sameGroup(a: Message, b: Message) {
   return (
@@ -66,6 +68,7 @@ export default function Chat({
   const [expiry, setExpiry] = useState<string | null>(expiresAt);
   const [extended, setExtended] = useState(Boolean(extendedAt));
   const [extendBusy, setExtendBusy] = useState(false);
+  const [emojiOpen, setEmojiOpen] = useState(false);
 
   const endRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
@@ -197,6 +200,20 @@ export default function Chat({
     if (!el) return;
     el.style.height = "auto";
     el.style.height = `${Math.min(el.scrollHeight, 128)}px`;
+  }
+
+  function insertEmoji(emoji: string) {
+    const el = inputRef.current;
+    const start = el?.selectionStart ?? body.length;
+    const end = el?.selectionEnd ?? body.length;
+    const next = body.slice(0, start) + emoji + body.slice(end);
+    setBody(next);
+    setEmojiOpen(false);
+    requestAnimationFrame(() => {
+      el?.focus();
+      el?.setSelectionRange(start + emoji.length, start + emoji.length);
+      resize();
+    });
   }
 
   function onType(e: React.ChangeEvent<HTMLTextAreaElement>) {
@@ -362,6 +379,7 @@ export default function Chat({
             {peerTyping ? "sedang menulis…" : statusLine}
           </p>
         </div>
+        <AudioCall matchId={matchId} meId={meId} otherName={otherName} />
         <button
           type="button"
           aria-label="Opsi dan keamanan"
@@ -512,7 +530,7 @@ export default function Chat({
                 <div className={`flex ${mine ? "justify-end" : "justify-start"} ${end ? "mb-3" : "mb-0.5"}`}>
                   <div className={`flex max-w-[80%] flex-col ${mine ? "items-end" : "items-start"}`}>
                     <div
-                      className={`px-3 py-2 text-sm leading-[1.45] ${bubbleShape} ${
+                      className={`blush-bubble-in px-3 py-2 text-sm leading-[1.45] ${bubbleShape} ${
                         mine
                           ? m.failed
                             ? "border border-line-strong bg-paper-2 text-ink"
@@ -582,8 +600,20 @@ export default function Chat({
         </p>
       ) : null}
 
-      <form onSubmit={send} className="border-t border-line p-2">
-        <div className="flex items-end gap-1.5 rounded-[22px] border border-line-input bg-paper px-3 py-1.5 transition-colors focus-within:border-blush-deep">
+      <form onSubmit={send} className="relative border-t border-line p-2">
+        {emojiOpen ? (
+          <div className="blush-pop-in absolute bottom-[calc(100%-4px)] right-2 z-30 w-[min(18rem,calc(100vw-2rem))] rounded-[18px] border border-line bg-paper p-2 shadow-[0_18px_50px_-20px_rgba(32,26,20,0.45)]" role="dialog" aria-label="Pilih emoji">
+            <div className="grid grid-cols-8 gap-1">
+              {EMOJIS.map((emoji) => (
+                <button key={emoji} type="button" onClick={() => insertEmoji(emoji)} className="grid h-9 w-9 place-items-center rounded-[9px] text-xl transition-colors hover:bg-paper-2 focus-visible:bg-paper-2" aria-label={`Sisipkan ${emoji}`}>
+                  {emoji}
+                </button>
+              ))}
+            </div>
+            <p className="mt-1 px-1 text-[10px] leading-4 text-ink-soft">Emoji mengikuti sistem perangkat. Di iPhone tampil gaya Apple.</p>
+          </div>
+        ) : null}
+        <div className="flex items-end gap-1.5 rounded-[22px] border border-line-input bg-paper px-2 py-1.5 transition-colors focus-within:border-blush-deep">
           <textarea
             ref={inputRef}
             rows={1}
@@ -601,10 +631,19 @@ export default function Chat({
             className="max-h-32 min-h-9 flex-1 resize-none bg-transparent py-1.5 text-sm leading-snug text-ink outline-none placeholder:text-ink-placeholder"
           />
           <button
+            type="button"
+            aria-label="Buka emoji"
+            aria-expanded={emojiOpen}
+            onClick={() => setEmojiOpen((open) => !open)}
+            className={`mb-0.5 grid h-9 w-9 shrink-0 place-items-center rounded-full transition-colors ${emojiOpen ? "bg-paper-3 text-ink" : "text-ink-soft hover:bg-paper-2 hover:text-ink"}`}
+          >
+            <Icon name="smile" className="h-[19px] w-[19px]" />
+          </button>
+          <button
             type="submit"
             disabled={!body.trim() || busy}
             aria-label="Kirim pesan"
-            className="mb-0.5 grid h-9 w-9 shrink-0 place-items-center rounded-full bg-blush-deep text-paper transition-colors disabled:bg-paper-3 disabled:text-ink-faint"
+            className="mb-0.5 grid h-9 w-9 shrink-0 place-items-center rounded-full bg-blush-deep text-paper transition-all disabled:cursor-not-allowed disabled:bg-paper-3 disabled:text-ink-faint disabled:opacity-50"
           >
             <Icon name="send" className="h-[18px] w-[18px]" />
           </button>

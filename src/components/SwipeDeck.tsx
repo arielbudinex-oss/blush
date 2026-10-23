@@ -11,6 +11,7 @@ import ProfileSheet from "@/components/ProfileSheet";
 import FiltersSheet from "@/components/FiltersSheet";
 import { CountUp } from "@/components/motion";
 import { Icon } from "@/components/Icon";
+import VerifiedBadge from "@/components/VerifiedBadge";
 import { btnDanger, btnGhost, btnPrimary } from "@/components/ui";
 
 export type Candidate = {
@@ -46,15 +47,7 @@ const VITAL_LABEL: Record<string, string> = {
 };
 
 function CheckBadge() {
-  return (
-    <span
-      title="Terverifikasi"
-      className="inline-grid h-4 w-4 shrink-0 place-items-center rounded-full bg-verify text-white"
-    >
-      <Icon name="check" className="h-[10px] w-[10px]" strokeWidth={3.2} />
-      <span className="sr-only">Terverifikasi</span>
-    </span>
-  );
+  return <VerifiedBadge size={16} />;
 }
 
 function SwipeCard({

@@ -4,6 +4,7 @@ import { photoUrl } from "@/lib/photo";
 import { Stagger, StaggerItem } from "@/components/motion";
 import ExpiryChip from "@/components/ExpiryChip";
 import { Icon } from "@/components/Icon";
+import VerifiedBadge from "@/components/VerifiedBadge";
 import { formatStamp } from "@/lib/time";
 
 // Route ini selalu butuh sesi terbaru dari cookies, jadi memang blocking (Next 16 cache components).
@@ -106,13 +107,7 @@ export default async function MatchesPage() {
                   <span className="flex items-center gap-1">
                     <span className="truncate font-semibold">{m.display_name || "Tanpa nama"}</span>
                     {m.is_verified === "approved" ? (
-                      <span
-                        title="Terverifikasi"
-                        className="inline-grid h-[18px] w-[18px] shrink-0 place-items-center rounded-full bg-verify text-white"
-                      >
-                        <Icon name="check" className="h-3 w-3" strokeWidth={2.8} />
-                        <span className="sr-only">Terverifikasi</span>
-                      </span>
+                      <VerifiedBadge />
                     ) : null}
                   </span>
                   <p className="truncate text-sm text-ink-soft">
@@ -124,7 +119,7 @@ export default async function MatchesPage() {
                     <span className="text-2xs font-medium text-ink-faint">{formatStamp(m.last_message_at)}</span>
                   ) : null}
                   {m.unread > 0 ? (
-                    <span className="min-w-5 rounded-full bg-blush-deep px-1.5 py-0.5 text-center text-2xs font-semibold text-paper">
+                    <span className="min-w-4 rounded-full bg-blush-deep px-1 py-0 text-center text-[10px] font-semibold leading-4 text-paper">
                       {m.unread}
                     </span>
                   ) : (

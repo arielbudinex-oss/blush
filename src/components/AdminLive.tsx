@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 import { Icon } from "@/components/Icon";
 import TrafficChart from "@/components/TrafficChart";
@@ -203,12 +204,15 @@ export default function AdminLive() {
             </div>
 
             <div className="rounded-card border border-line bg-paper p-5">
-              <h3 className="text-base font-semibold text-ink">Tautan paling diklik</h3>
+              <div className="flex items-start justify-between gap-3">
+                <h3 className="text-base font-semibold text-ink">Tautan paling diklik</h3>
+                <Link href="/admin/aktivitas/tautan" className="shrink-0 text-xs font-semibold text-ink-soft hover:text-ink">Lihat selengkapnya</Link>
+              </div>
               {data.topLinks.length === 0 ? (
                 <p className="mt-4 rounded-[9px] bg-paper-2 px-3 py-4 text-sm text-ink-soft">Belum ada klik tautan yang tercatat.</p>
               ) : (
                 <ul className="mt-3 flex flex-col gap-2">
-                  {data.topLinks.map((link) => (
+                  {data.topLinks.slice(0, 3).map((link) => (
                     <li key={link.target} className="rounded-[9px] bg-paper-2 px-3 py-2.5">
                       <p className="truncate text-sm font-semibold text-ink">{link.label || link.target}</p>
                       <p className="mt-1 truncate text-xs leading-5 text-ink-soft">{link.target}</p>

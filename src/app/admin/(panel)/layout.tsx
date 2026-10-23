@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { createServerSupabase } from "@/lib/supabase/server";
 import AdminSidebar from "@/components/AdminSidebar";
 import AdminSignOut from "@/components/AdminSignOut";
+import { PageFade } from "@/components/motion";
 
 export const instant = false;
 
@@ -31,7 +32,7 @@ export default async function AdminPanelLayout({ children }: { children: React.R
     <div className="min-h-dvh bg-[#f6f3ee]">
       <div className="mx-auto flex w-full max-w-[1400px] flex-col lg:flex-row">
         <AdminSidebar />
-        <main className="min-w-0 flex-1 px-4 py-5 lg:px-8 lg:py-8">{children}</main>
+        <main className="min-w-0 flex-1 px-4 py-5 lg:px-8 lg:py-8"><PageFade>{children}</PageFade></main>
       </div>
     </div>
   );
