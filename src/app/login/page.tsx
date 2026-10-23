@@ -27,6 +27,7 @@ export default function LoginPage() {
   const [error, setError] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  const [incomplete, setIncomplete] = useState(false);
 
   const [next, setNext] = useState("/app/discover");
 
@@ -38,13 +39,23 @@ export default function LoginPage() {
     const target = params.get("next");
     if (target) setNext(safeNext(target));
 
-    // Sudah punya sesi? Jangan tampilkan form login lagi.
-    createClient()
-      .auth.getUser()
-      .then(({ data }) => {
-        if (data.user) router.replace(safeNext(target));
-      });
+    // Akun yang sudah onboarding langsung masuk. Akun setengah jadi tetap
+    // boleh melihat form ini supaya bisa lanjut mendaftar atau ganti akun.
+    const supabase = createClient();
+    supabase.auth.getUser().then(async ({ data }) => {
+      if (!data.user) return;
+      const { data: profile } = await supabase.from("profiles").select("onboarded_at").eq("id", data.user.id).maybeSingle();
+      if (profile?.onboarded_at) router.replace(safeNext(target));
+      else setIncomplete(true);
+    });
   }, []);
+
+  async function switchAccount() {
+    await createClient().auth.signOut();
+    setIncomplete(false);
+    setError(null);
+    setNotice("Sesi sebelumnya sudah keluar. Silakan masuk dengan akun lain.");
+  }
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
@@ -57,6 +68,15 @@ export default function LoginPage() {
       setError(err.message === "Invalid login credentials" ? "Email atau password salah." : err.message);
       return;
     }
+    const { data: auth } = await supabase.auth.getUser();
+    const { data: profile } = auth.user
+      ? await supabase.from("profiles").select("onboarded_at").eq("id", auth.user.id).maybeSingle()
+      : { data: null };
+    if (auth.user && !profile?.onboarded_at) {
+      setIncomplete(true);
+      setNotice(null);
+      return;
+    }
     const next = safeNext(new URLSearchParams(window.location.search).get("next"));
     router.push(next);
     router.refresh();
@@ -64,6 +84,18 @@ export default function LoginPage() {
 
   return (
     <Shell title="Masuk ke Blush" hint="Selamat datang lagi.">
+      {incomplete ? (
+        <div className="mb-4 rounded-[10px] border border-line bg-paper-2 px-3 py-3 text-sm leading-6 text-ink-soft">
+          <p>Kamu masih punya sesi akun yang belum menyelesaikan pendaftaran.</p>
+          <div className="mt-2 flex flex-wrap items-center gap-2">
+            <Link href="/onboarding" className="font-semibold text-blush-deep">Lanjutkan pendaftaran</Link>
+            <span aria-hidden="true">·</span>
+            <button type="button" onClick={switchAccount} className="font-semibold text-ink underline-offset-2 hover:underline">
+              Keluar untuk ganti akun
+            </button>
+          </div>
+        </div>
+      ) : null}
       <form onSubmit={submit} className="flex flex-col gap-[var(--space-sm)]">
         <div>
           <label className={label} htmlFor="email">
