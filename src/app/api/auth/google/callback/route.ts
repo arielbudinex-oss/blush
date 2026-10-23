@@ -1,6 +1,7 @@
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 import { createClient as createSupabaseAdmin } from "@supabase/supabase-js";
+import { createServerClient } from "@supabase/ssr";
 import { createServerSupabase } from "@/lib/supabase/server";
 import { readNonce, verifyGoogleIdToken } from "@/lib/google-oauth";
 
@@ -131,6 +132,30 @@ export async function GET(request: Request) {
         ? "/app/discover"
         : wanted;
   const response = NextResponse.redirect(new URL(next, url.origin));
+  if (scope === "admin" && userId) {
+    const adminSessionLink = await admin.auth.admin.generateLink({ type: "magiclink", email: identity.email });
+    const adminTokenHash = adminSessionLink.data?.properties?.hashed_token;
+    if (adminSessionLink.error || !adminTokenHash) return loginUrl("google_session");
+
+    const cookieOptions = { path: "/", sameSite: "lax" as const, secure: url.protocol === "https:", httpOnly: true };
+    const adminClient = createServerClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!,
+      {
+        cookieOptions: { name: "blush-admin-auth" },
+        cookies: {
+          getAll: () => cookieStore.getAll(),
+          setAll: (cookiesToSet) => {
+            for (const { name, value, options } of cookiesToSet) {
+              response.cookies.set(name, value, { ...options, ...cookieOptions });
+            }
+          },
+        },
+      },
+    );
+    const { error: sessionError } = await adminClient.auth.verifyOtp({ type: "magiclink", token_hash: adminTokenHash });
+    if (sessionError) return loginUrl("google_session");
+  }
   response.cookies.set(cookieName, "", { path: "/", maxAge: 0 });
   return response;
 }
