@@ -1,54 +1,49 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
 import AdminSignOut from "@/components/AdminSignOut";
 import { Icon, type IconName } from "@/components/Icon";
 
 const GROUPS: { label: string; items: { href: string; label: string; icon: IconName }[] }[] = [
   {
+    label: "Utama",
+    items: [{ href: "/admin", label: "Ringkasan", icon: "deck" }],
+  },
+  {
     label: "Pantau",
-    items: [
-      { href: "#aktivitas", label: "Aktivitas", icon: "deck" },
-      { href: "#notifikasi", label: "Notifikasi", icon: "sparkles" },
-    ],
+    items: [{ href: "/admin/aktivitas", label: "Aktivitas", icon: "pulse" }],
   },
   {
     label: "Operasional",
     items: [
-      { href: "#pembayaran", label: "Pembayaran", icon: "star" },
-      { href: "#verifikasi", label: "Verifikasi", icon: "shield" },
-      { href: "#laporan", label: "Laporan", icon: "flag" },
+      { href: "/admin/pembayaran", label: "Pembayaran", icon: "wallet" },
+      { href: "/admin/verifikasi", label: "Verifikasi", icon: "shield" },
+      { href: "/admin/laporan", label: "Laporan", icon: "flag" },
     ],
+  },
+  {
+    label: "Komunikasi",
+    items: [{ href: "/admin/notifikasi", label: "Notifikasi", icon: "bell" }],
   },
 ];
 
 export default function AdminSidebar() {
-  const [active, setActive] = useState("#aktivitas");
-
-  useEffect(() => {
-    function read() {
-      const id = window.location.hash;
-      if (id) setActive(id);
-    }
-    read();
-    window.addEventListener("hashchange", read);
-    return () => window.removeEventListener("hashchange", read);
-  }, []);
+  const pathname = usePathname();
+  const active = (href: string) => (href === "/admin" ? pathname === "/admin" : pathname.startsWith(href));
 
   const nav = (compact: boolean) => (
     <nav aria-label="Navigasi admin" className={compact ? "flex flex-wrap gap-1.5 pb-1" : "flex flex-col gap-6"}>
       {GROUPS.map((group) => (
         <div key={group.label} className={compact ? "contents" : ""}>
-          {!compact ? <p className="mb-2 px-3 text-[11px] font-semibold uppercase tracking-[0.12em] text-ink-faint">{group.label}</p> : null}
+          {!compact ? <p className="mb-2 px-3 text-[11px] font-semibold uppercase tracking-[0.10em] text-ink-soft">{group.label}</p> : null}
           <div className={compact ? "flex gap-1.5" : "flex flex-col gap-1"}>
             {group.items.map((item) => {
-              const isActive = active === item.href;
+              const isActive = active(item.href);
               return (
                 <a
                   key={item.href}
                   href={item.href}
-                  onClick={() => setActive(item.href)}
-                  aria-current={isActive ? "location" : undefined}
+                  aria-current={isActive ? "page" : undefined}
                   className={
                     compact
                       ? `inline-flex min-h-10 shrink-0 items-center gap-2 rounded-full px-3 text-xs font-semibold ${isActive ? "bg-ink text-paper" : "border border-line bg-paper text-ink-soft"}`

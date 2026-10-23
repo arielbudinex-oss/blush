@@ -24,7 +24,11 @@ export type IconName =
   | "sparkles"
   | "flag"
   | "ban"
-  | "plus";
+  | "plus"
+  | "pulse"
+  | "wallet"
+  | "bell"
+  | "logout";
 
 /**
  * Satu set ikon 24px dengan grid, ketebalan, dan ujung garis yang sama.
@@ -212,6 +216,33 @@ export function Icon({
           <circle cx="5.6" cy="12" r="1.3" fill="currentColor" stroke="none" />
           <circle cx="12" cy="12" r="1.3" fill="currentColor" stroke="none" />
           <circle cx="18.4" cy="12" r="1.3" fill="currentColor" stroke="none" />
+        </svg>
+      );
+    case "pulse":
+      return (
+        <svg {...common}>
+          <path d="M3 12h4l2.1-6 4 12 2.1-6H21" />
+        </svg>
+      );
+    case "wallet":
+      return (
+        <svg {...common}>
+          <rect x="3.4" y="6.2" width="17.2" height="12.4" rx="2.2" />
+          <path d="M3.4 9.4h17.2M16.2 14.2h1.6" />
+        </svg>
+      );
+    case "bell":
+      return (
+        <svg {...common}>
+          <path d="M6.2 16.8h11.6l-1.2-2.2V10a4.6 4.6 0 0 0-9.2 0v4.6l-1.2 2.2Z" />
+          <path d="M10.2 19.2a2 2 0 0 0 3.6 0" />
+        </svg>
+      );
+    case "logout":
+      return (
+        <svg {...common}>
+          <path d="M10 5H5v14h5" />
+          <path d="M13 8.5 16.5 12 13 15.5M9 12h7.5" />
         </svg>
       );
     default:

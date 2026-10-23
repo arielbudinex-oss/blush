@@ -19,7 +19,7 @@ export default function AdminSignOut() {
       disabled={busy}
       className="flex min-h-10 w-full items-center gap-3 rounded-[8px] px-3 text-left text-[13px] font-medium text-ink-soft hover:bg-paper-2 hover:text-ink disabled:opacity-60"
     >
-      <Icon name="back" className="h-4 w-4 shrink-0 opacity-70" />
+      <Icon name="logout" className="h-4 w-4 shrink-0 opacity-70" />
       {busy ? "Keluar…" : "Keluar dari admin"}
     </button>
   );
