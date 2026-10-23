@@ -126,7 +126,7 @@ export default function Home() {
 
         <div className="relative mx-auto w-full max-w-[19rem]">
           <div className="absolute inset-0 -z-10 -rotate-2 translate-y-2 rounded-[36px] border border-line bg-paper-3" aria-hidden="true" />
-          <Phone src="/landing/deck.png" alt="Kartu profil Damar di deck Blush, lengkap dengan bio, prompt, dan minat" />
+          <Phone src="/landing/deck.png" alt="Kartu profil Raka Aditya di deck Blush, lengkap dengan bio, prompt, dan minat" />
         </div>
       </section>
 
