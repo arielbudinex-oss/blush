@@ -100,7 +100,7 @@ export default async function LikesPage() {
       <h1 className="text-3xl font-bold">Yang suka kamu</h1>
       <p className="mt-1 text-sm text-ink-soft">
         {rows.length > 0
-          ? `${rows.length} orang sudah suka duluan. Balas dari deck, kalau cocok kalian langsung match.`
+          ? `${rows.length} orang sudah suka duluan. Balas dari halaman Temukan, kalau cocok kalian langsung match.`
           : "Kalau ada yang suka, fotonya muncul di sini."}
       </p>
 
@@ -122,7 +122,7 @@ export default async function LikesPage() {
             const url = photoUrl(l.photos?.[0]);
             return (
               <StaggerItem key={l.id}>
-                <article className="flex items-center gap-[var(--space-sm)] rounded-card border border-line bg-paper p-[var(--space-sm)]">
+                <article className="flex h-full items-center gap-[var(--space-sm)] rounded-card border border-line bg-paper p-[var(--space-sm)]">
                   <div className="h-16 w-16 shrink-0 overflow-hidden rounded-[10px] bg-paper-2">
                     {url ? (
                       // eslint-disable-next-line @next/next/no-img-element
@@ -130,9 +130,9 @@ export default async function LikesPage() {
                     ) : null}
                   </div>
                   <div className="min-w-0 flex-1">
-                    <p className="flex flex-wrap items-center gap-1 font-semibold">
-                      <span className="truncate">{l.display_name || "Tanpa nama"}</span>
-                      {l.age ? <span className="text-ink-faint">· {l.age}</span> : null}
+                    <p className="flex min-w-0 items-center gap-1 font-semibold">
+                      <span className="min-w-0 truncate">{l.display_name || "Tanpa nama"}</span>
+                      {l.age ? <span className="shrink-0 text-ink-faint">· {l.age}</span> : null}
                       {l.is_verified === "approved" ? (
                         <span
                           title="Terverifikasi"
@@ -144,7 +144,7 @@ export default async function LikesPage() {
                       ) : null}
                     </p>
                     <p className={`text-xs font-semibold ${l.action === "superlike" ? "text-blush-deep" : "text-ink-faint"}`}>
-                      {l.action === "superlike" ? "Superlike" : "Like"}
+                      {l.action === "superlike" ? "Superlike" : "Menyukai profilmu"}
                     </p>
                   </div>
                   <LikeBackButton targetId={l.id} />

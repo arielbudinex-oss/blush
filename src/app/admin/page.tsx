@@ -45,7 +45,7 @@ export default async function AdminPage() {
 
   return (
     <div className="min-h-dvh bg-[#f6f3ee]">
-      <div className="mx-auto flex w-full max-w-[1400px]">
+      <div className="mx-auto flex w-full max-w-[1400px] flex-col lg:flex-row">
         <AdminSidebar />
         <main className="min-w-0 flex-1 px-4 py-5 lg:px-8 lg:py-8">
       <header className="flex flex-wrap items-end justify-between gap-4 border-b border-line pb-5">

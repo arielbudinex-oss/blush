@@ -54,7 +54,7 @@ export default function LikeBackButton({ targetId }: { targetId: string }) {
       className="inline-flex shrink-0 items-center gap-1 rounded-[999px] bg-blush-deep px-3 py-1.5 text-xs font-bold text-paper transition-colors hover:bg-ink disabled:opacity-60"
     >
       <Icon name="heart" className="h-3.5 w-3.5" filled />
-      {state === "busy" ? "Mengirim…" : state === "error" ? "Coba lagi" : "Suka balik"}
+      {state === "busy" ? "Mengirim…" : state === "error" ? "Coba lagi" : "Balas"}
     </button>
   );
 }

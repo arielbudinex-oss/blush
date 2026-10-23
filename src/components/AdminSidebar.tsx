@@ -36,7 +36,7 @@ export default function AdminSidebar() {
   }, []);
 
   const nav = (compact: boolean) => (
-    <nav aria-label="Navigasi admin" className={compact ? "flex gap-1.5 overflow-x-auto pb-1" : "flex flex-col gap-6"}>
+    <nav aria-label="Navigasi admin" className={compact ? "flex flex-wrap gap-1.5 pb-1" : "flex flex-col gap-6"}>
       {GROUPS.map((group) => (
         <div key={group.label} className={compact ? "contents" : ""}>
           {!compact ? <p className="mb-2 px-3 text-[11px] font-semibold uppercase tracking-[0.12em] text-ink-faint">{group.label}</p> : null}

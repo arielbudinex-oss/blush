@@ -116,10 +116,13 @@ export default function AdminLive() {
       ) : null}
 
       {loading && !data ? (
-        <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          {[0, 1, 2, 3].map((n) => (
-            <div key={n} className="h-24 animate-pulse rounded-card border border-line bg-paper-2" />
-          ))}
+        <div className="mt-5" aria-busy="true" aria-label="Memuat analitik">
+          <p className="text-sm text-ink-soft">Memuat data aktivitas…</p>
+          <div className="mt-3 grid auto-rows-fr gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {[0, 1, 2, 3].map((n) => (
+              <div key={n} className="h-24 animate-pulse rounded-card border border-line bg-paper-2" />
+            ))}
+          </div>
         </div>
       ) : null}
 
@@ -155,7 +158,20 @@ export default function AdminLive() {
               {data.live.length === 0 ? (
                 <p className="mt-4 rounded-[9px] bg-paper-2 px-3 py-4 text-sm text-ink-soft">Belum ada pengunjung dalam 30 menit terakhir.</p>
               ) : (
-                <div className="mt-4 overflow-x-auto">
+                <>
+                <div className="mt-4 flex flex-col gap-2 md:hidden">
+                  {data.live.map((row) => (
+                    <div key={row.sessionId} className="rounded-[9px] border border-line bg-paper-2 px-3 py-3">
+                      <div className="flex items-start justify-between gap-3">
+                        <p className="min-w-0 truncate text-sm font-semibold text-ink">{row.name}</p>
+                        <span className="shrink-0 font-mono text-[11px] text-ink-soft">{row.ipMasked}</span>
+                      </div>
+                      <p className="mt-1 truncate text-xs leading-5 text-ink-soft">{row.eventType === "link_click" ? `Klik ${row.label || row.target}` : row.path}</p>
+                      <p className="mt-1 text-[11px] text-ink-soft">{row.device} · {row.browser} · {timeAgo(row.lastAt)}</p>
+                    </div>
+                  ))}
+                </div>
+                <div className="mt-4 hidden overflow-x-auto md:block">
                   <table className="w-full min-w-[560px] border-collapse text-left text-sm">
                     <thead>
                       <tr className="border-b border-line text-[11px] font-semibold uppercase tracking-[0.08em] text-ink-soft">
@@ -182,6 +198,7 @@ export default function AdminLive() {
                     </tbody>
                   </table>
                 </div>
+                </>
               )}
             </div>
 

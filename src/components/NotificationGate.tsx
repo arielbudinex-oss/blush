@@ -123,7 +123,11 @@ export default function NotificationGate() {
             <button type="button" onClick={finish} className="inline-flex min-h-11 items-center justify-center rounded-full border border-line px-4 text-sm font-semibold text-ink-soft hover:text-ink">
               {iosInstall ? "Mengerti" : "Lanjut tanpa notifikasi"}
             </button>
-          ) : null}
+          ) : (
+            <button type="button" onClick={finish} className="inline-flex min-h-11 items-center justify-center rounded-full px-4 text-sm font-semibold text-ink-soft hover:text-ink">
+              Nanti saja
+            </button>
+          )}
           <p className="text-center text-2xs text-ink-faint">Izin hanya diminta sekali di awal.</p>
         </div>
       </div>
