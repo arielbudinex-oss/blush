@@ -10,7 +10,9 @@ const LABELS = [0, 6, 12, 18, 23];
  */
 export default function TrafficChart({ hourly }: { hourly: HourRow[] }) {
   const rows = hourly.length ? hourly : [];
-  const max = Math.max(1, ...rows.map((h) => h.views + h.clicks));
+  const dataMax = Math.max(1, ...rows.map((h) => h.views + h.clicks));
+  // Beri ruang di atas bar tertinggi supaya puncaknya tidak menyentuh tick atas.
+  const max = Math.max(1, Math.ceil(dataMax * 1.1));
   const total = rows.reduce((sum, h) => sum + h.views + h.clicks, 0);
   if (total === 0) {
     return (
