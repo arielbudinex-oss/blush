@@ -38,7 +38,7 @@ export default async function PremiumPage() {
 
   return (
     <main className="mx-auto w-full max-w-3xl px-[var(--space-md)] py-[var(--space-lg)]">
-      <h1 className="text-3xl font-bold">Paket Blush</h1>
+      <h1 className="text-2xl font-bold sm:text-3xl">Paket Blush</h1>
       <p className="mt-1 text-sm text-ink-soft">
         Paket aktif: <strong>{PLANS[plan].name}</strong>
         {profile?.plan_expires_at

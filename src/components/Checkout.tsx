@@ -144,7 +144,7 @@ export default function Checkout({
             WIB
           </p>
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={state.qrDataUrl} alt="QRIS pembayaran" className="mt-3 h-64 w-64 rounded-[8px] border border-line bg-paper" />
+          <img src={state.qrDataUrl} alt="QRIS pembayaran" className="mt-3 aspect-square w-full max-w-64 rounded-[8px] border border-line bg-paper object-contain" />
           <p className="mt-2 text-xs text-ink-faint">
             Scan pakai aplikasi bank atau e-wallet apa pun yang mendukung QRIS. Status:{" "}
             <strong>{state.status === "pending" ? "menunggu pembayaran" : state.status}</strong>

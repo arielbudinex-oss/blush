@@ -30,7 +30,8 @@ export type IconName =
   | "bell"
   | "logout"
   | "smile"
-  | "phone";
+  | "phone"
+  | "chart";
 
 /**
  * Satu set ikon 24px dengan grid, ketebalan, dan ujung garis yang sama.
@@ -254,6 +255,16 @@ export function Icon({
           <path d="M8.4 14.1c.8 1.3 2 2 3.6 2s2.8-.7 3.6-2" />
           <circle cx="9" cy="9.8" r=".9" fill="currentColor" stroke="none" />
           <circle cx="15" cy="9.8" r=".9" fill="currentColor" stroke="none" />
+        </svg>
+      );
+    case "chart":
+      return (
+        <svg {...common}>
+          <path d="M4.5 19.5V5.2" />
+          <path d="M4.5 19.5h15" />
+          <path d="M7.5 15.5v-4" />
+          <path d="M12 15.5V7.5" />
+          <path d="M16.5 15.5v-7" />
         </svg>
       );
     case "phone":

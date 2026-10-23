@@ -8,7 +8,12 @@ const TABS: { href: string; label: string; icon: IconName; match: string[] }[] =
   { href: "/app/discover", label: "Temukan", icon: "deck", match: ["/app/discover"] },
   { href: "/app/likes", label: "Suka", icon: "heart", match: ["/app/likes"] },
   { href: "/app/matches", label: "Chat", icon: "chat", match: ["/app/matches", "/app/chat"] },
-  { href: "/app/profile", label: "Profil", icon: "user", match: ["/app/profile"] },
+  {
+    href: "/app/profile",
+    label: "Profil",
+    icon: "user",
+    match: ["/app/profile", "/app/settings", "/app/verify", "/app/premium"],
+  },
 ];
 
 function TabLink({

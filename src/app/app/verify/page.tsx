@@ -23,7 +23,7 @@ export default async function VerifyPage() {
     <div className="mx-auto w-full max-w-4xl px-[var(--space-md)] py-[var(--space-lg)]">
       <header className="mb-[var(--space-lg)]">
         <span className="text-xs font-semibold text-blush-deep">Opsional, bukan wajib</span>
-        <h1 className="mt-1 text-3xl font-bold">Verifikasi wajah</h1>
+        <h1 className="mt-1 text-2xl font-bold sm:text-3xl">Verifikasi wajah</h1>
         <p className="mt-2 max-w-prose text-sm text-ink-soft">
           Verifikasi tidak wajib. Profil tetap bisa dipakai tanpa itu. Sekali pindai, kamu dapat centang biru dan
           tambahan 20% di kelengkapan profil. Prosesnya berjalan di browser; yang dikirim hanya angka ciri wajah, bukan

@@ -54,9 +54,13 @@ export default async function AdminOverviewPage() {
         </Link>
       </AdminPageHeader>
 
-      <section className="mt-6 grid gap-4 md:grid-cols-3" aria-label="Ringkasan operasional">
+      <section className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3" aria-label="Ringkasan operasional">
         {cards.map((card) => (
-          <Link key={card.href} href={card.href} className="group rounded-card border border-line bg-paper p-5 transition-colors hover:border-ink/30">
+          <Link
+            key={card.href}
+            href={card.href}
+            className={`group rounded-card border border-line bg-paper p-5 transition-colors hover:border-ink/30 ${card.href === "/admin/laporan" ? "sm:col-span-2 lg:col-span-1" : ""}`}
+          >
             <div className="flex items-start justify-between gap-3">
               <p className="text-sm font-semibold leading-5 text-ink-soft">{card.label}</p>
               <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-paper-2 text-ink-soft ring-1 ring-line">

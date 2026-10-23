@@ -51,10 +51,10 @@ export default function LikeBackButton({ targetId }: { targetId: string }) {
       onClick={likeBack}
       disabled={state === "busy"}
       aria-label="Suka balik"
-      className="inline-flex shrink-0 items-center gap-1 rounded-[999px] bg-blush-deep px-3 py-1.5 text-xs font-bold text-paper transition-colors hover:bg-ink disabled:opacity-60"
+      className="inline-flex shrink-0 items-center justify-center gap-1 rounded-[999px] bg-blush-deep px-3 py-1.5 text-xs font-bold text-paper transition-colors hover:bg-ink disabled:opacity-60 max-[359px]:w-11 max-[359px]:px-0"
     >
       <Icon name="heart" className="h-3.5 w-3.5" filled />
-      {state === "busy" ? "Mengirim…" : state === "error" ? "Coba lagi" : "Balas"}
+      <span className="max-[359px]:hidden">{state === "busy" ? "Mengirim…" : state === "error" ? "Coba lagi" : "Balas"}</span>
     </button>
   );
 }

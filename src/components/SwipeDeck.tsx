@@ -557,7 +557,7 @@ export default function SwipeDeck({
           <button
             type="button"
             onClick={() => setFiltersOpen(true)}
-            className="inline-flex min-h-8 items-center gap-1 rounded-[999px] border border-line-strong px-2.5 text-2xs font-bold text-ink transition-colors hover:border-ink hover:bg-paper-2"
+            className="inline-flex min-h-11 items-center gap-1 rounded-[999px] border border-line-strong px-3 text-xs font-bold text-ink transition-colors hover:border-ink hover:bg-paper-2"
           >
             <Icon name="filter" className="h-3.5 w-3.5" />
             Filter

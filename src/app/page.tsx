@@ -213,7 +213,7 @@ export default function Home() {
         <p className="mt-2 max-w-[52ch] text-sm leading-relaxed text-ink-soft">
           Paket gratis sudah bisa dipakai penuh. Naikkan paket kalau butuh swipe tanpa batas dan ingin melihat siapa yang sudah suka duluan.
         </p>
-        <div className="mt-6 grid gap-3 md:grid-cols-3">
+        <div className="mt-6 grid grid-cols-[repeat(auto-fit,minmax(260px,1fr))] gap-3">
           {(["free", "plus", "gold"] as const).map((id) => {
             const p = PLANS[id];
             const highlight = id === "plus";
@@ -225,14 +225,14 @@ export default function Home() {
                 <div className="flex min-h-9 flex-wrap items-start justify-between gap-x-2 gap-y-1">
                   <h3 className="text-base font-bold">{p.name}</h3>
                   {highlight ? (
-                    <span className="shrink-0 rounded-[999px] bg-blush-tint px-2 py-0.5 text-2xs font-bold text-blush-deep">
+                    <span className="max-w-full shrink-0 rounded-[999px] bg-blush-tint px-2 py-0.5 text-center text-2xs font-bold leading-5 text-blush-deep">
                       Paling sering dipilih
                     </span>
                   ) : null}
                 </div>
-                <p className="mt-1 min-h-8 text-2xl font-bold tabular-nums">
+                <p className="mt-1 flex min-h-8 flex-wrap items-baseline gap-x-1 text-2xl font-bold tabular-nums">
                   {p.priceIdr === 0 ? "Rp0" : formatIdr(p.priceIdr)}
-                  <span className="text-xs font-semibold text-ink-soft"> / {p.period}</span>
+                  <span className="text-xs font-semibold text-ink-soft">/ {p.period}</span>
                 </p>
                 <ul className="mt-3 flex flex-1 flex-col gap-2 text-sm leading-5 text-ink-soft">
                   {p.features.slice(0, 4).map((f) => (

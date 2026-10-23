@@ -37,7 +37,7 @@ export default async function LikesPage() {
     const preview = rows.slice(0, 6);
     return (
       <main className="mx-auto w-full max-w-2xl px-[var(--space-md)] py-[var(--space-lg)]">
-        <h1 className="text-3xl font-bold">Yang suka kamu</h1>
+        <h1 className="text-2xl font-bold sm:text-3xl">Yang suka kamu</h1>
         <p className="mt-1 text-sm text-ink-soft">
           {rows.length > 0
             ? `${rows.length} orang sudah suka duluan. Di paket gratis, fotonya masih disamarkan.`
@@ -98,7 +98,7 @@ export default async function LikesPage() {
 
   return (
     <main className="mx-auto w-full max-w-3xl px-[var(--space-md)] py-[var(--space-lg)]">
-      <h1 className="text-3xl font-bold">Yang suka kamu</h1>
+      <h1 className="text-2xl font-bold sm:text-3xl">Yang suka kamu</h1>
       <p className="mt-1 text-sm text-ink-soft">
         {rows.length > 0
           ? `${rows.length} orang sudah suka duluan. Balas dari halaman Temukan, kalau cocok kalian langsung match.`
@@ -122,8 +122,8 @@ export default async function LikesPage() {
           {rows.map((l) => {
             const url = photoUrl(l.photos?.[0]);
             return (
-              <StaggerItem key={l.id}>
-                <article className="flex h-full items-center gap-[var(--space-sm)] rounded-card border border-line bg-paper p-[var(--space-sm)]">
+              <StaggerItem key={l.id} className="min-w-0">
+                <article className="flex h-full w-full min-w-0 items-center gap-[var(--space-sm)] rounded-card border border-line bg-paper p-[var(--space-sm)]">
                   <div className="h-16 w-16 shrink-0 overflow-hidden rounded-[10px] bg-paper-2">
                     {url ? (
                       // eslint-disable-next-line @next/next/no-img-element
@@ -131,12 +131,12 @@ export default async function LikesPage() {
                     ) : null}
                   </div>
                   <div className="min-w-0 flex-1">
-                    <p className="flex min-w-0 items-center gap-1 text-sm font-semibold">
-                      <span className="min-w-0 truncate">{l.display_name || "Tanpa nama"}</span>
-                      {l.age ? <span className="shrink-0 text-ink-faint">· {l.age}</span> : null}
-                      {l.is_verified === "approved" ? (
-                        <VerifiedBadge />
-                      ) : null}
+                    <p className="min-w-0 text-sm font-semibold">
+                      <span className="block truncate">{l.display_name || "Tanpa nama"}</span>
+                      <span className="mt-0.5 flex items-center gap-1 text-xs font-medium text-ink-faint">
+                        {l.age ? <span>· {l.age}</span> : null}
+                        {l.is_verified === "approved" ? <VerifiedBadge /> : null}
+                      </span>
                     </p>
                     <p className={`text-xs font-semibold ${l.action === "superlike" ? "text-blush-deep" : "text-ink-faint"}`}>
                       {l.action === "superlike" ? "Superlike" : "Menyukai profilmu"}

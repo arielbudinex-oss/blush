@@ -32,10 +32,10 @@ export default function AdminLinks() {
 
   return (
     <div className="mt-5 grid gap-4 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)]">
-      <section className="rounded-card border border-line bg-paper p-5">
-        <div className="flex items-baseline justify-between gap-3">
-          <h2 className="font-display text-xl font-semibold tracking-[-0.01em]">Semua tautan</h2>
-          <span className="text-xs text-ink-soft">{data.topLinks.length} tautan</span>
+      <section className="min-w-0 rounded-card border border-line bg-paper p-5">
+        <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
+          <h2 className="min-w-0 font-display text-lg font-semibold tracking-[-0.01em]">Semua tautan</h2>
+          <span className="shrink-0 text-xs text-ink-soft">{data.topLinks.length} tautan</span>
         </div>
         {data.topLinks.length === 0 ? (
           <p className="mt-4 rounded-[9px] bg-paper-2 px-3 py-5 text-sm text-ink-soft">Belum ada klik tautan.</p>
@@ -55,7 +55,7 @@ export default function AdminLinks() {
         )}
       </section>
 
-      <section className="rounded-card border border-line bg-paper p-5">
+      <section className="min-w-0 rounded-card border border-line bg-paper p-5">
         <div className="flex items-baseline justify-between gap-3">
           <h2 className="font-display text-xl font-semibold tracking-[-0.01em]">Klik terbaru</h2>
           <Link href="/admin/aktivitas" className="inline-flex items-center gap-1 text-xs font-semibold text-ink-soft hover:text-ink">

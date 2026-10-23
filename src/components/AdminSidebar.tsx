@@ -22,7 +22,7 @@ const GROUPS: { label: string; items: { href: string; label: string; icon: IconN
     items: [
       { href: "/admin/pembayaran", label: "Pembayaran", icon: "wallet" },
       { href: "/admin/verifikasi", label: "Verifikasi", icon: "shield" },
-      { href: "/admin/laporan", label: "Laporan", icon: "flag" },
+      { href: "/admin/laporan", label: "Laporan", icon: "chart" },
     ],
   },
   {
@@ -37,11 +37,11 @@ export default function AdminSidebar() {
     href === "/admin" || href === "/admin/aktivitas" ? pathname === href : pathname.startsWith(href);
 
   const nav = (compact: boolean) => (
-    <nav aria-label="Navigasi admin" className={compact ? "flex flex-wrap gap-1.5 pb-1" : "flex flex-col gap-6"}>
+    <nav aria-label="Navigasi admin" className={compact ? "grid grid-cols-2 gap-1.5 pb-1" : "flex flex-col gap-6"}>
       {GROUPS.map((group) => (
         <div key={group.label} className={compact ? "contents" : ""}>
           {!compact ? <p className="mb-2 px-3 text-[11px] font-semibold uppercase tracking-[0.10em] text-ink-soft">{group.label}</p> : null}
-          <div className={compact ? "flex gap-1.5" : "flex flex-col gap-1"}>
+          <div className={compact ? "contents" : "flex flex-col gap-1"}>
             {group.items.map((item) => {
               const isActive = active(item.href);
               return (
@@ -52,7 +52,7 @@ export default function AdminSidebar() {
                   aria-current={isActive ? "page" : undefined}
                   className={
                     compact
-                      ? `inline-flex min-h-10 shrink-0 items-center gap-2 rounded-full px-3 text-xs font-semibold ${isActive ? "bg-ink text-paper" : "border border-line bg-paper text-ink-soft"}`
+                      ? `inline-flex min-h-11 shrink-0 items-center gap-2 rounded-full px-3 text-xs font-semibold ${item.href === "/admin/notifikasi" ? "col-span-2" : ""} ${isActive ? "bg-ink text-paper" : "border border-line bg-paper text-ink-soft"}`
                       : `flex min-h-11 items-center gap-3 rounded-[9px] px-3 text-[13px] font-medium leading-5 ${isActive ? "bg-ink text-paper" : "text-ink-soft hover:bg-paper-2 hover:text-ink"}`
                   }
                 >

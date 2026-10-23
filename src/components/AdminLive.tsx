@@ -94,7 +94,7 @@ export default function AdminLive() {
   const totalDevices = Math.max(1, (data?.devices ?? []).reduce((sum, d) => sum + d.count, 0));
 
   return (
-    <section className="mt-6" aria-label="Analitik pengunjung">
+    <section className="mt-6 min-w-0" aria-label="Analitik pengunjung">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
           <h2 className="font-display text-2xl font-semibold tracking-[-0.01em]">Aktivitas langsung</h2>
@@ -142,7 +142,7 @@ export default function AdminLive() {
             </p>
           ) : null}
 
-          <div className="mt-5 rounded-card border border-line bg-paper p-5">
+          <div className="mt-5 min-w-0 rounded-card border border-line bg-paper p-5">
             <div className="flex flex-wrap items-baseline justify-between gap-2">
               <h3 className="text-base font-semibold text-ink">Trafik 24 jam</h3>
               <span className="text-xs text-ink-soft">
@@ -152,8 +152,8 @@ export default function AdminLive() {
             <TrafficChart hourly={data.hourly} />
           </div>
 
-          <div className="mt-5 grid items-start gap-4 lg:grid-cols-[minmax(0,1.35fr)_minmax(0,1fr)]">
-            <div className="rounded-card border border-line bg-paper p-5">
+          <div className="mt-5 grid min-w-0 items-start gap-4 lg:grid-cols-[minmax(0,1.35fr)_minmax(0,1fr)]">
+            <div className="min-w-0 rounded-card border border-line bg-paper p-5">
               <h3 className="text-base font-semibold text-ink">Sesi terbaru</h3>
               <p className="mt-1 text-xs text-ink-soft">30 menit terakhir</p>
               {data.live.length === 0 ? (
@@ -203,7 +203,7 @@ export default function AdminLive() {
               )}
             </div>
 
-            <div className="rounded-card border border-line bg-paper p-5">
+            <div className="min-w-0 rounded-card border border-line bg-paper p-5">
               <div className="flex items-start justify-between gap-3">
                 <h3 className="text-base font-semibold text-ink">Tautan paling diklik</h3>
                 <Link href="/admin/aktivitas/tautan" className="shrink-0 text-xs font-semibold text-ink-soft hover:text-ink">Lihat selengkapnya</Link>
@@ -240,7 +240,7 @@ export default function AdminLive() {
           </div>
 
           <div className="mt-4 grid gap-4 md:grid-cols-2">
-            <div className="rounded-card border border-line bg-paper p-5">
+            <div className="min-w-0 rounded-card border border-line bg-paper p-5">
               <h3 className="text-base font-semibold text-ink">Perangkat</h3>
               <p className="mt-1 text-xs text-ink-soft">24 jam terakhir</p>
               <div className="mt-3 flex flex-col gap-2">
@@ -262,7 +262,7 @@ export default function AdminLive() {
               </p>
             </div>
 
-            <div className="rounded-card border border-line bg-paper p-5">
+            <div className="min-w-0 rounded-card border border-line bg-paper p-5">
               <h3 className="text-base font-semibold text-ink">Akun aktif</h3>
               <p className="mt-1 text-xs text-ink-soft">24 jam terakhir</p>
               {data.activeProfiles.length === 0 ? (

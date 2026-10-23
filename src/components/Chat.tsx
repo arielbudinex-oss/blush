@@ -348,11 +348,18 @@ export default function Chat({
 
   const sinceActive = liveActiveAt ? nowMs - new Date(liveActiveAt).getTime() : Number.POSITIVE_INFINITY;
   const activeNow = Boolean(liveActiveAt) && sinceActive < 5 * 60_000;
+  const activeShort = !liveActiveAt
+    ? ""
+    : sinceActive < 3_600_000
+      ? `${Math.max(1, Math.floor(sinceActive / 60_000))}m`
+      : sinceActive < 86_400_000
+        ? `${Math.floor(sinceActive / 3_600_000)}j`
+        : `${Math.floor(sinceActive / 86_400_000)}h`;
   const statusLine = !liveActiveAt
     ? "Saling suka"
     : activeNow
       ? "Aktif sekarang"
-      : `Aktif ${formatRelative(liveActiveAt)}`;
+      : `Aktif ${activeShort}`;
 
   return (
     <div className="flex h-[calc(100dvh-10.75rem)] flex-col overflow-hidden bg-paper md:h-[calc(100dvh-7.5rem)] md:rounded-card md:border md:border-line">
