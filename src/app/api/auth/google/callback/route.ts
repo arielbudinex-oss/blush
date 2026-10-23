@@ -105,7 +105,14 @@ export async function GET(request: Request) {
   const { data: me } = await admin.from("profiles").select("onboarded_at").eq("id", userId ?? "").maybeSingle();
   const wanted = saved.next.startsWith("/") && !saved.next.startsWith("//") ? saved.next : "/app/discover";
   // Akun lama yang sudah onboarding tidak dikirim ke form pendaftaran lagi.
-  const next = wanted === "/onboarding" && me?.onboarded_at ? "/app/discover" : wanted;
+  // Akun yang belum onboarding dan masuk lewat tombol Masuk tetap melihat
+  // halaman login dengan pilihan lanjut pendaftaran atau ganti akun.
+  const next =
+    !me?.onboarded_at && wanted === "/app/discover"
+      ? "/login?incomplete=1"
+      : wanted === "/onboarding" && me?.onboarded_at
+        ? "/app/discover"
+        : wanted;
   const response = NextResponse.redirect(new URL(next, url.origin));
   response.cookies.set("blush_oauth", "", { path: "/", maxAge: 0 });
   return response;
