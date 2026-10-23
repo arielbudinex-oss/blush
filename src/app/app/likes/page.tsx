@@ -130,7 +130,7 @@ export default async function LikesPage() {
                     ) : null}
                   </div>
                   <div className="min-w-0 flex-1">
-                    <p className="flex min-w-0 items-center gap-1 font-semibold">
+                    <p className="flex min-w-0 items-center gap-1 text-sm font-semibold">
                       <span className="min-w-0 truncate">{l.display_name || "Tanpa nama"}</span>
                       {l.age ? <span className="shrink-0 text-ink-faint">· {l.age}</span> : null}
                       {l.is_verified === "approved" ? (
