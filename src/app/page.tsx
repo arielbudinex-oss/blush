@@ -220,9 +220,9 @@ export default function Home() {
             return (
               <article
                 key={id}
-                className={`rounded-card border p-4 ${highlight ? "border-blush-deep bg-paper" : "border-line bg-paper"}`}
+                className={`flex h-full flex-col rounded-card border p-4 ${highlight ? "border-blush-deep bg-paper" : "border-line bg-paper"}`}
               >
-                <div className="flex flex-wrap items-center justify-between gap-x-2 gap-y-1">
+                <div className="flex min-h-9 flex-wrap items-start justify-between gap-x-2 gap-y-1">
                   <h3 className="text-base font-bold">{p.name}</h3>
                   {highlight ? (
                     <span className="shrink-0 rounded-[999px] bg-blush-tint px-2 py-0.5 text-2xs font-bold text-blush-deep">
@@ -230,11 +230,11 @@ export default function Home() {
                     </span>
                   ) : null}
                 </div>
-                <p className="mt-1 text-2xl font-bold tabular-nums">
+                <p className="mt-1 min-h-8 text-2xl font-bold tabular-nums">
                   {p.priceIdr === 0 ? "Rp0" : formatIdr(p.priceIdr)}
                   <span className="text-xs font-semibold text-ink-soft"> / {p.period}</span>
                 </p>
-                <ul className="mt-3 flex flex-col gap-1.5 text-sm text-ink-soft">
+                <ul className="mt-3 flex flex-1 flex-col gap-2 text-sm leading-5 text-ink-soft">
                   {p.features.slice(0, 4).map((f) => (
                     <li key={f} className="flex gap-2">
                       <Icon name="check" className="mt-0.5 h-4 w-4 shrink-0 text-ok" strokeWidth={2.6} />
@@ -242,8 +242,8 @@ export default function Home() {
                     </li>
                   ))}
                 </ul>
-                <Link href="/signup" className={`${highlight ? primary : secondary} mt-4 w-full`}>
-                  Buat akun gratis
+                <Link href="/signup" className={`${highlight ? primary : secondary} mt-5 h-12 w-full shrink-0`}>
+                  {id === "free" ? "Buat akun gratis" : id === "plus" ? "Mulai dengan Plus" : "Mulai dengan Gold"}
                 </Link>
               </article>
             );
