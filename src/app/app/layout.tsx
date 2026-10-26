@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import { after } from "next/server";
 import { getMe } from "@/lib/supabase/me";
 import { photoUrl } from "@/lib/photo";
 import BottomNav from "@/components/BottomNav";
@@ -24,10 +25,13 @@ export default async function AppLayout({ children }: { children: React.ReactNod
   const initial = (profile.display_name || "B").trim().charAt(0).toUpperCase() || "B";
 
   // Presence: tandai aktif paling sering tiap 2 menit, jangan tulis tiap navigasi.
-  const stale = !profile.last_active_at || Date.now() - new Date(profile.last_active_at).getTime() > 120_000;
-  if (stale) {
-    await supabase.from("profiles").update({ last_active_at: new Date().toISOString() }).eq("id", user.id);
-  }
+  // Dibungkus after() supaya clock dibaca setelah respons, bukan saat prerender.
+  after(async () => {
+    const stale = !profile.last_active_at || Date.now() - new Date(profile.last_active_at).getTime() > 120_000;
+    if (stale) {
+      await supabase.from("profiles").update({ last_active_at: new Date().toISOString() }).eq("id", user.id);
+    }
+  });
 
   return (
     <div className="app-shell flex min-h-dvh flex-col bg-paper">
