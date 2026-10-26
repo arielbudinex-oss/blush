@@ -51,9 +51,26 @@ export default async function ChatPage({ params }: { params: Promise<{ matchId: 
     .from("photos")
     .select("storage_path")
     .eq("profile_id", otherId)
-    .order("position")
-    .limit(1)
-    .maybeSingle();
+    .order("position");
+
+  const { data: otherPromptRows } = await supabase
+    .from("profile_prompts")
+    .select("prompt_id, answer, position, prompts(text)")
+    .eq("profile_id", otherId)
+    .order("position");
+
+  const otherPromptText = new Map(
+    (otherPromptRows ?? []).map((row: { prompt_id: number; prompts: { text: string } | { text: string }[] | null }) => {
+      const joined = Array.isArray(row.prompts) ? row.prompts[0] : row.prompts;
+      return [row.prompt_id, joined?.text ?? ""] as const;
+    }),
+  );
+  const otherPrompts = (otherPromptRows ?? [])
+    .map((row: { prompt_id: number; answer: string | null }) => ({
+      q: otherPromptText.get(row.prompt_id) ?? "",
+      a: row.answer ?? "",
+    }))
+    .filter((p: { q: string; a: string }) => p.q && p.a.trim());
 
   return (
     <main className="mx-auto w-full max-w-2xl px-[var(--space-md)] py-[var(--space-md)]">
@@ -62,7 +79,9 @@ export default async function ChatPage({ params }: { params: Promise<{ matchId: 
         meId={meId}
         otherId={otherId}
         otherName={other?.display_name ?? ""}
-        otherPhoto={photoUrl(photo?.storage_path)}
+        otherPhoto={photoUrl(photo?.[0]?.storage_path)}
+        otherPhotos={(photo ?? []).map((p: { storage_path: string }) => photoUrl(p.storage_path)).filter(Boolean) as string[]}
+        otherPrompts={otherPrompts}
         otherActiveAt={other?.last_active_at ?? null}
         expiresAt={
           match.expires_at ??

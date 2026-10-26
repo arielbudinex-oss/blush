@@ -20,7 +20,7 @@ export function MatchModal({
     <AnimatePresence>
       {matched ? (
         <motion.div
-          className="fixed inset-0 z-40 flex items-center justify-center bg-ink/60 p-[var(--space-md)]"
+          className="fixed inset-0 z-[60] flex items-center justify-center bg-ink/60 p-[var(--space-md)]"
           initial={reduce ? false : { opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
@@ -107,7 +107,7 @@ export function ReportModal({
   return (
     <AnimatePresence>
       <motion.div
-        className="fixed inset-0 z-40 flex items-end justify-center bg-ink/60 p-[var(--space-md)] sm:items-center"
+        className="fixed inset-0 z-[60] flex items-end justify-center bg-ink/60 p-[var(--space-md)] sm:items-center"
         initial={reduce ? false : { opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}

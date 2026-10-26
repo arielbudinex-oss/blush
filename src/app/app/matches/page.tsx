@@ -5,6 +5,7 @@ import { Stagger, StaggerItem } from "@/components/motion";
 import ExpiryChip from "@/components/ExpiryChip";
 import { Icon } from "@/components/Icon";
 import VerifiedBadge from "@/components/VerifiedBadge";
+import EmojiText from "@/components/emoji/EmojiText";
 import { formatStamp } from "@/lib/time";
 
 // Route ini selalu butuh sesi terbaru dari cookies, jadi memang blocking (Next 16 cache components).
@@ -111,7 +112,7 @@ export default async function MatchesPage() {
                     ) : null}
                   </span>
                   <p className="truncate text-sm text-ink-soft">
-                    {m.last_message ?? "Belum ada pesan. Sapa duluan."}
+                    <EmojiText text={m.last_message ?? "Belum ada pesan. Sapa duluan."} />
                   </p>
                 </div>
                 <div className="flex shrink-0 flex-col items-end gap-1">

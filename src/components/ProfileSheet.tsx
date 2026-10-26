@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "@/components/motion";
 import { Icon } from "@/components/Icon";
 import VerifiedBadge from "@/components/VerifiedBadge";
+import EmojiText from "@/components/emoji/EmojiText";
 import { photoUrl, distanceLabel } from "@/lib/photo";
 import { btnGhost, btnPrimary, btnDanger } from "@/components/ui";
 
@@ -88,7 +89,7 @@ export default function ProfileSheet({
     <AnimatePresence>
       {open && candidate ? (
         <motion.div
-          className="fixed inset-0 z-50 flex items-end justify-center bg-ink/60 sm:items-center sm:p-4"
+          className="fixed inset-0 z-[60] flex items-end justify-center bg-ink/60 sm:items-center sm:p-4"
           initial={reduce ? false : { opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
@@ -170,7 +171,9 @@ export default function ProfileSheet({
                 {candidate.bio ? (
                   <section>
                     <h3 className="text-xs font-bold text-ink-soft">Tentang</h3>
-                    <p className="mt-1 whitespace-pre-line text-sm leading-relaxed text-ink">{candidate.bio}</p>
+                    <p className="mt-1 whitespace-pre-line text-sm leading-relaxed text-ink">
+                      <EmojiText text={candidate.bio} />
+                    </p>
                   </section>
                 ) : null}
 
@@ -197,7 +200,7 @@ export default function ProfileSheet({
                   </section>
                 ) : null}
 
-                {candidate.interests.length ? (
+                {candidate.interests?.length ? (
                   <section>
                     <h3 className="text-xs font-bold text-ink-soft">Minat</h3>
                     <div className="mt-1.5 flex flex-wrap gap-1.5">

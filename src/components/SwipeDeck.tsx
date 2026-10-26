@@ -12,6 +12,7 @@ import FiltersSheet from "@/components/FiltersSheet";
 import { CountUp } from "@/components/motion";
 import { Icon } from "@/components/Icon";
 import VerifiedBadge from "@/components/VerifiedBadge";
+import EmojiText from "@/components/emoji/EmojiText";
 import { btnDanger, btnGhost, btnPrimary } from "@/components/ui";
 
 export type Candidate = {
@@ -295,7 +296,11 @@ function SwipeCard({
       </div>
 
       <div className="px-[var(--space-md)] pb-3 pt-3">
-        {candidate.bio ? <p className="line-clamp-2 text-sm leading-relaxed text-ink-soft">{candidate.bio}</p> : null}
+        {candidate.bio ? (
+          <p className="line-clamp-2 text-sm leading-relaxed text-ink-soft">
+            <EmojiText text={candidate.bio} />
+          </p>
+        ) : null}
 
         {prompt ? (
           <div className="mt-3 rounded-[10px] border border-line bg-paper px-3.5 py-2.5">

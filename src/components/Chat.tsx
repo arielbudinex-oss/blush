@@ -1,7 +1,6 @@
 "use client";
 
 import { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react";
-import type { CSSProperties } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
@@ -9,8 +8,8 @@ import { Icon } from "@/components/Icon";
 import { btnGhost, btnPrimary } from "@/components/ui";
 import { formatClock, formatDayLabel, formatRelative, sameDay } from "@/lib/time";
 import AudioCall from "@/components/AudioCall";
-const Picker = lazy(() => import("@emoji-mart/react"));
-import emojiData from "@emoji-mart/data";
+const Picker = lazy(() => import("@/components/emoji/EmojiPicker"));
+import EmojiText from "@/components/emoji/EmojiText";
 import ProfileSheet from "@/components/ProfileSheet";
 import VerifiedBadge from "@/components/VerifiedBadge";
 
@@ -41,6 +40,8 @@ export default function Chat({
   otherId,
   otherName,
   otherPhoto,
+  otherPhotos,
+  otherPrompts = [],
   otherActiveAt,
   expiresAt,
   extendedAt,
@@ -57,6 +58,8 @@ export default function Chat({
   otherId: string;
   otherName: string;
   otherPhoto: string | null;
+  otherPhotos?: string[];
+  otherPrompts?: { q: string; a: string }[];
   otherActiveAt: string | null;
   expiresAt: string | null;
   extendedAt: string | null;
@@ -85,7 +88,6 @@ export default function Chat({
   const [extended, setExtended] = useState(Boolean(extendedAt));
   const [extendBusy, setExtendBusy] = useState(false);
   const [emojiOpen, setEmojiOpen] = useState(false);
-  const [emojiPickerReady, setEmojiPickerReady] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
 
   const endRef = useRef<HTMLDivElement>(null);
@@ -571,7 +573,9 @@ export default function Chat({
                           : "border border-line bg-paper-2 text-ink"
                       }`}
                     >
-                      <p className="whitespace-pre-wrap break-words [text-wrap:pretty]">{m.body}</p>
+                      <p className="whitespace-pre-wrap break-words [text-wrap:pretty]">
+                        <EmojiText text={m.body} />
+                      </p>
                     </div>
                     {end ? (
                       <div className="mt-1.5 flex items-center gap-1.5 text-[0.7rem] font-medium leading-none text-ink-soft">
@@ -636,21 +640,9 @@ export default function Chat({
       <form onSubmit={send} className="relative border-t border-line p-2">
         {emojiOpen ? (
           <div className="blush-pop-in absolute bottom-[calc(100%-4px)] right-2 z-30 overflow-hidden rounded-[18px] border border-line bg-paper shadow-[0_18px_50px_-20px_rgba(32,26,20,0.45)]" role="dialog" aria-label="Pilih emoji">
-            <div className="h-[min(360px,55dvh)] w-[min(352px,calc(100vw-24px))] overflow-hidden bg-paper text-ink" style={{ ["--em-rgb-background" as string]: "var(--paper)", ["--em-rgb-input" as string]: "var(--paper-2)", ["--em-rgb-color" as string]: "var(--ink)", ["--em-rgb-accent" as string]: "var(--blush-deep)" }}>
+            <div className="h-[min(340px,52dvh)] w-[min(344px,calc(100vw-24px))] overflow-hidden">
               <Suspense fallback={<div className="grid h-full place-items-center text-sm text-ink-soft">Memuat emoji…</div>}>
-                <Picker
-                  data={emojiData}
-                  set="apple"
-                  theme="light"
-                  previewPosition="none"
-                  skinTonePosition="none"
-                  perLine={8}
-                  emojiSize={24}
-                  emojiButtonSize={38}
-                  maxFrequentRows={0}
-                  onEmojiSelect={(item: { native: string }) => insertEmoji(item.native)}
-                  style={{ width: "100%", height: "100%" } as CSSProperties}
-                />
+                <Picker onPick={insertEmoji} />
               </Suspense>
             </div>
           </div>
@@ -676,6 +668,12 @@ export default function Chat({
             type="button"
             aria-label="Buka emoji"
             aria-expanded={emojiOpen}
+            onMouseEnter={() => {
+              void import("@/components/emoji/EmojiText").then((m) => {
+                const img = new Image();
+                img.src = m.APPLE_SHEET;
+              });
+            }}
             onClick={() => setEmojiOpen((open) => !open)}
             className={`mb-0.5 grid h-9 w-9 shrink-0 place-items-center rounded-full transition-colors ${emojiOpen ? "bg-paper-3 text-ink" : "text-ink-soft hover:bg-paper-2 hover:text-ink"}`}
           >
@@ -707,8 +705,9 @@ export default function Chat({
           intent: otherIntent === "relationship" || otherIntent === "friends" ? otherIntent : "dating",
           is_verified: otherVerified ? "approved" : "none",
           distance_m: null,
-          photos: otherPhoto ? [otherPhoto] : [],
+          photos: otherPhotos?.length ? otherPhotos : otherPhoto ? [otherPhoto] : [],
           interests: sharedInterests,
+          prompts: otherPrompts,
         }}
         open={profileOpen}
         superLeft={0}
@@ -726,7 +725,7 @@ export default function Chat({
       />
 
       {confirmUnmatch ? (
-        <div className="fixed inset-0 z-40 flex items-center justify-center bg-ink/60 p-[var(--space-md)]">
+        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-ink/60 p-[var(--space-md)]">
           <div
             role="dialog"
             aria-modal="true"

@@ -14,6 +14,7 @@ export type IconName =
   | "star"
   | "undo"
   | "clock"
+  | "search"
   | "chevron"
   | "camera"
   | "lock"
@@ -133,6 +134,13 @@ export function Icon({
         <svg {...common}>
           <path d="M4.6 9.2h8.6a5.2 5.2 0 1 1 0 10.4H8.6" />
           <path d="M8.2 5.2 4.2 9.2l4 4" />
+        </svg>
+      );
+    case "search":
+      return (
+        <svg {...common}>
+          <circle cx="10.8" cy="10.8" r="6" />
+          <path d="m15.2 15.2 4 4" />
         </svg>
       );
     case "clock":

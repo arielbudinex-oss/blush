@@ -6,6 +6,7 @@ import { photoUrl } from "@/lib/photo";
 import { Icon } from "@/components/Icon";
 import VerifiedBadge from "@/components/VerifiedBadge";
 import ProfileForm from "@/components/ProfileForm";
+import EmojiText from "@/components/emoji/EmojiText";
 import Completeness from "@/components/Completeness";
 import { profileCompletion, profileGaps } from "@/lib/completeness";
 import { btnGhost } from "@/components/ui";
@@ -127,7 +128,9 @@ export default async function ProfilePage() {
           </div>
           <div className="grid gap-2.5 p-4">
             <p className={`line-clamp-3 text-sm leading-relaxed ${profile.bio ? "text-ink" : "text-ink-soft"}`}>
-              {profile.bio || "Belum ada bio. Tambahkan satu kalimat yang bikin orang penasaran."}
+              <EmojiText
+                text={profile.bio || "Belum ada bio. Tambahkan satu kalimat yang bikin orang penasaran."}
+              />
             </p>
             {shownPrompts.map((p) => (
               <div key={p.prompt_id} className="rounded-[12px] bg-paper-2 px-3 py-2">
