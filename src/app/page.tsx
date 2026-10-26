@@ -92,8 +92,9 @@ export default function Home() {
             ketemu orangnya.
           </h1>
           <p className="mt-4 max-w-[38ch] text-pretty text-[1.02rem] leading-[1.6] text-ink-soft">
-            Buka langsung di browser, tanpa install. Lihat foto, bio, dan jawaban asli sebelum memutuskan. Saling suka,
-            chat langsung terbuka. Profil terverifikasi dapat centang biru.
+            <strong className="font-bold text-ink">Tanpa download.</strong> Buka di browser, langsung main. Lihat foto,
+            bio, dan jawaban asli sebelum memutuskan. Saling suka, chat langsung terbuka. Profil terverifikasi dapat
+            centang biru.
           </p>
 
           <div className="mt-6 flex flex-col gap-2 sm:flex-row">
@@ -105,7 +106,7 @@ export default function Home() {
             </a>
           </div>
           <p className="mt-3 text-xs font-medium leading-relaxed text-ink-soft">
-            Gratis dengan 20 like per hari. Tanpa kartu kredit, tanpa masa uji.
+            Tanpa kartu kredit, tanpa masa uji.
           </p>
 
           <dl className="mt-7 grid max-w-md grid-cols-3 gap-3 border-t border-line pt-5">
