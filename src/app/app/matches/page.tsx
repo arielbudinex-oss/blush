@@ -69,12 +69,7 @@ export default async function MatchesPage() {
                     ) : null}
                   </span>
                   <span className="w-full truncate text-xs font-semibold">{m.display_name || "Tanpa nama"}</span>
-                  <ExpiryChip
-                    expiresAt={
-                      m.expires_at ??
-                      new Date(new Date(m.created_at).getTime() + 24 * 60 * 60 * 1000).toISOString()
-                    }
-                  />
+                  <ExpiryChip expiresAt={m.expires_at} />
                 </Link>
               );
             })}
@@ -98,7 +93,7 @@ export default async function MatchesPage() {
                 href={`/app/chat/${m.match_id}`}
                 className="flex items-center gap-[var(--space-sm)] rounded-card border border-line bg-paper p-[var(--space-sm)] transition-colors duration-150 hover:border-line-strong hover:bg-paper-2"
               >
-                <div className="h-[52px] w-[52px] shrink-0 overflow-hidden rounded-full bg-paper-2">
+                <div className="relative h-[52px] w-[52px] shrink-0 overflow-hidden rounded-full bg-paper-2">
                   {url ? (
                     <Image src={url} alt={`Foto ${m.display_name}`} fill sizes="52px" className="object-cover" />
                   ) : null}
@@ -123,12 +118,7 @@ export default async function MatchesPage() {
                       {m.unread}
                     </span>
                   ) : (
-                    <ExpiryChip
-                      expiresAt={
-                        m.expires_at ??
-                        new Date(new Date(m.created_at).getTime() + 24 * 60 * 60 * 1000).toISOString()
-                      }
-                    />
+                    <ExpiryChip expiresAt={m.expires_at} />
                   )}
                 </div>
               </Link>

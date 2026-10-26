@@ -124,7 +124,7 @@ export default async function LikesPage() {
             return (
               <StaggerItem key={l.id} className="min-w-0">
                 <article className="flex h-full w-full min-w-0 items-center gap-[var(--space-sm)] rounded-card border border-line bg-paper p-[var(--space-sm)]">
-                  <div className="h-16 w-16 shrink-0 overflow-hidden rounded-[10px] bg-paper-2">
+                  <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-[10px] bg-paper-2">
                     {url ? (
                       <Image src={url} alt={`Foto ${l.display_name}`} fill sizes="64px" className="object-cover" />
                     ) : null}

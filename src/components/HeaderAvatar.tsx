@@ -13,7 +13,7 @@ export default function HeaderAvatar({ cover, initial }: { cover: string | null;
     <Link
       href="/app/profile"
       aria-label="Profil kamu"
-      className="grid h-11 w-11 shrink-0 place-items-center overflow-hidden rounded-full border border-line-strong bg-paper-2 text-sm font-bold text-ink-soft"
+      className="relative grid h-11 w-11 shrink-0 place-items-center overflow-hidden rounded-full border border-line-strong bg-paper-2 text-sm font-bold text-ink-soft"
     >
       {cover ? (
         <Image src={cover} alt="" fill sizes="40px" className="object-cover" />
