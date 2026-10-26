@@ -7,6 +7,7 @@ export type PlanConfig = {
   id: Plan;
   name: string;
   priceIdr: number;
+  compareAtIdr: number;
   period: string;
   tagline: string;
   features: string[];
@@ -23,6 +24,7 @@ export const PLANS: Record<Plan, PlanConfig> = {
     id: "free",
     name: "Gratis",
     priceIdr: 0,
+    compareAtIdr: 0,
     period: "selamanya",
     tagline: "Semua yang kamu butuh buat mulai. Tanpa bayar.",
     features: [
@@ -42,7 +44,8 @@ export const PLANS: Record<Plan, PlanConfig> = {
   plus: {
     id: "plus",
     name: "Blush Plus",
-    priceIdr: 49000,
+    priceIdr: 29000,
+    compareAtIdr: 49000,
     period: "per bulan",
     tagline: "Geser sepuasnya, tanpa menunggu kuota.",
     features: [
@@ -50,6 +53,7 @@ export const PLANS: Record<Plan, PlanConfig> = {
       "Lihat siapa yang suka kamu duluan",
       "5 superlike per hari",
       "Batalkan swipe terakhir",
+      "Filter umur, jarak, gender, dan profil terverifikasi",
     ],
     dailyLikes: 100000,
     dailySuperlikes: 5,
@@ -61,14 +65,15 @@ export const PLANS: Record<Plan, PlanConfig> = {
   gold: {
     id: "gold",
     name: "Blush Gold",
-    priceIdr: 129000,
+    priceIdr: 59000,
+    compareAtIdr: 129000,
     period: "per bulan",
     tagline: "Buat yang mau dilihat lebih banyak orang.",
     features: [
       "Semua fitur Blush Plus",
-      "Naik ke urutan atas 30 menit, 1 kali per minggu",
+      "10 superlike per hari",
+      "Boost 30 menit, 4 kali sebulan",
       "Ganti kota: jelajah orang di kota lain",
-      "Profil lebih sering muncul duluan",
       "Saring hanya profil terverifikasi",
     ],
     dailyLikes: 100000,
@@ -84,9 +89,9 @@ export const PLAN_ORDER: Plan[] = ["free", "plus", "gold"];
 
 /** Paket superlike sekali beli. Harga terpisah dari langganan bulanan. */
 export const SUPERLIKE_PACKS = [
-  { id: "superlike-5", count: 5, priceIdr: 15000 },
-  { id: "superlike-15", count: 15, priceIdr: 39000 },
-  { id: "superlike-40", count: 40, priceIdr: 89000 },
+  { id: "superlike-5", count: 5, priceIdr: 9000 },
+  { id: "superlike-15", count: 15, priceIdr: 24000 },
+  { id: "superlike-40", count: 40, priceIdr: 49000 },
 ] as const;
 
 export function isPremium(plan: Plan | null | undefined): boolean {

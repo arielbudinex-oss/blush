@@ -2,6 +2,7 @@
 
 import { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { Icon } from "@/components/Icon";
@@ -96,6 +97,7 @@ export default function Chat({
   const channelRef = useRef<ReturnType<typeof supabase.channel> | null>(null);
   const typingSentAt = useRef(0);
   const scrollOnNext = useRef(true);
+  const composerRef = useRef<HTMLFormElement>(null);
 
   const scrollToEnd = useCallback((smooth = true) => {
     const reduce = typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -215,6 +217,25 @@ export default function Chat({
     [messages, meId],
   );
 
+  const expired = Boolean(expiry) && new Date(expiry as string).getTime() <= nowMs;
+
+  useEffect(() => {
+    if (!emojiOpen) return;
+    function onDown(event: PointerEvent) {
+      const form = composerRef.current;
+      if (form && !form.contains(event.target as Node)) setEmojiOpen(false);
+    }
+    function onKey(event: KeyboardEvent) {
+      if (event.key === "Escape") setEmojiOpen(false);
+    }
+    document.addEventListener("pointerdown", onDown);
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("pointerdown", onDown);
+      document.removeEventListener("keydown", onKey);
+    };
+  }, [emojiOpen]);
+
   function resize() {
     const el = inputRef.current;
     if (!el) return;
@@ -228,7 +249,6 @@ export default function Chat({
     const end = el?.selectionEnd ?? body.length;
     const next = body.slice(0, start) + emoji + body.slice(end);
     setBody(next);
-    setEmojiOpen(false);
     requestAnimationFrame(() => {
       el?.focus();
       el?.setSelectionRange(start + emoji.length, start + emoji.length);
@@ -398,7 +418,7 @@ export default function Chat({
           className="relative h-11 w-11 shrink-0 rounded-full focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blush-deep"
         >
           <span className="block h-11 w-11 overflow-hidden rounded-full bg-paper-2">
-            {otherPhoto ? <img src={otherPhoto} alt="" className="h-full w-full object-cover" /> : null}
+            {otherPhoto ? <Image src={otherPhoto} alt="" fill sizes="44px" className="object-cover" /> : null}
           </span>
           {activeNow ? <span className="absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full bg-ok ring-2 ring-paper" /> : null}
         </button>
@@ -479,27 +499,26 @@ export default function Chat({
       {expiry ? (() => {
         const left = Math.max(0, new Date(expiry).getTime() - nowMs);
         const hours = Math.floor(left / 3_600_000);
-        const expired = left === 0;
+        const minutes = Math.max(1, Math.floor(left / 60_000));
         return (
           <div className="flex flex-wrap items-center justify-between gap-2 border-b border-line bg-paper-2 px-3 py-2 text-xs">
-            <span className={expired ? "font-semibold text-blush-deep" : "text-ink-soft"}>
-              {expired ? "Waktu chat habis" : `Chat ditutup dalam ${hours > 0 ? `${hours} jam` : `${Math.max(1, Math.floor(left / 60_000))} menit`}`}
+            <span className="inline-flex items-center gap-1.5 text-ink-soft">
+              <Icon name={expired ? "lock" : "clock"} className="h-3.5 w-3.5 shrink-0" />
+              {expired
+                ? "Waktu untuk memulai chat sudah habis"
+                : `Sisa ${hours > 0 ? `${hours} jam` : `${minutes} menit`} buat mulai chat`}
             </span>
-            {!extended && !expired ? (
+            {!expired && !extended ? (
               <button
                 type="button"
                 onClick={extend}
                 disabled={extendBusy}
-                className="inline-flex min-h-8 items-center gap-1 rounded-[999px] border border-line-strong px-3 text-xs font-semibold text-ink transition-colors hover:border-ink disabled:opacity-60"
+                className="inline-flex min-h-8 items-center gap-1 rounded-[999px] border border-line-strong bg-paper px-3 text-xs font-semibold text-ink transition-colors hover:border-ink disabled:opacity-60"
               >
                 <Icon name="clock" className="h-3.5 w-3.5" />
-                {extendBusy ? "Memperpanjang…" : "Perpanjang 24 jam"}
+                {extendBusy ? "Memperpanjang…" : "Tambah 24 jam"}
               </button>
-            ) : (
-              <span className="inline-flex items-center gap-1 font-semibold text-ok">
-                <Icon name="check" className="h-3.5 w-3.5" /> sudah diperpanjang
-              </span>
-            )}
+            ) : null}
           </div>
         );
       })() : null}
@@ -637,7 +656,29 @@ export default function Chat({
         </p>
       ) : null}
 
-      <form onSubmit={send} className="relative border-t border-line p-2">
+      {expired ? (
+        <div className="border-t border-line bg-paper px-3 py-4">
+          <div className="flex items-start gap-3 rounded-[18px] border border-line bg-paper-2 px-4 py-3">
+            <span className="mt-0.5 grid h-9 w-9 shrink-0 place-items-center rounded-full bg-paper-3 text-ink-soft">
+              <Icon name="lock" className="h-[18px] w-[18px]" />
+            </span>
+            <div className="min-w-0">
+              <p className="text-sm font-semibold text-ink">Chat sudah ditutup</p>
+              <p className="mt-1 text-xs leading-relaxed text-ink-soft">
+                Waktu untuk memulai chat sudah lewat, jadi pesan baru tidak bisa dikirim. Cari match lain dan sapa lebih cepat.
+              </p>
+              <Link
+                href="/app/discover"
+                className="mt-2.5 inline-flex min-h-9 items-center gap-1.5 rounded-full bg-blush-deep px-4 text-xs font-semibold text-paper"
+              >
+                Cari match baru
+                <Icon name="chevron" className="h-3.5 w-3.5" />
+              </Link>
+            </div>
+          </div>
+        </div>
+      ) : (
+      <form ref={composerRef} onSubmit={send} className="relative border-t border-line p-2">
         {emojiOpen ? (
           <div className="blush-pop-in absolute bottom-[calc(100%-4px)] right-2 z-30 overflow-hidden rounded-[18px] border border-line bg-paper shadow-[0_18px_50px_-20px_rgba(32,26,20,0.45)]" role="dialog" aria-label="Pilih emoji">
             <div className="h-[min(340px,52dvh)] w-[min(344px,calc(100vw-24px))] overflow-hidden">
@@ -647,7 +688,7 @@ export default function Chat({
             </div>
           </div>
         ) : null}
-        <div className="flex items-end gap-1.5 rounded-[22px] border border-line-input bg-paper px-2 py-1.5 transition-colors focus-within:border-blush-deep">
+        <div className="flex items-end gap-1.5 rounded-[22px] border border-line-input bg-paper px-2 py-1.5 transition-colors focus-within:border-ink/30">
           <textarea
             ref={inputRef}
             rows={1}
@@ -662,7 +703,7 @@ export default function Chat({
             placeholder="Tulis pesan…"
             aria-label="Pesan"
             maxLength={2000}
-            className="max-h-32 min-h-9 flex-1 resize-none bg-transparent py-1.5 text-sm leading-snug text-ink outline-none placeholder:text-ink-placeholder"
+            className="max-h-32 min-h-9 flex-1 resize-none bg-transparent py-1.5 text-sm leading-snug text-ink outline-none placeholder:text-ink-placeholder focus-visible:outline-none"
           />
           <button
             type="button"
@@ -670,7 +711,7 @@ export default function Chat({
             aria-expanded={emojiOpen}
             onMouseEnter={() => {
               void import("@/components/emoji/EmojiText").then((m) => {
-                const img = new Image();
+                const img = new window.Image();
                 img.src = m.APPLE_SHEET;
               });
             }}
@@ -693,6 +734,7 @@ export default function Chat({
           <span className="ml-auto tabular-nums">{body.length > 1800 ? `${body.length}/2000` : ""}</span>
         </div>
       </form>
+      )}
 
       <ProfileSheet
         candidate={{

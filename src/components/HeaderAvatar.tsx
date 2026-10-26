@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 
 /** Avatar header global; disembunyikan di halaman profil supaya tidak dobel. */
@@ -15,8 +16,7 @@ export default function HeaderAvatar({ cover, initial }: { cover: string | null;
       className="grid h-11 w-11 shrink-0 place-items-center overflow-hidden rounded-full border border-line-strong bg-paper-2 text-sm font-bold text-ink-soft"
     >
       {cover ? (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img src={cover} alt="" className="h-full w-full object-cover" />
+        <Image src={cover} alt="" fill sizes="40px" className="object-cover" />
       ) : (
         initial
       )}

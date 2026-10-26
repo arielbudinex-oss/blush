@@ -83,10 +83,7 @@ export default async function ChatPage({ params }: { params: Promise<{ matchId: 
         otherPhotos={(photo ?? []).map((p: { storage_path: string }) => photoUrl(p.storage_path)).filter(Boolean) as string[]}
         otherPrompts={otherPrompts}
         otherActiveAt={other?.last_active_at ?? null}
-        expiresAt={
-          match.expires_at ??
-          new Date(new Date(match.created_at).getTime() + 24 * 60 * 60 * 1000).toISOString()
-        }
+        expiresAt={match.expires_at ?? null}
         extendedAt={match.extended_at}
         sharedInterests={(sharedRows ?? []).map((r: { label: string }) => r.label)}
         otherAge={other?.birthdate ? Math.floor((Date.now() - new Date(`${other.birthdate}T00:00:00Z`).getTime()) / 31_557_600_000) : null}

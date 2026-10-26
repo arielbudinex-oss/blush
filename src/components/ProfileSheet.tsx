@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Image from "next/image";
 import { AnimatePresence, motion, useReducedMotion } from "@/components/motion";
 import { Icon } from "@/components/Icon";
 import VerifiedBadge from "@/components/VerifiedBadge";
@@ -129,8 +130,13 @@ export default function ProfileSheet({
             <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain">
               <div className="relative aspect-[4/5] max-h-[42dvh] w-full bg-paper-2">
                 {photos[photo] ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img src={photos[photo]} alt={`Foto ${candidate.display_name} ${photo + 1}`} className="h-full w-full object-cover" />
+                  <Image
+                    src={photos[photo]}
+                    alt={`Foto ${candidate.display_name} ${photo + 1}`}
+                    fill
+                    sizes="(max-width: 520px) 100vw, 430px"
+                    className="object-cover"
+                  />
                 ) : (
                   <span className="grid h-full place-items-center text-sm text-ink-soft">Belum ada foto</span>
                 )}

@@ -46,6 +46,9 @@ export default async function PremiumPage() {
           : ""}
         . Bayar dengan QRIS, paket aktif setelah pembayaran dikonfirmasi.
       </p>
+      <p className="mt-2 text-sm text-ink-soft">
+        Harga lebih hemat dari langganan aplikasi kencan populer, dengan fitur yang tetap lengkap.
+      </p>
 
       <div className="mt-[var(--space-lg)] grid gap-[var(--space-md)] md:grid-cols-2">
         {(["plus", "gold"] as const).map((id) => (
@@ -54,6 +57,7 @@ export default async function PremiumPage() {
             plan={id}
             planName={PLANS[id].name}
             priceIdr={PLANS[id].priceIdr}
+            compareAtIdr={PLANS[id].compareAtIdr}
             features={PLANS[id].features}
             popular={id === "plus"}
           />

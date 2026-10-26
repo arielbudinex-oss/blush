@@ -77,8 +77,8 @@ fs.writeFileSync(path.join(root, "src/lib/emoji/apple-emoji-map.json"), JSON.str
 
 fs.mkdirSync(path.join(root, "public/emoji"), { recursive: true });
 await sharp(path.join(src, "img/apple/sheets/64.png"))
-  .resize(2046, 2046, { kernel: "lanczos3" })
-  .webp({ quality: 82, effort: 6, alphaQuality: 90 })
+  .resize(1364, 1364, { kernel: "lanczos3" })
+  .webp({ quality: 80, effort: 6, alphaQuality: 88 })
   .toFile(path.join(root, "public/emoji/apple-sheet.webp"));
 
 const bytes = fs.statSync(path.join(root, "public/emoji/apple-sheet.webp")).size;

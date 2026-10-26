@@ -52,6 +52,10 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="id" className={jakarta.variable}>
+      <head>
+        <link rel="preconnect" href={process.env.NEXT_PUBLIC_SUPABASE_URL ?? "https://ojyfxtmjcexngmipgtge.supabase.co"} crossOrigin="" />
+        <link rel="dns-prefetch" href={process.env.NEXT_PUBLIC_SUPABASE_URL ?? "https://ojyfxtmjcexngmipgtge.supabase.co"} />
+      </head>
       <body>
         <AnalyticsTracker />
         <script

@@ -229,9 +229,9 @@ export default function AudioCall({ matchId, meId, otherName }: { matchId: strin
         type="button"
         onClick={start}
         aria-label={`Telepon ${otherName || "match"}`}
-        className="grid h-11 w-11 shrink-0 place-items-center rounded-full border border-line-strong text-ink transition-colors hover:border-ink hover:bg-paper-2"
+        className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-ink text-paper shadow-[0_6px_16px_-8px_rgba(32,26,20,0.6)] transition-transform active:scale-95"
       >
-        <Icon name="phone" className="h-[18px] w-[18px]" />
+        <Icon name="phone" filled className="h-[18px] w-[18px]" />
       </button>
       <audio ref={audioRef} autoPlay playsInline className="hidden" />
       {error && !modal ? (

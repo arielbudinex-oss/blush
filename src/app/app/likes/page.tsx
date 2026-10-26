@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { createServerSupabase } from "@/lib/supabase/server";
 import { isPremium, type Plan } from "@/lib/plans";
 import { photoUrl } from "@/lib/photo";
@@ -51,8 +52,7 @@ export default async function LikesPage() {
                 return (
                   <div key={l.id} className="relative aspect-[3/4] overflow-hidden bg-paper-2">
                     {src ? (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img src={src} alt="" className="h-full w-full scale-125 object-cover blur-[18px]" />
+                      <Image src={src} alt="" fill sizes="200px" className="scale-125 object-cover blur-[18px]" />
                     ) : (
                       <span className="absolute inset-0 bg-gradient-to-b from-paper-3 to-paper-2" />
                     )}
@@ -126,8 +126,7 @@ export default async function LikesPage() {
                 <article className="flex h-full w-full min-w-0 items-center gap-[var(--space-sm)] rounded-card border border-line bg-paper p-[var(--space-sm)]">
                   <div className="h-16 w-16 shrink-0 overflow-hidden rounded-[10px] bg-paper-2">
                     {url ? (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img src={url} alt={`Foto ${l.display_name}`} className="h-full w-full object-cover" />
+                      <Image src={url} alt={`Foto ${l.display_name}`} fill sizes="64px" className="object-cover" />
                     ) : null}
                   </div>
                   <div className="min-w-0 flex-1">

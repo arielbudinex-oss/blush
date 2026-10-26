@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { redirect } from "next/navigation";
 import { createServerSupabase } from "@/lib/supabase/server";
 import { PLANS, type Plan } from "@/lib/plans";
@@ -109,8 +110,7 @@ export default async function ProfilePage() {
         <div className="overflow-hidden rounded-[22px] border border-line bg-paper">
           <div className="relative aspect-[16/11] w-full bg-paper-2">
             {cover ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img src={cover} alt="" className="h-full w-full object-cover object-[center_28%]" />
+              <Image src={cover} alt="" fill sizes="(max-width: 520px) 100vw, 430px" className="object-cover object-[center_28%]" />
             ) : null}
             <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/55 to-transparent" />
             <div className="absolute inset-x-0 bottom-0 flex flex-wrap items-end gap-x-2 gap-y-1 p-4 [text-shadow:0_1px_2px_rgba(0,0,0,0.45)]">

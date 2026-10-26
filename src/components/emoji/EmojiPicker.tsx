@@ -10,6 +10,27 @@ type Data = { categories: string[]; emoji: Item[] };
 const RECENT_KEY = "blush:emoji-recent";
 const MAX_RECENT = 16;
 
+function readRecent(): string[] {
+  try {
+    const saved = JSON.parse(localStorage.getItem(RECENT_KEY) ?? "[]");
+    if (!Array.isArray(saved)) return [];
+    return saved.filter((x) => typeof x === "string").slice(0, MAX_RECENT);
+  } catch {
+    return [];
+  }
+}
+
+/** Simpan unified id sebelum induk sempat menutup picker, supaya riwayat tidak hilang. */
+function saveRecent(unified: string) {
+  const next = [unified, ...readRecent().filter((x) => x !== unified)].slice(0, MAX_RECENT);
+  try {
+    localStorage.setItem(RECENT_KEY, JSON.stringify(next));
+  } catch {
+    /* storage can be full or disabled */
+  }
+  return next;
+}
+
 const TABS: { icon: string; label: string }[] = [
   { icon: "😀", label: "Wajah" },
   { icon: "👋", label: "Orang" },
@@ -47,26 +68,12 @@ export default function EmojiPicker({ onPick }: { onPick: (native: string) => vo
   }, []);
 
   useEffect(() => {
-    try {
-      const saved = JSON.parse(localStorage.getItem(RECENT_KEY) ?? "[]");
-      if (Array.isArray(saved)) setRecent(saved.filter((x) => typeof x === "string").slice(0, MAX_RECENT));
-    } catch {
-      setRecent([]);
-    }
+    setRecent(readRecent());
   }, []);
 
   function pick(item: Item) {
-    const native = emojiFromUnified(item.u);
-    onPick(native);
-    setRecent((prev) => {
-      const next = [native, ...prev.filter((x) => x !== native)].slice(0, MAX_RECENT);
-      try {
-        localStorage.setItem(RECENT_KEY, JSON.stringify(next));
-      } catch {
-        /* storage can be full or disabled */
-      }
-      return next;
-    });
+    setRecent(saveRecent(item.u));
+    onPick(emojiFromUnified(item.u));
   }
 
   const items = useMemo(() => {
@@ -78,17 +85,25 @@ export default function EmojiPicker({ onPick }: { onPick: (native: string) => vo
         .slice(0, 160);
     }
     if (tab === "recent") {
+      // Simpan unified id; entri lama berupa glyph native tetap dikenali.
       return recent
-        .map((native) => data.emoji.find((e) => emojiFromUnified(e.u) === native))
+        .map((entry) => data.emoji.find((e) => e.u === entry) ?? data.emoji.find((e) => emojiFromUnified(e.u) === entry))
         .filter((e): e is Item => Boolean(e));
     }
     return data.emoji.filter((e) => e.c === tab);
   }, [data, query, tab, recent]);
 
+  // Isi sisa ruang tab Terakhir supaya panel tidak terlihat kosong saat riwayat masih sedikit.
+  const popular = useMemo(() => {
+    if (!data || tab !== "recent" || query) return [];
+    const have = new Set(items.map((e) => e.u));
+    return data.emoji.filter((e) => e.c === 0 && !have.has(e.u)).slice(0, 24);
+  }, [data, tab, query, items]);
+
   return (
     <div className="flex h-full flex-col bg-paper text-ink">
       <div className="border-b border-line px-2.5 py-2">
-        <div className="flex h-9 items-center gap-2 rounded-full bg-paper-2 pl-3 pr-2 ring-1 ring-transparent focus-within:ring-blush-deep">
+        <div className="flex h-9 items-center gap-2 rounded-full bg-paper-2 pl-3 pr-2 ring-1 ring-transparent focus-within:ring-ink/25">
           <Icon name="search" className="h-4 w-4 shrink-0 text-ink-soft" />
           <input
             ref={searchRef}
@@ -125,6 +140,25 @@ export default function EmojiPicker({ onPick }: { onPick: (native: string) => vo
                 </button>
               ))}
             </div>
+            {popular.length > 0 ? (
+              <>
+                <p className="px-1 pb-1.5 pt-3 text-2xs font-semibold text-ink-soft">Emoji populer</p>
+                <div className="grid grid-cols-8 gap-0.5">
+                  {popular.map((item) => (
+                    <button
+                      key={item.u}
+                      type="button"
+                      onClick={() => pick(item)}
+                      title={item.n.replace(/_/g, " ")}
+                      aria-label={item.n.replace(/_/g, " ")}
+                      className="grid h-9 w-full place-items-center rounded-lg text-[1.45rem] leading-none transition-colors hover:bg-paper-2 focus-visible:bg-paper-2 focus-visible:outline-none active:scale-95"
+                    >
+                      <EmojiSprite x={item.x} y={item.y} label={item.n} scale={1.35} />
+                    </button>
+                  ))}
+                </div>
+              </>
+            ) : null}
           </>
         )}
       </div>

@@ -19,22 +19,23 @@ export default async function DiscoverPage({
   const startOfDay = new Date();
   startOfDay.setHours(0, 0, 0, 0);
 
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("plan, is_verified, preferences(min_age, max_age, max_distance_km, show_gender, verified_only, search_lat, search_lng)")
+    .eq("id", user!.id)
+    .maybeSingle();
+  const plan = (profile?.plan ?? "free") as Plan;
+
   const [
     { data: candidates },
     { data: likesUsed },
-    { data: profile },
     { data: myInterestRows },
     { data: interestRows },
     { count: superUsed },
     { count: swipeCount },
   ] = await Promise.all([
-    supabase.rpc("discover_candidates", { p_limit: 20 }),
+    supabase.rpc("discover_candidates", { p_limit: 20, p_verified_only: plan === "gold" }),
     supabase.rpc("likes_used_today"),
-    supabase
-      .from("profiles")
-      .select("plan, is_verified, preferences(min_age, max_age, max_distance_km, show_gender, verified_only, search_lat, search_lng)")
-      .eq("id", user!.id)
-      .maybeSingle(),
     supabase.from("profile_interests").select("interest_id").eq("profile_id", user!.id),
     supabase.from("interests").select("id, label"),
     supabase
@@ -46,7 +47,6 @@ export default async function DiscoverPage({
     supabase.from("swipes").select("id", { count: "exact", head: true }).eq("actor_id", user!.id),
   ]);
 
-  const plan = (profile?.plan ?? "free") as Plan;
   const quota = PLANS[plan] ?? PLANS.free;
   const prefRow = (
     profile as {

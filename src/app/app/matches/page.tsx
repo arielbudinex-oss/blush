@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { createServerSupabase } from "@/lib/supabase/server";
 import { photoUrl } from "@/lib/photo";
 import { Stagger, StaggerItem } from "@/components/motion";
@@ -64,8 +65,7 @@ export default async function MatchesPage() {
                 <Link key={m.match_id} href={`/app/chat/${m.match_id}`} className="flex w-24 shrink-0 flex-col items-center gap-1.5 text-center">
                   <span className="relative block h-20 w-20 overflow-hidden rounded-full border-2 border-blush-deep bg-paper-2">
                     {url ? (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img src={url} alt={`Foto ${m.display_name}`} className="h-full w-full object-cover" />
+                      <Image src={url} alt={`Foto ${m.display_name}`} fill sizes="80px" className="object-cover" />
                     ) : null}
                   </span>
                   <span className="w-full truncate text-xs font-semibold">{m.display_name || "Tanpa nama"}</span>
@@ -100,8 +100,7 @@ export default async function MatchesPage() {
               >
                 <div className="h-[52px] w-[52px] shrink-0 overflow-hidden rounded-full bg-paper-2">
                   {url ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img src={url} alt={`Foto ${m.display_name}`} className="h-full w-full object-cover" />
+                    <Image src={url} alt={`Foto ${m.display_name}`} fill sizes="52px" className="object-cover" />
                   ) : null}
                 </div>
                 <div className="min-w-0 flex-1">

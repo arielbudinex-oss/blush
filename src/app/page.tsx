@@ -211,7 +211,7 @@ export default function Home() {
       <section id="paket" className="mx-auto max-w-5xl px-4 py-12 md:py-16">
         <h2 className="text-2xl font-bold tracking-[-0.02em] sm:text-3xl">Paket dan harga</h2>
         <p className="mt-2 max-w-[52ch] text-sm leading-relaxed text-ink-soft">
-          Paket gratis sudah bisa dipakai penuh. Naikkan paket kalau butuh swipe tanpa batas dan ingin melihat siapa yang sudah suka duluan.
+          Paket gratis sudah bisa dipakai penuh. Naikkan paket kalau butuh swipe tanpa batas dan ingin melihat siapa yang sudah suka duluan. Harga kami lebih hemat dari langganan aplikasi kencan populer.
         </p>
         <div className="mt-6 grid grid-cols-[repeat(auto-fit,minmax(260px,1fr))] gap-3">
           {(["free", "plus", "gold"] as const).map((id) => {
@@ -233,6 +233,9 @@ export default function Home() {
                 <p className="mt-1 flex min-h-8 flex-wrap items-baseline gap-x-1 text-2xl font-bold tabular-nums">
                   {p.priceIdr === 0 ? "Rp0" : formatIdr(p.priceIdr)}
                   <span className="text-xs font-semibold text-ink-soft">/ {p.period}</span>
+                  {p.compareAtIdr > p.priceIdr ? (
+                    <span className="text-xs font-semibold text-ink-faint line-through">{formatIdr(p.compareAtIdr)}</span>
+                  ) : null}
                 </p>
                 <ul className="mt-3 flex flex-1 flex-col gap-2 text-sm leading-5 text-ink-soft">
                   {p.features.slice(0, 4).map((f) => (

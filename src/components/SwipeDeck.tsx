@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { motion, useMotionValue, useReducedMotion, useTransform, animate } from "motion/react";
 import { createClient } from "@/lib/supabase/client";
@@ -184,11 +185,13 @@ function SwipeCard({
 
       <div className="deck-photo relative w-full bg-paper-2">
         {photos[photoIdx] ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
+          <Image
             src={photos[photoIdx]}
             alt={`Foto ${candidate.display_name}`}
-            className="h-full w-full object-cover object-[center_30%]"
+            fill
+            sizes="(max-width: 520px) 100vw, 430px"
+            priority
+            className="object-cover object-[center_30%]"
             draggable={false}
           />
         ) : (

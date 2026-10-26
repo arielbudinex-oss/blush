@@ -19,12 +19,16 @@ export default function ExpiryChip({ expiresAt }: { expiresAt: string | null }) 
   const hours = Math.floor(left / 3_600_000);
   const minutes = Math.floor((left % 3_600_000) / 60_000);
   const urgent = left < 6 * 3_600_000;
-  const label = left === 0 ? "Kedaluwarsa" : hours > 0 ? `${hours} jam lagi` : `${minutes} menit lagi`;
+  const label = left === 0 ? "Waktu habis" : hours > 0 ? `${hours} jam lagi` : `${minutes} menit lagi`;
 
   return (
     <span
       className={`shrink-0 whitespace-nowrap rounded-[999px] border px-1.5 py-px text-[10px] font-medium leading-4 tracking-normal ${
-        urgent ? "border-blush-deep/50 bg-blush-tint text-blush-deep" : "border-line text-ink-soft"
+        left === 0
+          ? "border-line bg-paper-2 text-ink-soft"
+          : urgent
+            ? "border-blush-deep/40 bg-blush-tint text-blush-deep"
+            : "border-line text-ink-soft"
       }`}
     >
       {label}

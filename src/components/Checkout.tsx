@@ -23,12 +23,14 @@ export default function Checkout({
   plan,
   planName,
   priceIdr,
+  compareAtIdr = 0,
   features,
   popular = false,
 }: {
   plan: "plus" | "gold";
   planName: string;
   priceIdr: number;
+  compareAtIdr?: number;
   features: string[];
   popular?: boolean;
 }) {
@@ -83,8 +85,16 @@ export default function Checkout({
           </span>
         ) : null}
       </div>
-      <p className="mt-1.5 text-sm text-ink-soft">
-        {formatIdr(priceIdr)} per bulan
+      <p className="mt-1.5 flex flex-wrap items-baseline gap-x-2 text-sm text-ink-soft">
+        <span className="font-semibold text-ink">{formatIdr(priceIdr)} per bulan</span>
+        {compareAtIdr > priceIdr ? (
+          <>
+            <span className="text-xs text-ink-faint line-through">{formatIdr(compareAtIdr)}</span>
+            <span className="rounded-[999px] bg-ok/10 px-2 py-0.5 text-2xs font-semibold text-ok">
+              Hemat {Math.round((1 - priceIdr / compareAtIdr) * 100)}%
+            </span>
+          </>
+        ) : null}
         {months > 1 ? ` · total ${formatIdr(total)}` : ""}
       </p>
 
