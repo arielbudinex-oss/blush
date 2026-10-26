@@ -111,7 +111,7 @@ export default async function MatchesPage() {
                 </div>
                 <div className="flex shrink-0 flex-col items-end gap-1">
                   {m.last_message_at ? (
-                    <span className="text-2xs font-medium text-ink-faint">{formatStamp(m.last_message_at)}</span>
+                    <span className="text-[10px] font-normal leading-none tracking-[0.01em] text-ink-faint">{formatStamp(m.last_message_at)}</span>
                   ) : null}
                   {m.unread > 0 ? (
                     <span className="min-w-4 rounded-full bg-blush-deep px-1 py-0 text-center text-[10px] font-semibold leading-4 text-paper">
