@@ -1,6 +1,6 @@
 # Blush TikTok Account Kit
 
-Semua aset di folder ini siap dipakai. Video utama 9:16, 1080x1920, 30 fps, 35,8 detik, audio -14 LUFS, H.264 + AAC, faststart.
+Semua aset di folder ini siap dipakai. Video utama 9:16, 1080x1920, 30 fps, 34,0 detik, audio -14 LUFS, H.264 + AAC, faststart.
 
 ## 1. Profil
 
@@ -19,32 +19,32 @@ Username dicek langsung di aplikasi TikTok saat mendaftar. Nama tampilan bisa di
 
 ## 2. Video yang sudah jadi
 
-- `blush-iklan-9x16.mp4` — iklan utama 35,8 detik: hook, masalah, solusi web tanpa download, bukti profil, penawaran, CTA.
+- `blush-iklan-9x16.mp4` — iklan utama 34,0 detik: hook, masalah, solusi web tanpa download, bukti profil, penawaran, CTA.
 - `cover-9x16.jpg` — cover unggahan, hook `Buka webnya, ketemu orangnya.`
-- `voiceover-raw.wav` — voice over final tanpa musik (35,8 detik), sudah di-loudnorm.
-- `vo_v8_preview.mp3` — preview voice over untuk cek cepat di HP.
+- `voiceover-raw.wav` — voice over final tanpa musik (34,0 detik), sudah di-loudnorm.
+- `vo_v11_preview.mp3` — preview voice over untuk cek cepat di HP.
 
 Naskah voice over (7 segmen, tiap kalimat dikunci ke scene-nya):
 
-1. `Masalahnya bukan kamu. Aplikasinya yang bikin kamu merasa begitu.` (0,0–5,0)
-2. `Swipe ratusan foto, tapi tidak satu pun jadi obrolan.` (5,0–9,4)
-3. `Blush beda. Buka langsung dari browser. Tanpa download, tanpa ribet.` (9,4–14,1)
-4. `Foto, bio, dan jawaban asli sebelum kamu memutuskan. Saling suka, obrolan langsung jalan.` (14,1–20,6)
-5. `Profil yang sudah dichek, dapat centang biru.` (20,6–23,9)
-6. `Mulai gratis. Buka semua fitur kapan pun kamu siap.` (23,9–30,8)
-7. `Buka Blush sekarang. Orangnya mungkin sudah menunggu.` (30,8–35,8)
+1. `Cari pasangan mulai terasa melelahkan? Mungkin bukan kamu yang salah.` (0,0–5,5)
+2. `Geser ratusan foto, tapi obrolan tak pernah jalan.` (5,5–9,9)
+3. `Blush beda. Langsung dari browser, tanpa download.` (9,9–14,4)
+4. `Foto asli, bio jelas, jawaban jujur. Saling suka, langsung ngobrol.` (14,4–21,2)
+5. `Profil yang sudah dicek, dapat centang biru.` (21,2–24,7)
+6. `Mulai gratis. Fitur lengkap kapan pun kamu siap.` (24,7–28,9)
+7. `Buka Blush sekarang. Bisa jadi, orangnya sedang menunggu.` (28,9–33,9)
 
 Harga tidak diucapkan di voice over karena sudah tertera di kartu scene 6. Voice over hanya menjual manfaat.
 
-Voice: VoxCPM1.5 (Apache-2.0) + LoRA `aisyahsyihab/voxcpm-lora-indonesian-female-v2` (Apache-2.0, r=64, 400 klip suara perempuan Indonesia), cfg 3.2, 28 langkah. Tanpa prompt audio, tanpa suara orang nyata, tanpa rekaman artis. Tiap segmen dipangkas jedanya lalu di-tempo maksimal 1,24x agar jatuh tepat di scene. Musik dibuat khusus dengan Python, bebas royalti.
+Voice: edge-tts (lisensi MIT, gratis) voice `id-ID-GadisNeural`, rate dan pitch dibedakan per kalimat supaya prosodi tidak datar. Hasil TTS dipangkas heningnya, difade 12–20 ms di tiap ujung, lalu diolah high-pass 95 Hz, potong mud 300 Hz, presence 3,2 kHz, de-ess 7,2 kHz, kompresor 2,5:1. Musik dibuat khusus dengan Python, bebas royalti, di-ducking 6:1 di bawah voice over.
 
 ## 3. Caption unggahan utama
 
 ```
-Masalahnya bukan kamu. Aplikasinya yang bikin kamu merasa begitu.
+Masalahnya bukan kamu. Aplikasinya yang bikin capek.
 
 Blush bisa dibuka langsung dari browser. Tanpa download, tanpa ribet.
-Foto, bio, dan jawaban asli kelihatan duluan. Saling suka, chat langsung jalan.
+Foto asli, bio jelas, jawaban jujur. Saling suka, obrolan langsung jalan.
 
 Mulai gratis. Link di bio.
 
