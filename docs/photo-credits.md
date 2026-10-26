@@ -10,7 +10,7 @@ Foto profil akun demo memakai stok Pexels dengan lisensi Pexels (gratis untuk pe
 | Sinta Maharani | 4350179 | https://www.pexels.com/photo/smiling-young-asian-woman-sitting-in-cafe-with-chin-on-hand-and-using-smartphone-4350179/ |
 | Tara Wulandari | 8357252 | https://www.pexels.com/photo/a-woman-sitting-at-the-table-8357250/ |
 | Kirana Maheswari | 32057175 | https://www.pexels.com/photo/young-woman-in-batik-dress-in-jakarta-32057175/ |
-| Alya Puspita | 5338627 | https://www.pexels.com/photo/woman-in-pink-hijab-white-sitting-5338627/ |
+| Alya Puspita | 21851191 | https://www.pexels.com/photo/21851191/ |
 | Raka Aditya | 6666773 | https://www.pexels.com/photo/man-in-blue-crew-neck-t-shirt-smiling-6666773/ |
 | Damar | 15480251 | https://www.pexels.com/photo/woman-posing-on-city-street-15276729/ |
 | Rani Kusuma | 33402413 | https://www.pexels.com/photo/traditional-indonesian-attire-on-jakarta-street-33402413/ |
@@ -30,7 +30,7 @@ Foto profil akun demo memakai stok Pexels dengan lisensi Pexels (gratis untuk pe
 | Nadia Prameswari | 15938260 | https://www.pexels.com/photo/smiling-hijab-girl-enjoying-a-book-in-a-cozy-coffee-shop-in-the-city-15938260/ |
 | Dinda Pramesti | 8357251 | https://www.pexels.com/photo/a-woman-sitting-at-the-table-8357250/ |
 | Kirana Maheswari | 32057175 | https://www.pexels.com/photo/young-woman-in-batik-dress-in-jakarta-32057175/ |
-| Alya Puspita | 5338627 | https://www.pexels.com/photo/woman-in-pink-hijab-white-sitting-5338627/ |
+| Alya Puspita | 21851191 | https://www.pexels.com/photo/21851191/ |
 | Raka Aditya | 6666773 | https://www.pexels.com/photo/man-in-blue-crew-neck-t-shirt-smiling-6666773/ |
 | Damar | 15480251 | https://www.pexels.com/photo/woman-posing-on-city-street-15276729/ |
 | Rani Kusuma | 33402413 | https://www.pexels.com/photo/traditional-indonesian-attire-on-jakarta-street-33402413/ |
@@ -38,3 +38,5 @@ Foto profil akun demo memakai stok Pexels dengan lisensi Pexels (gratis untuk pe
 | Rio Pratama | 20226018 | https://www.pexels.com/photo/a-young-man-standing-on-a-balcony-in-front-of-a-building-20226018/ |
 
 Foto dipotong 4:5 dan dikompres untuk kartu deck. Semua profil demo memakai nama dan foto orang Indonesia. Wajah pada foto stok bukan identitas akun nyata; profil demo hanya untuk pengujian dan tangkapan layar produk.
+
+Foto Alya Puspita diganti ke potret natural non-hijab (Pexels 21851191) untuk iklan dan kartu deck. Akun demo Alya juga ditandai terverifikasi agar badge centang biru tampil di materi promosi.

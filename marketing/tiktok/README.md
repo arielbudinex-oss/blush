@@ -22,20 +22,21 @@ Username dicek langsung di aplikasi TikTok saat mendaftar. Nama tampilan bisa di
 - `blush-iklan-9x16.mp4` — iklan utama 35,8 detik: hook, masalah, solusi web tanpa download, bukti profil, penawaran, CTA.
 - `cover-9x16.jpg` — cover unggahan, hook `Buka webnya, ketemu orangnya.`
 - `voiceover-raw.wav` — voice over final tanpa musik (35,8 detik), sudah di-loudnorm.
+- `vo_v8_preview.mp3` — preview voice over untuk cek cepat di HP.
 
 Naskah voice over (7 segmen, tiap kalimat dikunci ke scene-nya):
 
 1. `Masalahnya bukan kamu. Aplikasinya yang bikin kamu merasa begitu.` (0,0–5,0)
-2. `Geser ratusan foto, tapi tidak satu pun jadi obrolan.` (5,0–9,4)
+2. `Swipe ratusan foto, tapi tidak satu pun jadi obrolan.` (5,0–9,4)
 3. `Blush beda. Buka langsung dari browser. Tanpa download, tanpa ribet.` (9,4–14,1)
-4. `Foto, bio, dan jawaban asli sebelum kamu memutuskan. Saling suka, chat langsung jalan.` (14,1–20,6)
+4. `Foto, bio, dan jawaban asli sebelum kamu memutuskan. Saling suka, obrolan langsung jalan.` (14,1–20,6)
 5. `Profil yang sudah dichek, dapat centang biru.` (20,6–23,9)
 6. `Mulai gratis. Buka semua fitur kapan pun kamu siap.` (23,9–30,8)
 7. `Buka Blush sekarang. Orangnya mungkin sudah menunggu.` (30,8–35,8)
 
 Harga tidak diucapkan di voice over karena sudah tertera di kartu scene 6. Voice over hanya menjual manfaat.
 
-Voice: VoxCPM1.5 (Apache-2.0) + LoRA `aisyahsyihab/voxcpm-lora-indonesian-female-v2` (Apache-2.0, r=64, 400 klip suara perempuan Indonesia), cfg 2.5, 20 langkah. Tanpa prompt audio, tanpa suara orang nyata, tanpa rekaman artis. Tiap segmen dipangkas jedanya lalu di-tempo maksimal 1,24x agar jatuh tepat di scene. Musik dibuat khusus dengan Python, bebas royalti.
+Voice: VoxCPM1.5 (Apache-2.0) + LoRA `aisyahsyihab/voxcpm-lora-indonesian-female-v2` (Apache-2.0, r=64, 400 klip suara perempuan Indonesia), cfg 3.2, 28 langkah. Tanpa prompt audio, tanpa suara orang nyata, tanpa rekaman artis. Tiap segmen dipangkas jedanya lalu di-tempo maksimal 1,24x agar jatuh tepat di scene. Musik dibuat khusus dengan Python, bebas royalti.
 
 ## 3. Caption unggahan utama
 

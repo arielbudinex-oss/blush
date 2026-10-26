@@ -233,7 +233,7 @@ export default function ProfileSheet({
             <div className="grid grid-cols-3 gap-2 border-t border-line bg-paper px-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] pt-3 shadow-[0_-14px_24px_-24px_rgba(0,0,0,0.45)]">
               <button
                 type="button"
-                className={btnGhost}
+                className={`${btnGhost} gap-1.5 whitespace-nowrap px-2 text-[13px]`}
                 disabled={busy}
                 onClick={() => {
                   onDecide("pass");
@@ -244,7 +244,7 @@ export default function ProfileSheet({
               </button>
               <button
                 type="button"
-                className={btnGhost}
+                className={`${btnGhost} gap-1.5 whitespace-nowrap px-2 text-[13px]`}
                 disabled={busy || superLeft <= 0}
                 title={superLeft > 0 ? `Sisa ${superLeft} superlike` : "Superlike habis. Isi ulang dari Blush Plus."}
                 onClick={() => {
@@ -256,7 +256,7 @@ export default function ProfileSheet({
               </button>
               <button
                 type="button"
-                className={btnPrimary}
+                className={`${btnPrimary} gap-1.5 whitespace-nowrap px-2 text-[13px]`}
                 disabled={busy}
                 onClick={() => {
                   onDecide("like");
