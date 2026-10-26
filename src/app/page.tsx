@@ -85,7 +85,7 @@ export default function Home() {
 
       <section className="mx-auto grid max-w-5xl items-center gap-8 px-4 pb-12 pt-8 md:grid-cols-[minmax(0,1fr)_20rem] md:gap-10 md:pb-16 md:pt-12">
         <div className="min-w-0">
-          <p className="text-xs font-bold text-blush-deep">Dating tanpa download</p>
+          <p className="text-xs font-bold text-blush-deep">Dating app orang Indonesia</p>
           <h1 className="mt-2 text-pretty text-[2.4rem] font-bold leading-[1.03] tracking-[-0.035em] sm:text-[3.4rem]">
             Buka webnya,
             <br />
