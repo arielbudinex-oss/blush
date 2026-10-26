@@ -53,7 +53,6 @@ export const PLANS: Record<Plan, PlanConfig> = {
       "Lihat siapa yang suka kamu duluan",
       "5 superlike per hari",
       "Batalkan swipe terakhir",
-      "Filter umur, jarak, gender, dan profil terverifikasi",
     ],
     dailyLikes: 100000,
     dailySuperlikes: 5,

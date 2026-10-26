@@ -34,7 +34,12 @@ export default async function DiscoverPage({
     { count: superUsed },
     { count: swipeCount },
   ] = await Promise.all([
-    supabase.rpc("discover_candidates", { p_limit: 20, p_verified_only: plan === "gold" }),
+    supabase.rpc("discover_candidates", {
+      p_limit: 20,
+      p_verified_only:
+        plan === "gold" &&
+        Boolean((profile as { preferences?: { verified_only?: boolean } } | null)?.preferences?.verified_only),
+    }),
     supabase.rpc("likes_used_today"),
     supabase.from("profile_interests").select("interest_id").eq("profile_id", user!.id),
     supabase.from("interests").select("id, label"),

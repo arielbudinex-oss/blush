@@ -223,14 +223,23 @@ export default function FiltersSheet({
                 type="button"
                 role="switch"
                 aria-checked={verifiedOnly}
-                onClick={() => setVerifiedOnly((v) => !v)}
+                aria-disabled={!gold}
+                onClick={() => {
+                  if (!gold) return;
+                  setVerifiedOnly((v) => !v);
+                }}
                 className={`flex items-center justify-between rounded-[12px] border px-3 py-3 text-left transition-colors ${
                   verifiedOnly ? "border-verify bg-verify/5" : "border-line bg-paper"
-                }`}
+                } ${gold ? "" : "opacity-60"}`}
               >
                 <span>
-                  <span className="block text-sm font-semibold text-ink">Hanya profil terverifikasi</span>
-                  <span className="block text-xs text-ink-soft">Centang biru sudah dicek lewat kamera.</span>
+                  <span className="block text-sm font-semibold text-ink">
+                    Hanya profil terverifikasi
+                    {gold ? null : <span className="ml-1.5 rounded-full bg-blush-tint px-1.5 py-0.5 text-2xs font-semibold text-blush-deep">Gold</span>}
+                  </span>
+                  <span className="block text-xs text-ink-soft">
+                    {gold ? "Centang biru sudah dicek lewat kamera." : "Naikkan paket Gold untuk memakai saringan ini."}
+                  </span>
                 </span>
                 <span
                   className={`relative ml-3 inline-flex h-6 w-11 shrink-0 items-center rounded-full transition-colors ${
