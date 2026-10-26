@@ -6,7 +6,7 @@ import { photoUrl } from "@/lib/photo";
 import { Icon } from "@/components/Icon";
 import VerifiedBadge from "@/components/VerifiedBadge";
 import { btnPrimary } from "@/components/ui";
-import { Stagger, StaggerItem } from "@/components/motion";
+import { Stagger, StaggerItem } from "@/components/Stagger";
 import LikeBackButton from "@/components/LikeBackButton";
 
 // Route ini selalu butuh sesi terbaru dari cookies, jadi memang blocking (Next 16 cache components).

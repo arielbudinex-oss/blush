@@ -253,3 +253,21 @@ a {
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
+
+/* Daftar bertahap tanpa pustaka animasi: ringan, tetap tampil penuh. */
+@keyframes blush-stagger-in {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+[data-stagger] > .stagger-item {
+  animation: blush-stagger-in 340ms var(--ease-out) both;
+}
+[data-stagger] > .stagger-item:nth-child(1) { animation-delay: 40ms; }
+[data-stagger] > .stagger-item:nth-child(2) { animation-delay: 95ms; }
+[data-stagger] > .stagger-item:nth-child(3) { animation-delay: 150ms; }
+[data-stagger] > .stagger-item:nth-child(4) { animation-delay: 205ms; }
+[data-stagger] > .stagger-item:nth-child(5) { animation-delay: 260ms; }
+[data-stagger] > .stagger-item:nth-child(n + 6) { animation-delay: 300ms; }
+@media (prefers-reduced-motion: reduce) {
+  [data-stagger] > .stagger-item { animation: none; }
+}

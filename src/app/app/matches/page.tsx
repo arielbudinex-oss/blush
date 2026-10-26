@@ -2,7 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { createServerSupabase } from "@/lib/supabase/server";
 import { photoUrl } from "@/lib/photo";
-import { Stagger, StaggerItem } from "@/components/motion";
+import { Stagger, StaggerItem } from "@/components/Stagger";
 import ExpiryChip from "@/components/ExpiryChip";
 import { Icon } from "@/components/Icon";
 import VerifiedBadge from "@/components/VerifiedBadge";

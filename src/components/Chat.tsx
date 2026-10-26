@@ -3,6 +3,7 @@
 import { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { Icon } from "@/components/Icon";
@@ -11,7 +12,7 @@ import { formatClock, formatDayLabel, formatRelative, sameDay } from "@/lib/time
 import AudioCall from "@/components/AudioCall";
 const Picker = lazy(() => import("@/components/emoji/EmojiPicker"));
 import EmojiText from "@/components/emoji/EmojiText";
-import ProfileSheet from "@/components/ProfileSheet";
+const ProfileSheet = dynamic(() => import("@/components/ProfileSheet"), { ssr: false });
 import VerifiedBadge from "@/components/VerifiedBadge";
 
 type Message = {
@@ -90,6 +91,11 @@ export default function Chat({
   const [extendBusy, setExtendBusy] = useState(false);
   const [emojiOpen, setEmojiOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
+  // Sheet profil baru diunduh saat pertama dibuka.
+  const [sheetReady, setSheetReady] = useState(false);
+  useEffect(() => {
+    if (profileOpen) setSheetReady(true);
+  }, [profileOpen]);
 
   const endRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
@@ -741,6 +747,7 @@ export default function Chat({
       </form>
       )}
 
+      {sheetReady ? (
       <ProfileSheet
         candidate={{
           id: otherId,
@@ -770,6 +777,7 @@ export default function Chat({
           void block();
         }}
       />
+      ) : null}
 
       {confirmUnmatch ? (
         <div className="fixed inset-0 z-[60] flex items-center justify-center bg-ink/60 p-[var(--space-md)]">

@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { createServerSupabase } from "@/lib/supabase/server";
+import { getMe } from "@/lib/supabase/me";
 import { PLANS, SUPERLIKE_PACKS, formatIdr, type Plan } from "@/lib/plans";
 import Checkout from "@/components/Checkout";
 import BoostButton from "@/components/BoostButton";
@@ -8,18 +8,14 @@ import BoostButton from "@/components/BoostButton";
 export const instant = false;
 
 export default async function PremiumPage() {
-  const supabase = await createServerSupabase();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const { supabase, user, profile } = await getMe();
   if (!user) redirect("/login?next=/app/premium");
 
   const monthStart = new Date();
   monthStart.setDate(1);
   monthStart.setHours(0, 0, 0, 0);
 
-  const [{ data: profile }, { data: payments }, { data: boosts }] = await Promise.all([
-    supabase.from("profiles").select("plan, plan_expires_at").eq("id", user.id).maybeSingle(),
+  const [{ data: payments }, { data: boosts }] = await Promise.all([
     supabase
       .from("payments")
       .select("id, plan, months, amount_idr, status, created_at, expires_at")

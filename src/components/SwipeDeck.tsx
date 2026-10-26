@@ -7,10 +7,12 @@ import { useRouter } from "next/navigation";
 import { motion, useMotionValue, useReducedMotion, useTransform, animate } from "motion/react";
 import { createClient } from "@/lib/supabase/client";
 import { distanceLabel, photoUrl } from "@/lib/photo";
-import { MatchModal, ReportModal } from "@/components/DeckModals";
-import ProfileSheet from "@/components/ProfileSheet";
-import FiltersSheet from "@/components/FiltersSheet";
-import { CountUp } from "@/components/motion";
+import dynamic from "next/dynamic";
+const MatchModal = dynamic(() => import("@/components/DeckModals").then((m) => m.MatchModal), { ssr: false });
+const ReportModal = dynamic(() => import("@/components/DeckModals").then((m) => m.ReportModal), { ssr: false });
+const ProfileSheet = dynamic(() => import("@/components/ProfileSheet"), { ssr: false });
+const FiltersSheet = dynamic(() => import("@/components/FiltersSheet"), { ssr: false });
+import { CountUp } from "@/components/CountUp";
 import { Icon } from "@/components/Icon";
 import VerifiedBadge from "@/components/VerifiedBadge";
 import EmojiText from "@/components/emoji/EmojiText";
@@ -441,6 +443,11 @@ export default function SwipeDeck({
   const [sheetOpen, setSheetOpen] = useState(false);
   const [sheetCandidate, setSheetCandidate] = useState<Candidate | null>(null);
   const [filtersOpen, setFiltersOpen] = useState(false);
+  // Lapisan bawah (sheet/modal) dimuat saat pertama dibutuhkan, bukan saat halaman dibuka.
+  const [layersReady, setLayersReady] = useState(false);
+  useEffect(() => {
+    if (sheetOpen || filtersOpen || matched || reportFor) setLayersReady(true);
+  }, [sheetOpen, filtersOpen, matched, reportFor]);
 
   const current = candidates[index];
   const unlimited = dailyLikes >= 100000;
@@ -707,8 +714,9 @@ export default function SwipeDeck({
       </aside>
       </div>
 
-      <ProfileSheet
-        candidate={sheetCandidate ?? current ?? null}
+      {layersReady ? (
+        <ProfileSheet
+          candidate={sheetCandidate ?? current ?? null}
         open={sheetOpen}
         superLeft={superLeft}
         busy={busy}
@@ -729,19 +737,24 @@ export default function SwipeDeck({
           if (target) void block(target);
         }}
       />
+      ) : null}
 
-      <FiltersSheet open={filtersOpen} prefs={prefs} gold={gold} onClose={() => setFiltersOpen(false)} />
+      {layersReady ? (
+        <FiltersSheet open={filtersOpen} prefs={prefs} gold={gold} onClose={() => setFiltersOpen(false)} />
+      ) : null}
 
-      <MatchModal
-        matched={matched}
-        onClose={() => setMatched(null)}
-        onViewProfile={() => {
-          if (!matched) return;
-          setSheetCandidate(matched.candidate);
-          setMatched(null);
-          setSheetOpen(true);
-        }}
-      />
+      {layersReady ? (
+        <MatchModal
+          matched={matched}
+          onClose={() => setMatched(null)}
+          onViewProfile={() => {
+            if (!matched) return;
+            setSheetCandidate(matched.candidate);
+            setMatched(null);
+            setSheetOpen(true);
+          }}
+        />
+      ) : null}
 
       {reportFor ? (
         <ReportModal

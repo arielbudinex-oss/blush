@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { createServerSupabase } from "@/lib/supabase/server";
+import { getMe } from "@/lib/supabase/me";
 import { photoUrl } from "@/lib/photo";
 import BottomNav from "@/components/BottomNav";
 import AppNav from "@/components/AppNav";
@@ -13,21 +13,11 @@ import PushAuto from "@/components/PushAuto";
 export const instant = false;
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
-  const supabase = await createServerSupabase();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const { supabase, user, profile } = await getMe();
   if (!user) redirect("/login?next=/app/discover");
-
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("display_name, onboarded_at, plan, is_verified, last_active_at, location, photos(storage_path, position)")
-    .eq("id", user.id)
-    .maybeSingle();
-
   if (!profile?.onboarded_at) redirect("/onboarding");
 
-  const photos = ((profile as { photos?: { storage_path: string; position: number }[] }).photos ?? [])
+  const photos = (profile.photos ?? [])
     .slice()
     .sort((a, b) => a.position - b.position);
   const cover = photos.map((p) => photoUrl(p.storage_path)).find(Boolean) ?? null;

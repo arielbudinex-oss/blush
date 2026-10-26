@@ -1,4 +1,5 @@
-import { createServerSupabase } from "@/lib/supabase/server";
+import { redirect } from "next/navigation";
+import { getMe } from "@/lib/supabase/me";
 import { PLANS, type Plan } from "@/lib/plans";
 import SwipeDeck, { type Candidate } from "@/components/SwipeDeck";
 
@@ -10,20 +11,12 @@ export default async function DiscoverPage({
 }: {
   searchParams: Promise<{ fokus?: string }>;
 }) {
-  const supabase = await createServerSupabase();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  const { fokus } = await searchParams;
+  const [{ fokus }, { supabase, user, profile }] = await Promise.all([searchParams, getMe()]);
+  if (!user) redirect("/login?next=/app/discover");
 
   const startOfDay = new Date();
   startOfDay.setHours(0, 0, 0, 0);
 
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("plan, is_verified, preferences(min_age, max_age, max_distance_km, show_gender, verified_only, search_lat, search_lng)")
-    .eq("id", user!.id)
-    .maybeSingle();
   const plan = (profile?.plan ?? "free") as Plan;
 
   const [
