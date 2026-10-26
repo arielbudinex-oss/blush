@@ -240,12 +240,13 @@ export default function ProfileSheet({
                 type="button"
                 className={btnGhost}
                 disabled={busy || superLeft <= 0}
+                title={superLeft > 0 ? `Sisa ${superLeft} superlike` : "Superlike habis. Isi ulang dari Blush Plus."}
                 onClick={() => {
                   onDecide("superlike");
                   onClose();
                 }}
               >
-                <Icon name="star" className="h-4 w-4" /> Superlike
+                <Icon name="star" className="h-4 w-4" /> {superLeft > 0 ? `Superlike ${superLeft}` : "Superlike"}
               </button>
               <button
                 type="button"
