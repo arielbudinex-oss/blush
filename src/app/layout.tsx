@@ -18,25 +18,25 @@ const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: "Blush · kenalan dulu, urusan belakangan",
+    default: "Blush · buka webnya, ketemu orangnya",
     template: "%s · Blush",
   },
   description:
-    "Aplikasi kencan buat kenalan dulu. Isi profil sekali, geser kalau ada yang menarik, chat kebuka kalau kalian saling suka.",
+    "Dating tanpa download. Buka Blush langsung di browser, lihat foto, bio, dan jawaban asli sebelum memutuskan. Saling suka, chat langsung terbuka.",
   applicationName: "Blush",
   manifest: "/manifest.webmanifest",
   openGraph: {
     type: "website",
     url: siteUrl,
     siteName: "Blush",
-    title: "Blush · kenalan dulu, urusan belakangan",
-    description: "Profil yang jelas, badge wajah asli, chat yang kebuka setelah saling suka.",
+    title: "Blush · buka webnya, ketemu orangnya",
+    description: "Tanpa download, tanpa ribet. Foto, bio, dan jawaban asli sebelum kamu memutuskan.",
     images: [{ url: "/og.png", width: 1200, height: 630, alt: "Blush, aplikasi kencan dengan profil jelas dan badge wajah asli." }],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Blush · kenalan dulu, urusan belakangan",
-    description: "Profil yang jelas, badge wajah asli, chat yang kebuka setelah saling suka.",
+    title: "Blush · buka webnya, ketemu orangnya",
+    description: "Tanpa download, tanpa ribet. Foto, bio, dan jawaban asli sebelum kamu memutuskan.",
     images: ["/og.png"],
   },
   alternates: { canonical: "/" },

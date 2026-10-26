@@ -85,15 +85,15 @@ export default function Home() {
 
       <section className="mx-auto grid max-w-5xl items-center gap-8 px-4 pb-12 pt-8 md:grid-cols-[minmax(0,1fr)_20rem] md:gap-10 md:pb-16 md:pt-12">
         <div className="min-w-0">
-          <p className="text-xs font-bold text-blush-deep">Aplikasi kencan, dibuat di Indonesia</p>
+          <p className="text-xs font-bold text-blush-deep">Dating tanpa download</p>
           <h1 className="mt-2 text-pretty text-[2.4rem] font-bold leading-[1.03] tracking-[-0.035em] sm:text-[3.4rem]">
-            Kenalan dulu,
+            Buka webnya,
             <br />
-            urusan belakangan.
+            ketemu orangnya.
           </h1>
           <p className="mt-4 max-w-[38ch] text-pretty text-[1.02rem] leading-[1.6] text-ink-soft">
-            Lihat foto, bio, dan jawaban singkat sebelum memutuskan. Saling suka, chat langsung terbuka. Verifikasi wajah
-            opsional, buat yang mau centang biru.
+            Buka langsung di browser, tanpa install. Lihat foto, bio, dan jawaban asli sebelum memutuskan. Saling suka,
+            chat langsung terbuka. Profil terverifikasi dapat centang biru.
           </p>
 
           <div className="mt-6 flex flex-col gap-2 sm:flex-row">
