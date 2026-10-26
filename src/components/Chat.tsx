@@ -417,13 +417,13 @@ export default function Chat({
           aria-label={`Lihat profil ${otherName || "pasangan"}`}
           className="relative h-11 w-11 shrink-0 rounded-full focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blush-deep"
         >
-          <span className="block h-11 w-11 overflow-hidden rounded-full bg-paper-2">
+          <span className="relative block h-11 w-11 overflow-hidden rounded-full bg-paper-2">
             {otherPhoto ? <Image src={otherPhoto} alt="" fill sizes="44px" className="object-cover" /> : null}
           </span>
           {activeNow ? <span className="absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full bg-ok ring-2 ring-paper" /> : null}
         </button>
         <button type="button" onClick={() => setProfileOpen(true)} className="min-w-0 flex-1 text-left">
-          <p className="flex min-w-0 items-center gap-1 truncate font-display text-[0.95rem] font-bold leading-tight tracking-[-0.01em]">
+          <p className="flex min-w-0 items-center gap-1.5 truncate font-display text-[0.95rem] font-bold leading-tight tracking-[-0.01em]">
             <span className="truncate">{otherName || "Tanpa nama"}</span>
             {otherVerified ? <VerifiedBadge size={15} /> : null}
           </p>
@@ -595,32 +595,37 @@ export default function Chat({
                       <p className="whitespace-pre-wrap break-words [text-wrap:pretty]">
                         <EmojiText text={m.body} />
                       </p>
+                      {end && !m.failed && !m.pending ? (
+                        <div
+                          className={`mt-0.5 flex items-center justify-end gap-1 text-[10px] font-medium leading-none tabular-nums ${
+                            mine ? "text-paper/70" : "text-ink-faint"
+                          }`}
+                        >
+                          <span>{formatClock(m.created_at)}</span>
+                          {mineRead ? (
+                            m.read_at ? (
+                              <>
+                                <Icon name="checks" className={`h-3 w-3 ${mine ? "text-paper" : "text-blush-deep"}`} strokeWidth={2.2} />
+                                <span className="sr-only">Sudah dibaca</span>
+                              </>
+                            ) : (
+                              <>
+                                <Icon name="check" className="h-3 w-3" strokeWidth={2.2} />
+                                <span className="sr-only">Terkirim</span>
+                              </>
+                            )
+                          ) : null}
+                        </div>
+                      ) : null}
                     </div>
-                    {end ? (
-                      <div className="mt-1.5 flex items-center gap-1.5 text-[0.7rem] font-medium leading-none text-ink-soft">
+                    {end && (m.failed || m.pending) ? (
+                      <div className="mt-1 flex items-center gap-1.5 text-[0.7rem] font-medium leading-none text-ink-soft">
                         {m.failed ? (
                           <button type="button" onClick={() => retry(m)} className="font-semibold text-blush-deep underline">
                             Gagal · Coba lagi
                           </button>
-                        ) : m.pending ? (
-                          <span>Mengirim…</span>
                         ) : (
-                          <>
-                            <span className="tabular-nums">{formatClock(m.created_at)}</span>
-                            {mineRead ? (
-                              m.read_at ? (
-                                <>
-                                  <Icon name="checks" className="h-3.5 w-3.5 text-blush-deep" strokeWidth={2.2} />
-                                  <span className="sr-only">Sudah dibaca</span>
-                                </>
-                              ) : (
-                                <>
-                                  <Icon name="check" className="h-3.5 w-3.5" strokeWidth={2.2} />
-                                  <span className="sr-only">Terkirim</span>
-                                </>
-                              )
-                            ) : null}
-                          </>
+                          <span>Mengirim…</span>
                         )}
                       </div>
                     ) : null}
