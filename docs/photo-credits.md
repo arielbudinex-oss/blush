@@ -11,6 +11,7 @@ Foto profil akun demo memakai stok Pexels dengan lisensi Pexels (gratis untuk pe
 | Tara Wulandari | 8357252 | https://www.pexels.com/photo/a-woman-sitting-at-the-table-8357250/ |
 | Kirana Maheswari | 32057175 | https://www.pexels.com/photo/young-woman-in-batik-dress-in-jakarta-32057175/ |
 | Alya Puspita | 21851191 | https://www.pexels.com/photo/21851191/ |
+| Alya Puspita (model iklan TikTok) | 19461456 | https://www.pexels.com/photo/19461456/ |
 | Raka Aditya | 6666773 | https://www.pexels.com/photo/man-in-blue-crew-neck-t-shirt-smiling-6666773/ |
 | Damar | 15480251 | https://www.pexels.com/photo/woman-posing-on-city-street-15276729/ |
 | Rani Kusuma | 33402413 | https://www.pexels.com/photo/traditional-indonesian-attire-on-jakarta-street-33402413/ |
@@ -40,3 +41,5 @@ Foto profil akun demo memakai stok Pexels dengan lisensi Pexels (gratis untuk pe
 Foto dipotong 4:5 dan dikompres untuk kartu deck. Semua profil demo memakai nama dan foto orang Indonesia. Wajah pada foto stok bukan identitas akun nyata; profil demo hanya untuk pengujian dan tangkapan layar produk.
 
 Foto Alya Puspita diganti ke potret natural non-hijab (Pexels 21851191) untuk iklan dan kartu deck. Akun demo Alya juga ditandai terverifikasi agar badge centang biru tampil di materi promosi.
+
+Foto model iklan TikTok (Pexels 19461456) dipakai di kartu discover, profil HP, dan avatar match pada video `marketing/tiktok/blush-iklan-9x16.mp4`. Lisensi Pexels: gratis untuk komersial.

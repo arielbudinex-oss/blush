@@ -73,7 +73,7 @@ Posting 3–4 kali seminggu, jam 19.00–22.00 WIB. Semua video vertikal, teks a
 
 ## 5. Catatan produksi
 
-- Foto profil di video: Pexels, atribusi di `docs/photo-credits.md`.
+- Foto profil di video: Pexels (model iklan 19461456, non-hijab, lisensi Pexels gratis komersial), atribusi di `docs/photo-credits.md`.
 - Profil di video adalah profil demo, bukan pengguna nyata.
 - Verifikasi ditampilkan sebagai penanda profil yang sudah dicek, tanpa menyebut opsional dan tanpa klaim semua pengguna sudah diverifikasi.
 - Tidak memakai aset, logo, atau trade dress Bumble.
