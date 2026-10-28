@@ -1,6 +1,6 @@
 # Blush TikTok Account Kit
 
-Semua aset di folder ini siap dipakai. Video utama 9:16, 1080x1920, 30 fps, 30,6 detik, audio -14 LUFS, H.264 + AAC, faststart.
+Semua aset di folder ini siap dipakai. Video utama 9:16, 1080x1920, 30 fps, 37,0 detik, audio -13,8 LUFS, H.264 + AAC, faststart.
 
 ## 1. Profil
 
@@ -19,24 +19,31 @@ Username dicek langsung di aplikasi TikTok saat mendaftar. Nama tampilan bisa di
 
 ## 2. Video yang sudah jadi
 
-- `blush-iklan-9x16.mp4` — iklan utama 30,6 detik: hook, masalah, solusi web tanpa download, bukti profil, penawaran, CTA.
+- `blush-iklan-9x16.mp4` — iklan utama 37,0 detik dengan motion graphics: hook ribet, tiga masalah, STOP, brand, browser, nol download, akun satu menit, foto/bio, BOOM match, chat, gratis, tagline, URL, end card.
 - `cover-9x16.jpg` — cover unggahan, hook `Buka webnya, ketemu orangnya.`
-- `voiceover-raw.wav` — voice over final tanpa musik (30,6 detik), sudah di-loudnorm.
-- `vo_v13_preview.mp3` — preview voice over terbaru untuk cek cepat di HP.
+- `voiceover-raw.wav` — voice over final tanpa musik (37,0 detik), dari `iklan blush 1.3.mp3` milik user, tidak diubah nadanya.
+- `vo_v14_preview.mp3` — preview voice over terbaru untuk cek cepat di HP.
 
-Naskah voice over (7 segmen, tiap kalimat dikunci ke scene-nya):
+Naskah voice over (mengikuti audio user, 13 kalimat):
 
-1. `Cari pasangan mulai terasa melelahkan? Mungkin bukan kamu yang salah.` (0,0–3,8)
-2. `Geser ratusan foto, tapi obrolan tak pernah jalan.` (3,8–7,6)
-3. `Blush beda. Langsung dari browser, tanpa download.` (7,6–11,2)
-4. `Foto asli, bio jelas, jawaban jujur. Saling suka, langsung ngobrol.` (11,2–15,7)
-5. `Profil yang sudah diperiksa, dapat centang biru.` (15,7–19,0)
-6. `Mulai gratis. Fitur lengkap kapan pun kamu siap.` (19,0–22,5)
-7. `Buka Blush sekarang. Bisa jadi, orangnya sedang menunggu.` (22,5–30,6)
+1. `Cari gebetan kok ribet banget?` (0,0–1,9)
+2. `Harus download aplikasi, daftar panjang, belum tentu cocok lagi.` (2,3–6,2)
+3. `Stop! Kenalan sama Blush.` (7,4–9,7)
+4. `Dating platform buat kamu yang mau cari koneksi baru, langsung dari browser.` (10,2–14,5)
+5. `Tanpa download aplikasi.` (14,9–16,1)
+6. `Bikin akun? Cukup isi yang penting dalam satu menit.` (16,4–19,3)
+7. `Lihat foto, baca bio, temukan yang menarik.` (19,5–22,4)
+8. `Kalau sama-sama suka? BOOM! Langsung bisa chat.` (22,6–25,9)
+9. `Mulai gratis, cari koneksi yang cocok buat kamu.` (26,2–28,9)
+10. `Blush! Buka webnya, ketemu orangnya.` (28,9–31,8)
+11. `Langsung kunjungi blush.xinet.id.` (32,0–34,5)
+12. `Your next connection starts here.` (34,8–36,6)
 
-Harga tidak diucapkan di voice over karena sudah tertera di kartu scene 6. Voice over hanya menjual manfaat.
+Visual: 14 scene mengikuti kalimat di atas (`scratch/ad/ad.html`, `CFG.scenes` = 0 / 2,05 / 6,55 / 8,35 / 10,10 / 14,70 / 16,25 / 19,20 / 22,40 / 24,70 / 25,95 / 28,90 / 31,95 / 34,80, `end` 36,99). Semua gerak dihitung dari `seek(t)` supaya frame dan suara tidak meleset.
 
-Voice: VoxCPM1.5 (Apache-2.0) + LoRA `aisyahsyihab/voxcpm-lora-indonesian-female-v2` (Apache-2.0, r=64), cfg 3.2, 28 langkah, tanpa prompt audio. Tiap kalimat dibuat 3 take dengan seed berbeda, take dengan pelafalan terbersih dipilih lewat ASR. Segmen dipangkas heningnya, disamakan loudness-nya, lalu pitch-nya diselaraskan ke median 240 Hz dengan rubberband (formant dipertahankan) supaya warna suara tidak melompat antar kalimat. Tidak ada tempo-stretch per segmen. Kata `centang` ditulis `chentang` di naskah karena LoRA membacanya `sentang`; hasilnya dicek ulang lewat ASR. Olahan akhir: high-pass 95 Hz, potong mud 300 Hz, presence 3,2 kHz, de-ess 7,2 kHz, kompresor 2,5:1. Musik dibuat khusus dengan Python, bebas royalti, di-ducking 6:1 di bawah voice over.
+Tidak ada angka harga di video. Voice over hanya menjual manfaat: cepat, tanpa download, gratis untuk mulai.
+
+Audio: VO user dipakai apa adanya (tidak ada TTS baru, tidak ada tempo-stretch). Olahan akhir high-pass 95 Hz, potong mud 300 Hz, presence 3,2 kHz, de-ess 7,2 kHz, kompresor 2,5:1, lalu loudnorm -14 LUFS. Musik `music.wav` (dibuat dengan Python, bebas royalti) di-loop ke 37 detik dan di-ducking 6:1 di bawah VO.
 
 ## 3. Caption unggahan utama
 
@@ -46,7 +53,7 @@ Masalahnya bukan kamu. Aplikasinya yang bikin capek.
 Blush bisa dibuka langsung dari browser. Tanpa download, tanpa ribet.
 Foto asli, bio jelas, jawaban jujur. Saling suka, obrolan langsung jalan.
 
-Mulai gratis. Link di bio.
+Mulai gratis, langsung dari browser. Link di bio.
 
 #datingapp #datingindonesia #kenalan #blush #genzindonesia
 ```
